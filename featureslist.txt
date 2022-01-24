@@ -1,0 +1,26 @@
+openSatCon Feature List
+
+(Essential)
+
+1.  attitude dynamics & control system + pointing
+1a. Physical model to test correction system
+1b. Rpi + gyroscope + 1U satellite + output/visualise on gazebo
+1c. Data logging
+1d. Computing Power estimations (?)
+
+2.  Priority Handler + Command Schedule
+2a. What interrupts are handled first, adjust priority of actions
+
+3.  Orbital Calculations
+3a. Pre-planned orbit planned
+
+% (Optional, in order of priority)
+
+4.  Groundstation commands
+4a. Telemetry Tracking & Command (TT&C)
+4b. Data Transfer
+
+5.  GUI
+5a. Orbit visualisation
+5b. Adjust command order
+
