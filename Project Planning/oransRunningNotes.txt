@@ -1,0 +1,8 @@
+poll command on linux
+register a poll on the socket
+
+http://gazebosim.org/tutorials?tut=build_model
+
+https://docs.ros.org/en/foxy/Tutorials/Services/Understanding-ROS2-Services.html
+
+priority system
