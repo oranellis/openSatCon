@@ -1,7 +1,7 @@
 # openSatCon
 We are a team of University of Glasgow students creating an open-source satellite control system for use in satellite applications, primarily micro-satellite users. The aim is to provide a lightweight modular system that can be adapted to fit the needs of numerous mission types.
 
-![Header Image](Assets/Logos/HeaderCandidate.png)
+![Header Image](Assets/Logos/HeaderCandidateHQ.png)
 ## Feature List
 #### Essential
 - Attitude Control and Pointing, including data logging
