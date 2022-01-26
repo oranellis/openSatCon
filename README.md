@@ -10,10 +10,9 @@ We are a team of University of Glasgow students creating an open-source satellit
 - Ground Station Command Handling 
 - Telemetry, Tracking, & Command Modelling
 - Ground Station GUI w/ Orbit Visualisation
-- Sensor Pointing
+- Sensor Pointing Control
 
-## Social Media Links
+## Social Media Links & Authors
 [LinkTree](https://linktr.ee/openSatCon) &nbsp; &nbsp;[LinkedIn](https://linkedin.com/company/opensatcon) &nbsp; &nbsp;[Twitter](https://twitter.com/openSatCon) &nbsp; &nbsp;[Youtube](https://www.youtube.com/channel/UCqU7pj3qFMwDKtqEJbz2JTg)
 
-## Authors
 [Oran Ellis](https://github.com/oranellis) &nbsp; &nbsp;[Aidan Macrae](https://github.com/2306781M) &nbsp; &nbsp;[Shreyas Raje](https://github.com/Shreylord)
