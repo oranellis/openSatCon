@@ -1,6 +1,6 @@
 all:
-	g++ -o test test.cpp
+	g++ -o test.out test.cpp
 	
 clean:
-	rm test
+	rm test.out
 	
