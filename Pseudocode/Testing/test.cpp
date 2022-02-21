@@ -3,8 +3,7 @@
 #include <string>
 #include <math.h>
 #include <complex>
-//#include <QtMath>
-//#include <QGenericMatrix>
+#include <Eigen/Dense>
 
 
 int rad2deg(double deg){
@@ -18,5 +17,7 @@ int main ()
   double MomentOfInertia[3][3];
   int ReactionWheelConfigMatrix[3][4]={{1,0,0,1},{0,1,0,1},{0,0,1,1}};
   double omega_dot, TorqueCommand, TorqueDisturbances, TorqueActuators, ReactionWheelAngularMomentum;
+
 }
+
 
