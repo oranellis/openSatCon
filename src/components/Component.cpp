@@ -1,23 +1,40 @@
-class Component{
-  private:
-    double Mass, Position[3], Power;
-  public:
-    double GetMass() {
-      return Mass;
-	}
-    double * GetPos() {
-      return *Position;
-	}
-    double GetPower() {
-      return Power;
-	}
-    double MomentOfInertia(){
-	} //TBD
+#include "Component.hpp"
 
-    void SetMass(double mass) {
-      Mass = mass;
+class Component{
+
+  private:
+  
+    double Mass;
+    double Position[3];
+    double Power;
+
+
+  public:
+
+  //Initialisers
+  Component(double mass, double* position) {
+    Mass = mass;
+    for (int i=0;i<3;i++) {
+      Position[i] = position[i];
+    }
+  }
+
+  // Accessors
+  double GetMass() {
+    return Mass;
 	}
-    void * SetPos(double position) {
-      *Position = *position;
+
+  double* GetPos() {
+    return Position;
+	}
+
+  void SetMass(double mass) {
+    Mass = mass;
+	}
+  
+  void SetPos(double* position) {
+    for (int i=0; i<3;i++) {
+      Position[i] = position[i];
+    }
 	}
 };
