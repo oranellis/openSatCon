@@ -31,6 +31,9 @@ class Component{
   void SetMass(double mass) {
     Mass = mass;
 	}
+  double GetPower() {
+    return Power;
+	}
   
   void SetPos(double* position) {
     for (int i=0; i<3;i++) {
