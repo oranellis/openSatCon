@@ -1,4 +1,4 @@
-class MagneticTorquer : Actuator{
+class magneticTorquer {
   private:
     double MagneticFluxDensity;
   public:
@@ -12,4 +12,17 @@ class MagneticTorquer : Actuator{
       //lambda = sqrt(1 + (3 * sin(pi/2 - MagneticLatitude)^2))
 
       //MagneticLatitude = lookup table (International Geomagnetic Reference Field (IGRF))
+};
+
+class reactionWheel {
+  private:
+    double Torque, StoredMomentum, RotationSpeed;
+  public:
+    double GetTorque(){
+      return Torque;}
+    double GetStoredMomentum(){
+      return StoredMomentum;}
+    double GetRotationSpeed(){
+      return RotationSpeed;}
+      //Torque  = RotationSpeed * Something ()
 };
