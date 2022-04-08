@@ -2,9 +2,11 @@
 #include <vector>
 #include <map>
 
-#include "components/component.hpp"
-#include "components/fueltank.cpp"
-#include "osctypes.hpp"
+#include "../components/component.hpp"
+#include "../components/fueltank.cpp"
+#include "../osctypes.hpp"
+
+namespace osc {
 
 class craftcontroller {
 
@@ -71,3 +73,4 @@ class craftcontroller {
     //     return cg;
     // }
 };
+}

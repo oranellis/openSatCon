@@ -2,6 +2,6 @@
 
 main(int argc, char* args) {
 
-    craftcontroller controller;
+    osc::craftcontroller controller;
 
 }

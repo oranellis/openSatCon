@@ -1,28 +1,31 @@
-class magneticTorquer {
-  private:
-    double MagneticFluxDensity;
-  public:
-    double GetMagneticFluxDensity(){
-      return MagneticFluxDensity;}
-      //Torque  = DipoleMoment(Am^2) * MagneticFieldStrength(T)
-      //        = DipoleMoment(Am^2) * (EarthMagneticMoment(Tm^3) / SatelliteRadius(m)^3 * lambda)
+namespace osc {
 
-      //EarthMagneticMoment = 7.8e15Tm^3 (different for other planets)
-      
-      //lambda = sqrt(1 + (3 * sin(pi/2 - MagneticLatitude)^2))
+  class magneticTorquer {
+    private:
+      double MagneticFluxDensity;
+    public:
+      double GetMagneticFluxDensity(){
+        return MagneticFluxDensity;}
+        //Torque  = DipoleMoment(Am^2) * MagneticFieldStrength(T)
+        //        = DipoleMoment(Am^2) * (EarthMagneticMoment(Tm^3) / SatelliteRadius(m)^3 * lambda)
 
-      //MagneticLatitude = lookup table (International Geomagnetic Reference Field (IGRF))
-};
+        //EarthMagneticMoment = 7.8e15Tm^3 (different for other planets)
 
-class reactionWheel {
-  private:
-    double Torque, StoredMomentum, RotationSpeed;
-  public:
-    double GetTorque(){
-      return Torque;}
-    double GetStoredMomentum(){
-      return StoredMomentum;}
-    double GetRotationSpeed(){
-      return RotationSpeed;}
-      //Torque  = RotationSpeed * Something ()
-};
+        //lambda = sqrt(1 + (3 * sin(pi/2 - MagneticLatitude)^2))
+
+        //MagneticLatitude = lookup table (International Geomagnetic Reference Field (IGRF))
+  };
+
+  class reactionWheel {
+    private:
+      double Torque, StoredMomentum, RotationSpeed;
+    public:
+      double GetTorque(){
+        return Torque;}
+      double GetStoredMomentum(){
+        return StoredMomentum;}
+      double GetRotationSpeed(){
+        return RotationSpeed;}
+        //Torque  = RotationSpeed * Something ()
+  };
+}

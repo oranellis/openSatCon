@@ -1,20 +1,40 @@
 #include "../osctypes.hpp"
 
-class fueltank {
+namespace osc {
 
-  double fuelMass;
-  position fuelMassPos;
+  class fueltank {
 
-  public:
-  double getFuelMass(){
-    return fuelMass;
-  }
+    std::string fuelType;
+    double fuelMass;
+    double fuelCapacity;
+    position fuelMassPos;
 
-  position getFuelPos() {
-    return fuelMassPos;
-  }
+    public:
 
-  void burnFuel(double burnedFuel){
-    fuelMass = fuelMass-burnedFuel; //assuming no CoG change for fuel use as of now
-  }
-}; //changing masses
+    fueltank(std::string initFuelType, double initFuelMass, position initFuelMassPos) {
+      fuelType = initFuelType;
+      fuelMass = initFuelMass;
+      fuelMassPos = initFuelMassPos;
+    };
+
+    std::string getFuelType() {
+      return fuelType;
+    }
+
+    double getFuelMass() {
+      return fuelMass;
+    }
+
+    double getFuelCapacity() {
+      return fuelCapacity;
+    }
+
+    position getFuelPos() {
+      return fuelMassPos;
+    }
+
+    void burnFuel(double burnedFuel){
+      fuelMass = fuelMass-burnedFuel; //assuming no CoG change for fuel use as of now
+    }
+  }; //changing masses
+}
