@@ -48,46 +48,54 @@ namespace osc {
         double asc; // longitude of the ascending node (rad)
         double meananom; // mean anomaly (rad)
         double eccanom; // eccentric anomaly (rad)
-        double truanon; // true anomaly (rad)
-        double trulon; // true longitude (rad)
+        double truanom; // true anomaly (rad)
     };
 
-    struct pcspos {
+    struct pcs {
         // Orbital position of satellite in Perifocal Co-Ordinate System - satellite centred
         double p; // points towards periapsis of orbit
         double q; // right hand angle along orbital plane
         double w; // normal to orbital plane
     };
 
-    struct ecipos {
+    struct eci {
         // Orbital position of satellite in Earth Centred Inertial Co-Ordinate System
         double i; // vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
         double j; // orthogonal towards Equator
         double k; // passes through Celestial North Pole
     };
 
-    struct ecefpos {
+    struct ecef {
         // Orbital position of satellite in Earth Centred Earth Fixed Co-Ordinate System
         double x; // vector passing through Greenwich Meridian
         double y; // orthogonal towards Equator
         double z; // passes through Celestial North Pole
     };
 
-    struct nedpos {
+    struct ned {
         // Orbital position of satellite in North East Down Co-Ordinate System - satellite centred
         double n; // points North
         double e; // points East
         double d; // ppoints down
     };
 
-    struct thcspos {
+    struct thcs {
         // Orbital position of satellite in Topocentric Horizon Co-Ordinate System - centred on ground point
         double s; // points South
         double e; // points East
         double z; // points up
     };
+    
+    struct lla {
+        // Ground Sub-Vehicle Point on Earth's surface
+        double lon; //geocentric longitude
+        double lat; //geocentric latitude
+        double alt; //height above WGS84 ellipsoid
 
-    struct earpos {
+
+    };
+
+    struct ear {
         // Orbital position of satellite in Elevation Azimuth Range Co-Ordinate System - centred on ground point
         double e; // elevation (rad)
         double a; // azimuth (rad)
