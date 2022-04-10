@@ -7,9 +7,10 @@
 namespace osc {
 
     enum componentType {
-    structural,
+    standard,
     fuelTank,
-    thruster
+    thruster,
+    rotator
     };
 
     struct position {
