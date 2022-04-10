@@ -6,15 +6,15 @@
 
 namespace osc{
 double meantotrue(orbparam KOE){
-        if (orbparam.ecc < 0.2){
-            orbparam.truanon = orbparam.meananom+2*orbparam.ecc*sin(orbparam.meananom)+1.25*orbparam.ecc^2*sin(2*orbparam.meananom)-orbparam.ecc^3*(0.25*sin(orbparam.meananom)-(13/12)*sin(3*orbparam.meananom))
+        if (KOE.ecc < 0.2){
+            KOE.truanom = KOE.meananom+2*KOE.ecc*sin(KOE.meananom)+1.25*pow(KOE.ecc,2)*sin(2*KOE.meananom)-pow(KOE.ecc,3)*(0.25*sin(KOE.meananom)-(13/12)*sin(3*KOE.meananom));
         } else{
             // newton-raphson's method
         };
 };
 
 
-double greenwichsiderealangle(utc){
+double greenwichsiderealangle(double utc){
     //find time since J2000
     //for Oran
     double siderealangle;
@@ -44,17 +44,17 @@ lla ECEFtoLLA(ecef arg, double siderealangle){
     double lat;
     double earthradius = 6378.137; 
     double flattening = 1/298.26;
-    double e=2.0*flattening-flattening^2;
+    double e=(2*flattening)-(pow(flattening, 2.0));
     double rho; //not sure what rho is yet
     double R;
 
 
-    lat=atan(arg.z/(sqrt(arg.x^2+arg.y^2)));
+    lat=atan(arg.z/(sqrt(pow(arg.x,2)+pow(arg.y,2))));
     llaret.lon=atan(arg.y/arg.x)-siderealangle;
     double lat_=lat+1.0e6;
     R=rho*cos(lat);
     while (abs(lat-lat_) > 1.0e-6){
-        C=1/sqrt(1-e*sin(lat)^2);
+        C=1/sqrt(1-e*pow(sin(lat),2));
         lat_=atan(arg.z+earthradius*C*e*sin(lat)/R);
     }
     llaret.lat=lat_;
@@ -66,7 +66,7 @@ eci KOEtoECI(orbparam arg){
     eci eciret;
     pcs pcs_;
     double orbitradius;
-    orbitradius = (arg.sma*(1-arg.ecc^2))/(1+arg.ecc*cos(arg.truanom));
+    orbitradius = (arg.sma*(1-pow(arg.ecc,2)))/(1+arg.ecc*cos(arg.truanom));
     pcs_.p = orbitradius * cos(arg.truanom); 
     pcs_.q = orbitradius * sin(arg.truanom);
     pcs_.w = 0;
@@ -98,8 +98,8 @@ orbparam ECEFtoKOE(ecef argpos, ecef argvel){
     orbparam koeret;
     ecef argangmnt;
     double mu = 10; //find value
-    double orbitalradius = sqrt(argpos.x^2+argpos.y^2+argpos.z^2);
-    double orbitalvelocity = sqrt(argvel.x^2+argvel.y^2+argvel.z^2);
+    double orbitalradius = sqrt(pow(argpos.x,2)+pow(argpos.y,2)+pow(argpos.z,2));
+    double orbitalvelocity = sqrt(pow(argvel.x,2)+pow(argvel.y,2)+pow(argvel.z,2));
     //angular momentum vector is wrong
     argangmnt.x = (argpos.y*argvel.z-argvel.y*argpos.z);
     argangmnt.x = (argpos.z*argvel.x-argpos.x*argvel.z);
@@ -110,9 +110,9 @@ orbparam ECEFtoKOE(ecef argpos, ecef argvel){
     //asc = acos(Nx/N)
     //if Ny > 0 then 0<asc<180
     //if Ny < 0 then 180<asc<360
-    //ecc = (1/mu)*((v^2-(mu/r))r_hat-dot(r,v)v_hat)
+    //ecc = (1/mu)*((v,2)-(mu/r))r_hat-dot(r,v)v_hat)
     //ecc_norm =norm(ecc)
-    //sma=(h^2/mu)/(1-ecc^2)
+    //sma=(h,2)/mu)/(1-ecc,2))
     //aop=acos(dot(N, ecc)/N*ecc)
     //if ecc_z > 0 then 0<aop<180
     //if ecc_z < 0 then 180<aop<360
