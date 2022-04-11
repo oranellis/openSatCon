@@ -81,7 +81,14 @@ namespace osc {
         // Orbital position of satellite in North East Down Co-Ordinate System - satellite centred
         double n; // points North
         double e; // points East
-        double d; // ppoints down
+        double d; // points down
+    };
+
+    struct enu {
+        // Orbital position of satellite in East North Up Co-Ordinate System - Earth centred
+        double e; // points East
+        double n; // points North
+        double u; // points Up
     };
 
     struct thcs {
@@ -93,7 +100,7 @@ namespace osc {
     
     struct lla {
         // Ground Sub-Vehicle Point on Earth's surface
-        double lon; //geocentric longitude
+        double lon; //geocentric longitude (output in deg-min-sec?)
         double lat; //geocentric latitude
         double alt; //height above WGS84 ellipsoid
 
