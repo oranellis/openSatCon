@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "osctypes.hpp"
+#include "planet.cpp"
 
 namespace osc{
 double meantotrue(orbparam KOE){
@@ -22,44 +23,195 @@ double greenwichsiderealangle(double utc){
 };
 
 
-eci LLAtoECI(lla arg) {
-    eci eciret;
-    // converts the angular position of the satellite to the ECI co-ordinate system
-    // note that this is from the Earth's centre and therefore geodetic latitude and geocentric longitude are not required
-    eciret.i=arg.alt*cos(arg.lon);
-    eciret.j=arg.alt*sin(arg.lon);
-    eciret.k=arg.alt*cos(arg.lat);
-    return eciret;
+ecef LLAtoECEF(lla arg) {
+    ecef ecefret;
+    // converts the angular position of the satellite to the ECEF co-ordinate system
+    // this gives the correct altitude of a non-spherical earth, note that altitude here is above the ground
+    double normaldistance=planet.semimajoraxis/sqrt(1-(planet.eccentricity*sin(arg.lat)));
+    ecefret.x=(normaldistance+arg.alt)*cos(arg.lon)*cos(arg.lat);
+    ecefret.y=(normaldistance+arg.alt)*sin(arg.lon)*cos(arg.lat);
+    ecefret.z=(normaldistance*(1-pow(planet.eccentricity,2))+arg.alt)*sin(arg.lat);
+    return ecefret;
 };
 
-eci SEZtoECI(thcs arg) {
-    //will implement later
-};
-
-lla ECEFtoLLA(ecef arg, double siderealangle){
+lla ECEFtoLLA(ecef arg, double earthradius, double flattening){
     //returns ground position of satellite from ECEF co-ords
     lla llaret;
-    double lat_=999;
-    double C;
-    double lat;
-    double earthradius = 6378.137; 
-    double flattening = 1/298.26;
-    double e=(2*flattening)-(pow(flattening, 2.0));
-    double rho; //not sure what rho is yet
-    double R;
-
-
-    lat=atan(arg.z/(sqrt(pow(arg.x,2)+pow(arg.y,2))));
-    llaret.lon=atan(arg.y/arg.x)-siderealangle;
-    double lat_=lat+1.0e6;
-    R=rho*cos(lat);
-    while (abs(lat-lat_) > 1.0e-6){
-        C=1/sqrt(1-e*pow(sin(lat),2));
-        lat_=atan(arg.z+earthradius*C*e*sin(lat)/R);
-    }
-    llaret.lat=lat_;
-    llaret.alt=(R/cos(lat_)-earthradius*C);
+    double semiminoraxis=earthradius-earthradius*flattening;
+    double eccentricity=sqrt((pow(earthradius,2)-pow(semiminoraxis,2))/pow(earthradius,2));
+    double eccentricity_=sqrt((pow(earthradius,2)-pow(semiminoraxis,2))/pow(semiminoraxis,2));
+    double p = sqrt(pow(arg.x,2)+pow(arg.y,2));
+    double theta = atan2(arg.z*earthradius,p*semiminoraxis);
+    llaret.lon = atan2(arg.y,arg.x);
+    llaret.lat = atan2(arg.z+pow(eccentricity_,2)*semiminoraxis*pow(sin(theta),3),p-pow(eccentricity,2)*earthradius*pow(sin(theta),3));
+    double normaldistance = earthradius/sqrt(1-pow(eccentricity,2)*pow(sin(llaret.lat),2));
+    llaret.alt = (p/cos(llaret.lat))-normaldistance;
     return llaret;
+};
+
+ned ECEFtoNED(ecef satpos, ecef refpos){ //probably better to use LLA for reference position
+    ned nedret;
+    ecef relpos;
+    relpos.x=satpos.x-refpos.x;
+    relpos.y=satpos.y-refpos.y;
+    relpos.z=satpos.z-refpos.z;
+    lla reflla = ECEFtoLLA(refpos);
+    nedret.n=   -sin(reflla.lat)*cos(reflla.lon)*relpos.x+
+                sin(reflla.lat)*sin(reflla.lon)*relpos.y+
+                cos(reflla.lat)*relpos.z;
+
+    nedret.e=   -sin(reflla.lon)*relpos.x+
+                cos(reflla.lon)*relpos.y+
+                0;
+
+    nedret.d=   -cos(reflla.lat)*cos(reflla.lon)*relpos.x+
+                -cos(reflla.lat)*sin(reflla.lon)*relpos.y+
+                -sin(reflla.lat)*relpos.z;
+    return nedret;
+};
+
+ecef NEDtoECEF(ned satpos, lla refpos){
+    ecef ecefret;
+
+    ecefret.x=  -cos(refpos.lon)*sin(refpos.lat)*satpos.n
+                -sin(refpos.lon)*satpos.e
+                -cos(refpos.lon)*cos(refpos.lat)*satpos.d;
+
+    ecefret.y=  -sin(refpos.lon)*sin(refpos.lat)*satpos.n
+                +cos(refpos.lon)*satpos.e
+                -sin(refpos.lon)*cos(refpos.lat)*satpos.d;
+
+    ecefret.z=  cos(refpos.lat)*satpos.n
+                +0
+                -sin(refpos.lat)*satpos.d;
+    return ecefret;   
+};
+
+ecef EARtoECEF(ear satpos, lla refpos){//this method goes through SEZ co-ordinates, but seems to be the best method
+    ecef ecefret;
+    ecef ecefrefpos = LLAtoECEF(refpos);
+    ecefret.x=  sin(refpos.lat)*cos(refpos.lon)*(-satpos.r*cos(satpos.e)*cos(satpos.a))
+                -sin(refpos.lon)*(satpos.r*cos(satpos.e)*sin(satpos.a))
+                +cos(refpos.lat)*cos(refpos.lon)*(satpos.r*sin(satpos.e)) + ecefrefpos.x;
+    
+    ecefret.y=  sin(refpos.lat)*sin(refpos.lon)*(-satpos.r*cos(satpos.e)*cos(satpos.a))
+                +cos(refpos.lon)*(satpos.r*cos(satpos.e)*sin(satpos.a))
+                +cos(refpos.lat)*sin(refpos.lon)*(satpos.r*sin(satpos.e)) + ecefrefpos.y;
+
+    ecefret.z=  -cos(refpos.lat)*(-satpos.r*cos(satpos.e)*cos(satpos.a))
+                +0
+                +sin(refpos.lat)*(satpos.r*sin(satpos.e)) + ecefrefpos.z;
+
+    return ecefret;
+};
+
+
+ear ECEFtoEAR(ecef satpos, ecef refpos){ //probably better to use LLA for reference position
+    ear earret;
+    ecef relpos;
+    relpos.x=-satpos.x+refpos.x;
+    relpos.y=-satpos.y+refpos.y;
+    relpos.z=-satpos.z+refpos.z;
+
+    earret.e=   acos((refpos.x*relpos.x+refpos.y*relpos.y+refpos.z*relpos.z)
+                /sqrt((pow(refpos.x,2)+pow(refpos.y,2)+pow(refpos.z,2))*(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2))))-M_PI_2;
+
+    earret.a=   atan((-refpos.y*relpos.x+refpos.x*relpos.y/sqrt((pow(refpos.x,2)+pow(refpos.y,2)+pow(refpos.z,2))*(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2))))
+                /(-refpos.z*refpos.x*relpos.x-refpos.z*refpos.y*relpos.y+(pow(refpos.x,2)+pow(refpos.y,2))*relpos.z)/sqrt((pow(refpos.x,2)+pow(refpos.y,2))+(pow(refpos.x,2)+pow(refpos.y,2)+pow(refpos.z,2))*(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2))));
+
+    earret.r=   sqrt(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2));
+    return earret;
+};
+
+// thcs EARtoSEZ(ear argpos, ear argvel, eci refpos) {// need to double check this maths
+//     //also probably better suited elsewhere as this is a tracking calculation
+//     thcs sezposret;
+//     thcs sezvelret;
+//     sezposret.s=refpos.i- argpos.r*cos(argpos.e)*cos(argpos.a);
+//     sezposret.e=refpos.j- argpos.r*cos(argpos.e)*sin(argpos.a);
+//     sezposret.z=refpos.k- argpos.r*sin(argpos.e);
+
+//     sezvelret.s=-argvel.r*cos(argpos.e)*cos(argpos.a)+argpos.r*sin(argpos.e)*cos(argpos.a)*argvel.e+argpos.r*cos(argpos.e)*sin(argpos.a)*argvel.a;
+//     sezvelret.e=argvel.r*cos(argpos.e)*sin(argpos.a)-argpos.r*sin(argpos.e)*sin(argpos.a)*argvel.e+argpos.r*cos(argpos.e)*cos(argpos.a)*argvel.a;
+//     sezvelret.z=argvel.r*sin(argpos.e)*argpos.r*cos(argpos.e)*argvel.e;
+//     return sezposret;
+//     return sezvelret;
+// };
+
+ecef ENUtoECEF(enu satpos, lla refpos){
+    ecef ecefret;
+    ecef ecefrefpos = LLAtoECEF(refpos);
+
+    ecefret.x=  -sin(refpos.lon)*satpos.e
+                -sin(refpos.lat)*cos(refpos.lon)*satpos.n
+                +cos(refpos.lat)*cos(refpos.lon)*satpos.u + ecefrefpos.x;
+
+    ecefret.y=  cos(refpos.lon)*satpos.e
+                -sin(refpos.lat)*sin(refpos.lon)*satpos.n
+                +cos(refpos.lat)*sin(refpos.lon)*satpos.u + ecefrefpos.y;
+
+    ecefret.z=  0
+                +cos(refpos.lat)*satpos.n
+                +sin(refpos.lat)*satpos.u + ecefrefpos.z;
+
+    return ecefret;
+};
+
+enu ECEFtoENU(ecef satpos, lla refpos){
+    enu enuret;
+    ecef ecefrefpos = LLAtoECEF(refpos);
+
+    enuret.e=   -sin(refpos.lon)*(satpos.x-ecefrefpos.x)
+                +cos(refpos.lon)*(satpos.y-ecefrefpos.y)
+                +0;
+
+    enuret.n=   -sin(refpos.lat)*cos(refpos.lon)*(satpos.x-ecefrefpos.x)
+                -sin(refpos.lat)*sin(refpos.lon)*(satpos.y-ecefrefpos.y)
+                +cos(refpos.lat)*(satpos.z-ecefrefpos.z);
+
+    enuret.u=   cos(refpos.lat)*cos(refpos.lon)+(satpos.x-ecefrefpos.x)
+                +cos(refpos.lat)*sin(refpos.lon)*(satpos.y-ecefrefpos.y)
+                +sin(refpos.lat)*(satpos.z-ecefrefpos.z);
+
+    return enuret;
+};
+
+ecef SEZtoECEF(thcs satpos, lla refpos){
+    ecef ecefret;
+    ecef ecefrefpos = LLAtoECEF(refpos);
+
+    ecefret.x=  cos(refpos.lon)*satpos.s
+                +sin(refpos.lat)*cos(refpos.lon)*satpos.e
+                + ecefrefpos.z;
+
+    ecefret.y=  -sin(refpos.lat)*sin(refpos.lon)*satpos.s
+                +sin(refpos.lat)*cos(refpos.lon)*satpos.e
+                +cos(refpos.lat)*satpos.z + ecefrefpos.y;
+
+    ecefret.z=  cos(refpos.lat)*sin(refpos.lon)*satpos.s
+                -cos(refpos.lat)*cos(refpos.lon)*satpos.e
+                +sin(refpos.lat)*satpos.z + ecefrefpos.z;
+
+    return ecefret;
+};
+
+thcs ECEFtoSEZ(ecef satpos, lla refpos){
+    thcs sezret;
+    ecef ecefrefpos = LLAtoECEF(refpos);
+
+    sezret.s=   sin(refpos.lat)*cos(refpos.lon)*(satpos.x-ecefrefpos.x)
+                +sin(refpos.lat)*sin(refpos.lon)*(satpos.y-ecefrefpos.y)
+                -cos(refpos.lat)*(satpos.z-ecefrefpos.z);
+
+    sezret.e=   -sin(refpos.lon)*(satpos.x-ecefrefpos.x)
+                +cos(refpos.lon)*(satpos.y-ecefrefpos.y)
+                +0;
+
+    sezret.z=   cos(refpos.lat)*cos(refpos.lon)+(satpos.x-ecefrefpos.x)
+                +cos(refpos.lat)*sin(refpos.lon)*(satpos.y-ecefrefpos.y)
+                +sin(refpos.lat)*(satpos.z-ecefrefpos.z);
+
+    return sezret;
 };
 
 eci KOEtoECI(orbparam arg){
@@ -86,48 +238,43 @@ eci KOEtoECI(orbparam arg){
     return eciret;
 };
 
+orbparam ECItoKOE(eci argpos, eci argvel, double mu){
+    orbparam koeret;
+    eci argangmnt;
+    eci nodalvect;
+    eccentricityvector eccvect;
+    double orbitalradius = sqrt(pow(argpos.i,2)+pow(argpos.j,2)+pow(argpos.k,2));
+    double orbitalvelocity = sqrt(pow(argvel.i,2)+pow(argvel.j,2)+pow(argvel.k,2));
+    argangmnt.i = (argpos.j*argvel.k-argvel.j*argpos.k);
+    argangmnt.j = (argpos.k*argvel.i-argpos.i*argvel.k);
+    argangmnt.k = (argpos.i*argvel.j-argpos.j*argvel.i);
+    double argangmntnorm=sqrt(pow(argangmnt.i,2)+pow(argangmnt.j,2)+pow(argangmnt.k,2));
+    koeret.inc = acos(argangmnt.k/argangmntnorm);
+    nodalvect.i=-argangmnt.j;
+    nodalvect.j=argangmnt.i;
+    double nodalvectnorm = sqrt(pow(nodalvect.i,2)+pow(nodalvect.j,2)); //might be atan2(nodalvect.i,nodalvect.j)
+    koeret.asc = acos(nodalvect.i/nodalvectnorm);
+    //if Ny > 0 then 0<asc<180
+    //if Ny < 0 then 180<asc<360
+    eccvect.r = (1/mu)*pow(orbitalvelocity,2);
+    eccvect.v = (-1/mu)*(argpos.i*argvel.i+argpos.j*argpos.j+argpos.k*argvel.k);
+    koeret.ecc = sqrt(pow(eccvect.r,2)+pow(eccvect.v,2));
+    koeret.sma=(pow(argangmntnorm,2)/mu)/(1-pow(koeret.ecc,2));
+    koeret.aop=acos((nodalvect.i*eccvect.r+nodalvect.j*eccvect.v)/(nodalvectnorm*koeret.ecc));
+    //if ecc_z > 0 then 0<aop<180
+    //if ecc_z < 0 then 180<aop<360
+    koeret.truanom=acos((koeret.sma*(1-pow(koeret.ecc,2))-orbitalradius)/(koeret.ecc*orbitalradius));
+    koeret.eccanom=atan2(sqrt(1-koeret.ecc)*sin(koeret.truanom/2),sqrt(1+koeret.ecc)*cos(koeret.truanom/2));
+    koeret.meananom=koeret.eccanom-koeret.ecc*sin(koeret.eccanom);
+    return koeret;
+};
+
 ecef ECItoECEF(eci arg,double siderealangle){
     ecef ecefret;
     ecefret.x = cos(siderealangle)*arg.i-sin(siderealangle)*arg.j;
     ecefret.y = sin(siderealangle)*arg.i+cos(siderealangle)*arg.j;
-    ecefret.z = arg.k; //add precession and nutation
+    ecefret.z = arg.k; //ignoring precession and nutation
     return ecefret;
-};
-
-orbparam ECEFtoKOE(ecef argpos, ecef argvel){
-    orbparam koeret;
-    ecef argangmnt;
-    ecef nodalvect;
-    eccentricityvector eccvect;
-    double mu = 10; //find value
-    double orbitalradius = sqrt(pow(argpos.x,2)+pow(argpos.y,2)+pow(argpos.z,2));
-    double orbitalvelocity = sqrt(pow(argvel.x,2)+pow(argvel.y,2)+pow(argvel.z,2));
-    //angular momentum vector is wrong
-    argangmnt.x = (argpos.y*argvel.z-argvel.y*argpos.z);
-    argangmnt.y = (argpos.z*argvel.x-argpos.x*argvel.z);
-    argangmnt.z = (argpos.x*argvel.y-argpos.y*argvel.x);
-    double argangmntnorm=sqrt(pow(argangmnt.x,2)+pow(argangmnt.y,2)+pow(argangmnt.z,2));
-    koeret.inc = acos(argangmnt.z/argangmntnorm);
-    nodalvect.x=-argangmnt.y;
-    nodalvect.y=argangmnt.x;
-    double nodalvectnorm = sqrt(pow(nodalvect.x,2)+pow(nodalvect.y,2)); //might be atan2(nodalvect.x,nodalvect.y)
-    koeret.asc = acos(nodalvect.x/nodalvectnorm);
-    //if Ny > 0 then 0<asc<180
-    //if Ny < 0 then 180<asc<360
-    eccvect.r = (1/mu)*pow(orbitalvelocity,2);
-    eccvect.v = (-1/mu)*(argpos.x*argvel.x+argpos.y*argpos.y+argpos.z*argvel.z);
-    koeret.ecc = sqrt(pow(eccvect.r,2)+pow(eccvect.v,2));
-    koeret.sma=(pow(argangmntnorm,2)/mu)/(1-pow(koeret.ecc,2));
-    koeret.aop=acos((nodalvect.x*eccvect.r+nodalvect.y*eccvect.v)/(nodalvectnorm*koeret.ecc));
-    //if ecc_z > 0 then 0<aop<180
-    //if ecc_z < 0 then 180<aop<360
-    double meanmotion=sqrt(mu/pow(koeret.sma,3));
-    koeret.eccanom=acos(koeret.sma-orbitalradius)/(koeret.sma*orbitalradius);
-    //koeret.truanom=acos(dot(ecc, r)/e*r);
-        //true anomaly is a hassle
-    //if dot(r, v) > 0 then 0<trueanom<180
-    //if dot(r, v) < 0 then 180<trueanom<360
-    return koeret;
 };
 };
 
