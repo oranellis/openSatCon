@@ -51,6 +51,11 @@ namespace osc {
         double truanom; // true anomaly (rad)
     };
 
+    struct eccentricityvector { //remove if unnecessary
+        double r; //radial component
+        double v; //velocity component
+    };
+
     struct pcs {
         // Orbital position of satellite in Perifocal Co-Ordinate System - satellite centred
         double p; // points towards periapsis of orbit

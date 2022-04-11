@@ -97,29 +97,37 @@ ecef ECItoECEF(eci arg,double siderealangle){
 orbparam ECEFtoKOE(ecef argpos, ecef argvel){
     orbparam koeret;
     ecef argangmnt;
+    ecef nodalvect;
+    eccentricityvector eccvect;
     double mu = 10; //find value
     double orbitalradius = sqrt(pow(argpos.x,2)+pow(argpos.y,2)+pow(argpos.z,2));
     double orbitalvelocity = sqrt(pow(argvel.x,2)+pow(argvel.y,2)+pow(argvel.z,2));
     //angular momentum vector is wrong
     argangmnt.x = (argpos.y*argvel.z-argvel.y*argpos.z);
-    argangmnt.x = (argpos.z*argvel.x-argpos.x*argvel.z);
-    argangmnt.x = (argpos.x*argvel.y-argpos.y*argvel.x);
-    //h_norm=norm(angularmomentumvector)
-    //i = acos(hz/h);
-    //N_hat=cross(z_hat, h_norm)
-    //asc = acos(Nx/N)
+    argangmnt.y = (argpos.z*argvel.x-argpos.x*argvel.z);
+    argangmnt.z = (argpos.x*argvel.y-argpos.y*argvel.x);
+    double argangmntnorm=sqrt(pow(argangmnt.x,2)+pow(argangmnt.y,2)+pow(argangmnt.z,2));
+    koeret.inc = acos(argangmnt.z/argangmntnorm);
+    nodalvect.x=-argangmnt.y;
+    nodalvect.y=argangmnt.x;
+    double nodalvectnorm = sqrt(pow(nodalvect.x,2)+pow(nodalvect.y,2)); //might be atan2(nodalvect.x,nodalvect.y)
+    koeret.asc = acos(nodalvect.x/nodalvectnorm);
     //if Ny > 0 then 0<asc<180
     //if Ny < 0 then 180<asc<360
-    //ecc = (1/mu)*((v,2)-(mu/r))r_hat-dot(r,v)v_hat)
-    //ecc_norm =norm(ecc)
-    //sma=(h,2)/mu)/(1-ecc,2))
-    //aop=acos(dot(N, ecc)/N*ecc)
+    eccvect.r = (1/mu)*pow(orbitalvelocity,2);
+    eccvect.v = (-1/mu)*(argpos.x*argvel.x+argpos.y*argpos.y+argpos.z*argvel.z);
+    koeret.ecc = sqrt(pow(eccvect.r,2)+pow(eccvect.v,2));
+    koeret.sma=(pow(argangmntnorm,2)/mu)/(1-pow(koeret.ecc,2));
+    koeret.aop=acos((nodalvect.x*eccvect.r+nodalvect.y*eccvect.v)/(nodalvectnorm*koeret.ecc));
     //if ecc_z > 0 then 0<aop<180
     //if ecc_z < 0 then 180<aop<360
-    //truanom=acos(dot(ecc, r)/e*r)
+    double meanmotion=sqrt(mu/pow(koeret.sma,3));
+    koeret.eccanom=acos(koeret.sma-orbitalradius)/(koeret.sma*orbitalradius);
+    //koeret.truanom=acos(dot(ecc, r)/e*r);
+        //true anomaly is a hassle
     //if dot(r, v) > 0 then 0<trueanom<180
     //if dot(r, v) < 0 then 180<trueanom<360
-    //return koeret;
+    return koeret;
 };
 };
 
