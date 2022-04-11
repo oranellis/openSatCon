@@ -1,4 +1,4 @@
-#include "craftcontroller.cpp"
+#include "control/craftcontroller.cpp"
 
 main(int argc, char* args) {
 
