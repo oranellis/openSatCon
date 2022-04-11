@@ -4,7 +4,7 @@
 
 //have this editable so we can orbit Mars as well
 struct celestial{
-    double gravity = 9.81;
+    double stdgravparam = 3.986004418e14;
     double semimajoraxis = 6378137;
     double flattening = 1/298.257223563;
     double semiminoraxis = semimajoraxis-semimajoraxis*flattening;

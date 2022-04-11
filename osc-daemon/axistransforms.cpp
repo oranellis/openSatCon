@@ -15,12 +15,13 @@ double meantotrue(orbparam KOE){
 };
 
 
-double greenwichsiderealangle(double utc){
-    //find time since J2000
-    //for Oran
-    double siderealangle;
-    return siderealangle;
-};
+// double greenwichsiderealangle(double utc){
+//     std::time_t utc
+//     //for Oran
+//     double siderealangle;
+//     return siderealangle;
+// };
+
 
 
 ecef LLAtoECEF(lla arg) {
@@ -34,17 +35,15 @@ ecef LLAtoECEF(lla arg) {
     return ecefret;
 };
 
-lla ECEFtoLLA(ecef arg, double earthradius, double flattening){
+lla ECEFtoLLA(ecef arg){
     //returns ground position of satellite from ECEF co-ords
     lla llaret;
-    double semiminoraxis=earthradius-earthradius*flattening;
-    double eccentricity=sqrt((pow(earthradius,2)-pow(semiminoraxis,2))/pow(earthradius,2));
-    double eccentricity_=sqrt((pow(earthradius,2)-pow(semiminoraxis,2))/pow(semiminoraxis,2));
+    double secondeccentricity=planet.eccentricity/sqrt(1-pow(planet.eccentricity,2));
     double p = sqrt(pow(arg.x,2)+pow(arg.y,2));
-    double theta = atan2(arg.z*earthradius,p*semiminoraxis);
+    double theta = atan2(arg.z*planet.semimajoraxis,p*planet.semiminoraxis);
     llaret.lon = atan2(arg.y,arg.x);
-    llaret.lat = atan2(arg.z+pow(eccentricity_,2)*semiminoraxis*pow(sin(theta),3),p-pow(eccentricity,2)*earthradius*pow(sin(theta),3));
-    double normaldistance = earthradius/sqrt(1-pow(eccentricity,2)*pow(sin(llaret.lat),2));
+    llaret.lat = atan2(arg.z+pow(secondeccentricity,2)*planet.semiminoraxis*pow(sin(theta),3),p-pow(planet.eccentricity,2)*planet.semimajoraxis*pow(sin(theta),3));
+    double normaldistance = planet.semimajoraxis/sqrt(1-pow(planet.eccentricity,2)*pow(sin(llaret.lat),2));
     llaret.alt = (p/cos(llaret.lat))-normaldistance;
     return llaret;
 };
@@ -238,7 +237,7 @@ eci KOEtoECI(orbparam arg){
     return eciret;
 };
 
-orbparam ECItoKOE(eci argpos, eci argvel, double mu){
+orbparam ECItoKOE(eci argpos, eci argvel){
     orbparam koeret;
     eci argangmnt;
     eci nodalvect;
@@ -256,10 +255,10 @@ orbparam ECItoKOE(eci argpos, eci argvel, double mu){
     koeret.asc = acos(nodalvect.i/nodalvectnorm);
     //if Ny > 0 then 0<asc<180
     //if Ny < 0 then 180<asc<360
-    eccvect.r = (1/mu)*pow(orbitalvelocity,2);
-    eccvect.v = (-1/mu)*(argpos.i*argvel.i+argpos.j*argpos.j+argpos.k*argvel.k);
+    eccvect.r = (1/planet.stdgravparam)*pow(orbitalvelocity,2);
+    eccvect.v = (-1/planet.stdgravparam)*(argpos.i*argvel.i+argpos.j*argpos.j+argpos.k*argvel.k);
     koeret.ecc = sqrt(pow(eccvect.r,2)+pow(eccvect.v,2));
-    koeret.sma=(pow(argangmntnorm,2)/mu)/(1-pow(koeret.ecc,2));
+    koeret.sma=(pow(argangmntnorm,2)/planet.stdgravparam)/(1-pow(koeret.ecc,2));
     koeret.aop=acos((nodalvect.i*eccvect.r+nodalvect.j*eccvect.v)/(nodalvectnorm*koeret.ecc));
     //if ecc_z > 0 then 0<aop<180
     //if ecc_z < 0 then 180<aop<360
@@ -276,6 +275,7 @@ ecef ECItoECEF(eci arg,double siderealangle){
     ecefret.z = arg.k; //ignoring precession and nutation
     return ecefret;
 };
+
 };
 
     

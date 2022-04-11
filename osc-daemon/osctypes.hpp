@@ -114,7 +114,14 @@ namespace osc {
         double r; // points up
     };
 
-    struct orbrot {
+        struct vnb {
+        // Orbital velocity of satellite in Velocity Normal Bi-Normal axes - used for orbital maneuvers
+        double v; // velocity vector - prograde
+        double n; // normal vector - normal to orbital plane
+        double b; // bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
+    };
+
+    struct orbrot {//this needs fixed
         // Orbital reference rotation is using the Velocity Normal Bi-Normal system
         double q;
         double x; // velocity vector - prograde
