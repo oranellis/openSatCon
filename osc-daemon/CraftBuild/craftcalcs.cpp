@@ -1,5 +1,5 @@
 #include <json/value.h>
-#include "fstream"
+#include <fstream>
 #include <iostream>
 #include <math.h>
 
@@ -8,7 +8,8 @@ craft_file >> craft;
 
 // access data via craft["ThrusterComponents"]["normal"] etc
 
-int main() {
+//calculates moments of inertia for craft
+void CalculateInertia() {
     double mass;
     double x;
     double y;
