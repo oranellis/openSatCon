@@ -31,6 +31,25 @@ namespace osc {
         momentofinertia addMass(momentofinertia I, double m, position r) {}
     };
 
+    struct inertialframe {//used for attitude dynamics
+        double x;
+        double y;
+        double z;
+    };
+
+    struct bodyframe{
+        double x;
+        double y;
+        double z;
+    };
+
+    struct inertiamatrix {
+        double  J11, J12, J13,
+                J21, J22, J23, 
+                J31, J32, J33;
+
+    };
+
     struct quaternion {
         double qw;
         double qx;
@@ -38,6 +57,15 @@ namespace osc {
         double qz;
 
         std::array<std::array<double, 3>, 3> toMat() {}
+    };
+
+    struct states{
+        double o1; //omega_i1
+        double o2; //omega_i2
+        double o3; //omega_i3
+        double q1;
+        double q2;
+        double q3;
     };
 
     struct orbparam {
@@ -61,6 +89,7 @@ namespace osc {
         double p; // points towards periapsis of orbit
         double q; // right hand angle along orbital plane
         double w; // normal to orbital plane
+        double vp, vq, vw;
     };
 
     struct eci {
@@ -68,6 +97,7 @@ namespace osc {
         double i; // vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
         double j; // orthogonal towards Equator
         double k; // passes through Celestial North Pole
+        double vi, vj, vk;
     };
 
     struct ecef {
@@ -75,6 +105,7 @@ namespace osc {
         double x; // vector passing through Greenwich Meridian
         double y; // orthogonal towards Equator
         double z; // passes through Celestial North Pole
+        double vx, vy, vz;
     };
 
     struct ned {
@@ -82,6 +113,7 @@ namespace osc {
         double n; // points North
         double e; // points East
         double d; // points down
+        double vn, ve, vd;
     };
 
     struct enu {
@@ -89,6 +121,7 @@ namespace osc {
         double e; // points East
         double n; // points North
         double u; // points Up
+        double ve, vn, vu;
     };
 
     struct thcs {
@@ -96,6 +129,7 @@ namespace osc {
         double s; // points South
         double e; // points East
         double z; // points up
+        double vs, ve, vz;
     };
     
     struct lla {
@@ -103,8 +137,6 @@ namespace osc {
         double lon; //geocentric longitude (output in deg-min-sec?)
         double lat; //geocentric latitude
         double alt; //height above WGS84 ellipsoid
-
-
     };
 
     struct ear {
@@ -127,6 +159,13 @@ namespace osc {
         double x; // velocity vector - prograde
         double y; // normal vector - normal to orbital plane
         double z; // bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
+    };
+
+    struct orbcommand {
+        double a; //altitude of apoapsis (m)
+        double p; //altitude of periapsis (m)
+        double e; //eccentricity
+        double i; //inclination (rad)
     };
 
     struct powermodel {
