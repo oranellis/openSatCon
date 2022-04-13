@@ -25,9 +25,16 @@ class craftcontroller {
 
     // Member functions
     bool initModel() {
-        // read in the information from json file
-        // parse info into relevant data structures
-        return true;
+        // jsonModel model;
+        // model.read("Path to json file");
+        // if (model.hasData()) {
+        //     components = model.getComponents();
+        //     fueltanks = model.getFueltanks();
+            return true;
+        // }
+        // else {
+        //     return false;
+        // }
     }
 
     void recomputeComponentDeps() {
