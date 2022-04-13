@@ -61,17 +61,17 @@ namespace osc {
     };
 
     struct momentofinertia {
-        double Ix = 0;
-        double Iy = 0;
-        double Iz = 0;
+        double Ixx = 0;
+        double Iyy = 0;
+        double Izz = 0;
 
         momentofinertia addMass(momentofinertia I, double m, position r) {
             /*
             Adds moment of inertia of a component with added with mass m, distance from the overall CG r and moment of inertia I
             */
-            Ix += I.Ix + m * r.x * r.x;
-            Iy += I.Iy + m * r.y * r.y;
-            Iz += I.Iz + m * r.z * r.z;
+            Ixx += I.Ixx + m * r.y * r.y * r.z * r.z;
+            Iyy += I.Iyy + m * r.z * r.z * r.x * r.x;
+            Izz += I.Izz + m * r.x * r.x * r.x * r.x;
         }
     };
 
