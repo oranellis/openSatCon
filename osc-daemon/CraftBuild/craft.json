@@ -1,30 +1,71 @@
 {
     "MassComponentNo" : 2,
     "ThrusterComponentNo" : 1,
+    "FuelTankNo" : 1,
+    "ReactionWheelNo" : 1,
+    "magnetictorquerNo" : 1,
     "MassComponents" : 
     {
-        "Comments" : "Masses in kg, position is x,y,z meters from satellite center",
+        "Comments" : "",
         "0" :
         {
+            "componentType" : 0,
+            "mass" : 2,
+            "moi" : 0.1,
             "position" : [0,0,0],
-            "mass" : 2
+            "powermodel" : 0
         },
         "1" :
         {
-            "position" : [1, 1, 1],
-            "mass" : 2
+            "componentType" : 0,
+            "mass" : 3,
+            "moi" : 0.2,
+            "position" : [0,1,0],
+            "powermodel" : 0
         }
 
     },
     "ThrusterComponents" : 
     {
-        "0" : 
+        "Comments" : "",
+        "2" : 
         {
-            "position" : [],
-            "normal" : [],
-            "thrust" : [],
-            "isp" : []
+            "maxThrust" : 5,
+            "minThrustFraction" : 0.1,
+            "thrustFraction" : 0.2,
+            "specificImpulse" : 1,
+            "thrustAxis" : [0,0,0],
+            "pin" : 1
         }
 
+    },
+    "FuelTanks" : 
+    {
+        "Comments" : "",
+        "3" :
+        {
+            "dryMass" : 25,
+            "maxFuelMass" : 50,
+            "position" : [0,0,0]
+        }
+    },
+    "Rotators" :
+    {
+        "Comments" : "",
+        "4" :
+        {
+            "Torque" : 5,
+            "storedMomentum" : 10,
+            "RotationSpeed" : 5
+        }
+    },
+    "mTorquers" :
+    {
+        "Comments" : "",
+        "5" :
+        {
+            "mFluxDensity" : 1
+        }
     }
+
 }
