@@ -5,18 +5,41 @@ We are a team of University of Glasgow students creating an open-source satellit
 
 ### Table of Contents
 * [Feature List](#feature-list)
-* [Social Media & Authors](#social-media-links-and-authors)
+* [Requirements](#requirements)
+* [openSatCon Installation](#opensatcon-installation)
+* [How to Use](#how-to-use)
+* [FAQs](#faqs)
+* [Social Media and Authors](#social-media-links-and-authors)
 
 ## Feature List
 #### Essential
 - Attitude Control and Pointing, including data logging
 - Command Scheduler and Priority Handling for actions
-- Orbital Calculations for pre-planned orbital manoeuvrers 
+- Orbital Calculations for pre-planned orbital manoeuvres 
 #### Stretch Goals
 - Ground Station Command Handling 
 - Telemetry, Tracking, & Command Modelling
 - Ground Station GUI w/ Orbit Visualisation
 - Sensor Pointing Control
+
+## Requirements
+#### Satellite Requirements
+- Satellite model, in prescribed json format
+- Scheduled orbital manoeuvres (if applicable)
+- Desired pointing location and hold attitude (if applicable)
+#### Hardware Requirements
+- Linux
+
+## openSatCon Installation
+
+
+## How to use
+1. The control system is run with an input configuration of the satellite in the form of a json file. This json is given as a specific format and contains a template for all necessary parameters for the satellite that are required to make use of the control software.
+2. Once the satellite file is input, the software requires desired pointing locations and/or orbital manoeuvres that are planned. The software does not facilitate live satellite-to-user commmunication, so only pre-planned manoevres will be scheduled. 
+3. After the satellite model and planned manoeuvres are listed, the software will then complete all listed goals, holding attitude, pointing and orbital manoeuvres for the duration of the mission. 
+
+## FAQs
+- 
 
 ## Social Media Links and Authors
 [LinkTree](https://linktr.ee/openSatCon) &nbsp; &nbsp;[LinkedIn](https://linkedin.com/company/opensatcon) &nbsp; &nbsp;[Twitter](https://twitter.com/openSatCon) &nbsp; &nbsp;[Youtube](https://www.youtube.com/channel/UCqU7pj3qFMwDKtqEJbz2JTg)
