@@ -21,7 +21,7 @@ class craftcontroller {
     position cg;
     momentofinertia moi;
     orbparam orbit;
-    orbrot rotation;
+    quaternion rotation;
 
     std::map<std::string, component> components;
     std::map<std::string, fueltank> fueltanks;

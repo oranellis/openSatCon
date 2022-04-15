@@ -26,7 +26,7 @@ namespace osc {
         /*
         Subtraction overload for subtraction of two positions
         */
-        position returnPos = position();
+        position returnPos(0,0,0);
         returnPos.x = x - rhs.x;
         returnPos.y = y - rhs.y;
         returnPos.z = z - rhs.z;
@@ -37,7 +37,7 @@ namespace osc {
         /*
         Multiplication by a constant
         */
-        position returnPos = position();
+        position returnPos(0,0,0);
         returnPos.x = x * rhs;
         returnPos.y = y * rhs;
         returnPos.z = z * rhs;
@@ -48,7 +48,7 @@ namespace osc {
         /*
         Division by a constant
         */
-        position returnPos = position();
+        position returnPos(0,0,0);
         returnPos.x = x / rhs;
         returnPos.y = y / rhs;
         returnPos.z = z / rhs;
@@ -56,7 +56,7 @@ namespace osc {
     }
 
     position position::dot(position argPos) {
-        position returnPos = position();
+        position returnPos(0,0,0);
         returnPos.x = x * argPos.x;
         returnPos.y = y * argPos.y;
         returnPos.z = z * argPos.z;
