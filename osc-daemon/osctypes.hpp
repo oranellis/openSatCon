@@ -6,28 +6,23 @@
 
 namespace osc {
 
-    enum componentType {
-    standard,
-    fuelTank,
-    thruster,
-    rotator
-    };
-
     struct position {
-        double x;
-        double y;
-        double z;
-        friend position operator+(const position lhs, const position& rhs) {}
-        friend position operator-(const position lhs, const position& rhs) {}
-        position divide(const double rhs) {}
-        position multiply(const double rhs) {}
-        position dot(position argPos) {}
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        position(double initX, double initY, double initZ);
+        position(std::array<double, 3> initPos);
+        position operator+(const position& rhs);
+        position operator-(const position& rhs);
+        position divide(const double rhs);
+        position multiply(const double rhs);
+        position dot(position argPos);
     };
 
     struct momentofinertia {
-        double Ix;
-        double Iy;
-        double Iz;
+        double Ixx;
+        double Iyy;
+        double Izz;
         momentofinertia addMass(momentofinertia I, double m, position r) {}
     };
 

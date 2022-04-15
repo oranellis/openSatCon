@@ -2,48 +2,29 @@
 
 namespace osc {
 
-  class component{
+  //Initialisers
+  component::component(double initMass, position initPos, powermodel initPower):mass(initMass), pos(initPos), power(initPower) { }
 
-    private:
+  // Accessors
+  double component::getMass() {
+    return mass;
+  }
 
-      componentType type;
-      double mass;
-      momentofinertia moi;
-      position pos;
-      powermodel power;
+  momentofinertia component::getMoi() {
+    return moi;
+  }
 
+  position component::getPos() {
+    return pos;
+  }
 
-    public:
-
-    //Initialisers
-    component(double initMass, position initPos, powermodel initPower):mass(initMass), pos(initPos), power(initPower) {
+  void component::setMass(double argMass) {
+    mass = argMass;
+  }
+  
+  void component::setPos(position argPos) {
+    for (int i=0; i<3;i++) {
+      pos = argPos;
     }
-
-    componentType getType () {
-      return type;
-    }
-
-    // Accessors
-    double getMass() {
-      return mass;
-    }
-
-    momentofinertia getI() {
-      return moi;
-    }
-
-    position getPos() {
-      return pos;
-    }
-
-    void setMass(double argMass) {
-      mass = argMass;
-    }
-    
-    void setPos(position argPos) {
-      for (int i=0; i<3;i++) {
-        pos = argPos;
-      }
-    }
-  };
-}
+  }
+} // namespace osc

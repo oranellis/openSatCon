@@ -3,6 +3,7 @@
 #include "../../osctypes.hpp"
 
 namespace osc {
+
   class thruster {
     private:
       double maxThrust; // (N)

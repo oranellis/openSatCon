@@ -4,7 +4,10 @@
 
 #include "../components/component.hpp"
 #include "../components/fueltank.cpp"
+#include "../components/actuators/thruster.cpp"
+#include "../components/actuators/rotator.cpp"
 #include "../osctypes.hpp"
+#include "scheduler.cpp"
 
 namespace osc {
 
@@ -22,6 +25,8 @@ class craftcontroller {
 
     std::map<std::string, component> components;
     std::map<std::string, fueltank> fueltanks;
+    std::map<std::string, thruster> thrusters;
+    std::map<std::string, rotator> rotators;
 
     // Member functions
     bool initModel() {
@@ -79,5 +84,9 @@ class craftcontroller {
     // position getCG() {
     //     return cg;
     // }
+
+    void beginControl() {
+        // scheduler* schedule = new scheduler();
+    }
 };
 }
