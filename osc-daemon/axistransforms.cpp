@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <time.h>
 
 #include "osctypes.hpp"
 #include "planet.cpp"
@@ -15,12 +16,21 @@ double meantotrue(orbparam KOE){
 };
 
 
-// double greenwichsiderealangle(double utc){
-//     std::time_t utc
-//     //for Oran
-//     double siderealangle;
-//     return siderealangle;
-// };
+double greenwichsiderealangle(){
+    time_t timer;
+    //for Oran
+    struct tm y2k = {0};
+    double seconds;
+
+    y2k.tm_hour = 0;   y2k.tm_min = 0; y2k.tm_sec = 0;
+    y2k.tm_year = 100; y2k.tm_mon = 0; y2k.tm_mday = 1;
+
+    time(&timer);
+
+    seconds = difftime(timer,mktime(&y2k));
+
+
+};
 
 
 
