@@ -4,38 +4,45 @@
 
 #include "osctypes.hpp"
 #include "planet.cpp"
+#include "axistransforms.cpp"
 
 namespace osc{
-orbparam VNBburn(orbparam koearg, vnb VNBdeltav){
+orbparam VNBburn(orbparam koearg, vnb VNBdV){
     orbparam koeret;
-    //eci curpos, eci curvel=KOEtoECI(koeret);//how do?
-    eci ECIdeltaV;
+    pcs pscposvel=KOEtoPCS(koeret);
+    eci posvel=PCStoECI(koeret, pscposvel);
+    eci neweci;
+   
 
-    newECIvel.i =   (curpos.i/sqrt(pow(curpos.i,2)+pow(curpos.j,2)+pow(curpos.k,2)))*VNBdeltav.v
-                    +((curpos.j*curvel.k-curpos.k*curvel.j)
-                    /sqrt(pow((curpos.j*curvel.k-curpos.k*curvel.j),2)+pow((curpos.k*curvel.i-curpos.i*curvel.k),2)+pow((curpos.i*curvel.j-curpos.j*curvel.i),2)))*VNBdeltav.n
-                    +(((curvel.k*curpos.i-curvel.i*curpos.k)*curvel.k-(curvel.i*curpos.j-curvel.j*curpos.i)*curvel.j)
-                    /sqrt(pow(((curvel.k*curpos.i-curvel.i*curpos.k)*curvel.k-(curvel.i*curpos.j-curvel.j*curpos.i)*curvel.j),2)
-                    +pow(((curvel.i*curpos.j-curvel.j*curpos.i)*curvel.i-(curvel.j*curpos.k-curvel.k*curpos.j)*curvel.k),2)
-                    +pow(((curvel.j*curpos.k-curvel.k*curpos.j)*curvel.j-(curvel.k*curpos.i-curvel.i*curpos.k)*curvel.i),2)))*VNBdeltav.b+curvel.i;
+    neweci.vi =   (posvel.i/sqrt(pow(posvel.i,2)+pow(posvel.j,2)+pow(posvel.k,2)))*VNBdV.v
+                    +((posvel.j*posvel.vk-posvel.k*posvel.vj)
+                    /sqrt(pow((posvel.j*posvel.vk-posvel.k*posvel.vj),2)+pow((posvel.k*posvel.vi-posvel.i*posvel.vk),2)+pow((posvel.i*posvel.vj-posvel.j*posvel.vi),2)))*VNBdV.n
+                    +(((posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vk-(posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vj)
+                    /sqrt(pow(((posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vk-(posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vj),2)
+                    +pow(((posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vi-(posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vk),2)
+                    +pow(((posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vj-(posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vi),2)))*VNBdV.b+posvel.vi;
 
-    newECIvel.j =   (curpos.j/sqrt(pow(curpos.i,2)+pow(curpos.j,2)+pow(curpos.k,2)))*VNBdeltav.v
-                    +((curpos.k*curvel.i-curpos.i*curvel.k)
-                    /sqrt(pow((curpos.j*curvel.k-curpos.k*curvel.j),2)+pow((curpos.k*curvel.i-curpos.i*curvel.k),2)+pow((curpos.i*curvel.j-curpos.j*curvel.i),2)))*VNBdeltav.n
-                    +(((curvel.i*curpos.j-curvel.j*curpos.i)*curvel.i-(curvel.j*curpos.k-curvel.k*curpos.j)*curvel.k)
-                    /sqrt(pow(((curvel.k*curpos.i-curvel.i*curpos.k)*curvel.k-(curvel.i*curpos.j-curvel.j*curpos.i)*curvel.j),2)
-                    +pow(((curvel.i*curpos.j-curvel.j*curpos.i)*curvel.i-(curvel.j*curpos.k-curvel.k*curpos.j)*curvel.k),2)
-                    +pow(((curvel.j*curpos.k-curvel.k*curpos.j)*curvel.j-(curvel.k*curpos.i-curvel.i*curpos.k)*curvel.i),2)))*VNBdeltav.b+curvel.j;
+    neweci.vj =   (posvel.j/sqrt(pow(posvel.i,2)+pow(posvel.j,2)+pow(posvel.k,2)))*VNBdV.v
+                    +((posvel.k*posvel.vi-posvel.i*posvel.vk)
+                    /sqrt(pow((posvel.j*posvel.vk-posvel.k*posvel.vj),2)+pow((posvel.k*posvel.vi-posvel.i*posvel.vk),2)+pow((posvel.i*posvel.vj-posvel.j*posvel.vi),2)))*VNBdV.n
+                    +(((posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vi-(posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vk)
+                    /sqrt(pow(((posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vk-(posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vj),2)
+                    +pow(((posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vi-(posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vk),2)
+                    +pow(((posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vj-(posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vi),2)))*VNBdV.b+posvel.vj;
 
-    newECIvel.k =   (curpos.k/sqrt(pow(curpos.i,2)+pow(curpos.j,2)+pow(curpos.k,2)))*VNBdeltav.v
-                    +((curpos.i*curvel.j-curpos.j*curvel.i)
-                    /sqrt(pow((curpos.j*curvel.k-curpos.k*curvel.j),2)+pow((curpos.k*curvel.i-curpos.i*curvel.k),2)+pow((curpos.i*curvel.j-curpos.j*curvel.i),2)))*VNBdeltav.n
-                    +(((curvel.j*curpos.k-curvel.k*curpos.j)*curvel.j-(curvel.k*curpos.i-curvel.i*curpos.k)*curvel.i)
-                    /sqrt(pow(((curvel.k*curpos.i-curvel.i*curpos.k)*curvel.k-(curvel.i*curpos.j-curvel.j*curpos.i)*curvel.j),2)
-                    +pow(((curvel.i*curpos.j-curvel.j*curpos.i)*curvel.i-(curvel.j*curpos.k-curvel.k*curpos.j)*curvel.k),2)
-                    +pow(((curvel.j*curpos.k-curvel.k*curpos.j)*curvel.j-(curvel.k*curpos.i-curvel.i*curpos.k)*curvel.i),2)))*VNBdeltav.b+curvel.k;
+    neweci.vk =   (posvel.k/sqrt(pow(posvel.i,2)+pow(posvel.j,2)+pow(posvel.k,2)))*VNBdV.v
+                    +((posvel.i*posvel.vj-posvel.j*posvel.vi)
+                    /sqrt(pow((posvel.j*posvel.vk-posvel.k*posvel.vj),2)+pow((posvel.k*posvel.vi-posvel.i*posvel.vk),2)+pow((posvel.i*posvel.vj-posvel.j*posvel.vi),2)))*VNBdV.n
+                    +(((posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vj-(posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vi)
+                    /sqrt(pow(((posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vk-(posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vj),2)
+                    +pow(((posvel.vi*posvel.j-posvel.vj*posvel.i)*posvel.vi-(posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vk),2)
+                    +pow(((posvel.vj*posvel.k-posvel.vk*posvel.j)*posvel.vj-(posvel.vk*posvel.i-posvel.vi*posvel.k)*posvel.vi),2)))*VNBdV.b+posvel.vk;
 
-    orbparam koeret =  ECItoKOE(curpos, newECIvel);
+    neweci.i=posvel.i; //should add the small 
+    neweci.j=posvel.j; //change in time, based 
+    neweci.k=posvel.k; //off calculation refresh rate
+
+    orbparam koeret =  ECItoKOE(neweci);
 
     
 };

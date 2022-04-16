@@ -59,13 +59,22 @@ namespace osc {
         std::array<std::array<double, 3>, 3> toMat() {}
     };
 
-    struct states{
+    struct rotstates{
         double o1; //omega_i1
         double o2; //omega_i2
         double o3; //omega_i3
-        double q1;
+        double q1; //quaternion vector
         double q2;
         double q3;
+    };
+
+    struct posstates{
+        double x;
+        double y;
+        double z; 
+        double vx;
+        double vy;
+        double vz;
     };
 
     struct orbparam {
