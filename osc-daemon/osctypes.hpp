@@ -69,12 +69,12 @@ namespace osc {
     };
 
     struct posstates{
-        double x;
-        double y;
-        double z; 
-        double vx;
-        double vy;
-        double vz;
+        double i;
+        double j;
+        double k; 
+        double vi;
+        double vj;
+        double vk;
     };
 
     struct orbparam {
