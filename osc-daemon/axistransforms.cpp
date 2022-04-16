@@ -38,7 +38,7 @@ double greenwichsiderealangle(){
     time(&timer);
 
     seconds = difftime(timer,mktime(&J2000));
-    double juliandays=seconds/60/60/365.35;
+    double juliandays=seconds/60/60/365.25;
     gsraret=2*M_PI*(0.77905722732640+1.00273781191135448*(juliandays-2451545));
     return gsraret;
     //this could be made down to sub-second accuracy if possible
