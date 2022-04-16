@@ -19,7 +19,6 @@ celestial mars(4.282837e13,     3396200, 0.00589,           3376200,        0.10
 celestial moon(4.9048695e12,    1738100, 0.0012,            1736000,        0.04897509571,  202.7e-6);
 
 // add more planets if we have time or if i can be bothered
-celestial planet;
 celestial planet=earth;//initialisation value, have this in start-up of final code
 
 
