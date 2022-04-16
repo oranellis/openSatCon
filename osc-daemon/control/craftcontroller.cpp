@@ -46,7 +46,7 @@ class craftcontroller {
         /*
         Recomputes craft parameters from a change in component configuiration
         */
-        cg = position();
+        cg = position(0,0,0);
         moi = momentofinertia();
         mass = 0;
         wetMass = 0;

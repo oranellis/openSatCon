@@ -11,6 +11,12 @@ namespace osc {
         z = initPos[2];
     }
 
+    position::position() {
+        x = 0;
+        y = 0;
+        z = 0;
+    }
+
     position position::operator+(const position& rhs) {
         /*
         Addition overload for addition of two positions
@@ -63,10 +69,14 @@ namespace osc {
         return returnPos;
     }
 
+    std::array<double, 3> position::toArray() {
+        return {x, y, z};
+    }
+
 
 
     // momentofinertia
-    momentofinertia momentofinertia::addMass(momentofinertia I, double m, position r) {
+    void momentofinertia::addMass(momentofinertia I, double m, position r) {
         /*
         Adds moment of inertia of a component with added with mass m, distance from the overall CG r and moment of inertia I
         */
@@ -78,6 +88,17 @@ namespace osc {
 
 
     // quaternion
+    quaternion::quaternion(std::array<double, 3> vec1, std::array<double, 3> vec2) {
+        /*
+        Generates a quaternion rotation between two unit vectors in the same reference frame
+        */
+        qw =    sqrt(pow(pow(vec1[0],2)+pow(vec1[1],2)+pow(vec1[2],2),2)*(pow(pow(vec2[0],2)+pow(vec2[1],2)+pow(vec2[2],2),2)));
+                        +vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
+        qx =    vec1[1]*vec2[2]-vec1[2]*vec2[1];
+        qy =    vec1[2]*vec2[0]-vec1[0]*vec2[2];
+        qz =    vec1[0]*vec2[1]-vec1[1]*vec2[0];
+    }
+
     std::array<std::array<double, 3>, 3> quaternion::toMat() {
         /*
         Information for conversion available at:
@@ -87,5 +108,6 @@ namespace osc {
         result[0] = {{1-2*qy*qy-2*qz*qz, 2*qx*qy-2*qz*qw, 2*qx*qz+2*qy*qw}};
         result[1] = {{2*qx*qy+2*qz*qw, 1-2*qx*qx-2*qz*qz, 2*qy*qz-2*qx*qw}};
         result[2] = {{2*qx*qz-2*qy*qw, 2*qy*qz+2*qx*qw, 1-2*qx*qx-2*qy*qy}};
+        return result;
     }
 } // namespace osc

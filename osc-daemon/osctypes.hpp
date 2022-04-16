@@ -3,27 +3,31 @@
 
 #include <vector>
 #include <array>
+#include <math.h>
 
 namespace osc {
 
     struct position {
-        double x = 0;
-        double y = 0;
-        double z = 0;
+        double x;
+        double y;
+        double z;
         position(double initX, double initY, double initZ);
         position(std::array<double, 3> initPos);
+        position();
         position operator+(const position& rhs);
         position operator-(const position& rhs);
         position divide(const double rhs);
         position multiply(const double rhs);
         position dot(position argPos);
+        std::array<double, 3> toArray();
     };
 
     struct momentofinertia {
         double Ixx;
         double Iyy;
         double Izz;
-        momentofinertia addMass(momentofinertia I, double m, position r) {}
+
+        void addMass(momentofinertia I, double m, position r);
     };
 
     struct quaternion {
@@ -32,7 +36,9 @@ namespace osc {
         double qy;
         double qz;
 
-        std::array<std::array<double, 3>, 3> toMat() {}
+        quaternion();
+        quaternion(std::array<double, 3> vec1, std::array<double, 3> vec2);
+        std::array<std::array<double, 3>, 3> toMat();
     };
 
     struct orbparam {

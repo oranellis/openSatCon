@@ -2,28 +2,30 @@
 #define COMPONENT_H
 
 #include <string>
+#include <iostream>
 
 #include "../osctypes.hpp"
 
 namespace osc {
 
   class component{
+
     private:
-      double mass;
-      momentofinertia moi;
-      position pos;
-      powermodel power;
-      std::string id; // Unique string identifier for the component
+    double mass;
+    momentofinertia moi;
+    position pos;
+    powermodel power;
+    std::string id; // Unique string identifier for the component
 
     public:
-      component(double initMass, position initPos, powermodel initPower) {}
-      double getMass() {}
-      momentofinertia getMoi() {}
-      position getPos() {}
-      powermodel getPower() {}
+    component(double initMass, position initPos, powermodel initPower);
+    double getMass();
+    momentofinertia getMoi();
+    position getPos();
+    powermodel getPower();
 
-      void setMass(double mass) {}
-      void setPos(position position) {}
+    void setMass(double mass);
+    void setPos(position position);
   };
 }
 
