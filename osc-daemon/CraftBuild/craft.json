@@ -1,39 +1,80 @@
 {
-    "MassComponentNo" : 2,
+    "Comments" : "Basic 1U cubesat with attitude determination system and micro cold-gas thruster system",
+    "MassComponentNo" : 7,
     "ThrusterComponentNo" : 1,
     "FuelTankNo" : 1,
-    "ReactionWheelNo" : 1,
-    "magnetictorquerNo" : 1,
+    "ReactionWheelNo" : 3,
+    "MagneticTorquerNo" : 3,
     "MassComponents" : 
     {
-        "Comments" : "",
+        "Comments" : "6 structural plates and 1 microcontroller",
         "0" :
         {
             "componentType" : 0,
-            "mass" : 2,
-            "moi" : 0.1,
-            "position" : [0,0,0],
+            "mass" : 0.015,
+            "moi" : 0.0000125,
+            "position" : [0.05,0,0],
             "powermodel" : 0
         },
         "1" :
         {
             "componentType" : 0,
-            "mass" : 3,
-            "moi" : 0.2,
-            "position" : [0,1,0],
+            "mass" : 0.015,
+            "moi" : 0.0000125,
+            "position" : [-0.05,0,0],
+            "powermodel" : 0
+        },
+        "2" :
+        {
+            "componentType" : 0,
+            "mass" : 0.015,
+            "moi" : 0.0000125,
+            "position" : [0,0.05,0],
+            "powermodel" : 0
+        },
+        "3" :
+        {
+            "componentType" : 0,
+            "mass" : 0.015,
+            "moi" : 0.0000125,
+            "position" : [0,-0.05,0],
+            "powermodel" : 0
+        },
+        "4" :
+        {
+            "componentType" : 0,
+            "mass" : 0.015,
+            "moi" : 0.0000125,
+            "position" : [0,0,0.05],
+            "powermodel" : 0
+        },
+        "5" :
+        {
+            "componentType" : 0,
+            "mass" : 0.015,
+            "moi" : 0.0000125,
+            "position" : [0,0,-0.05],
+            "powermodel" : 0
+        },
+        "6" :
+        {
+            "componentType" : 0,
+            "mass" : 0.04,
+            "moi" : 0.0000333,
+            "position" : [0,-0.025,0],
             "powermodel" : 0
         }
 
     },
     "ThrusterComponents" : 
     {
-        "Comments" : "",
-        "2" : 
+        "Comments" : "0.5U warm gas thruster unit",
+        "7" : 
         {
-            "maxThrust" : 5,
-            "minThrustFraction" : 0.1,
-            "thrustFraction" : 0.2,
-            "specificImpulse" : 1,
+            "maxThrust" : 0.0054,
+            "minThrustFraction" : 1,
+            "thrustFraction" : 1,
+            "specificImpulse" : 70,
             "thrustAxis" : [0,0,0],
             "pin" : 1
         }
@@ -41,30 +82,65 @@
     },
     "FuelTanks" : 
     {
-        "Comments" : "",
-        "3" :
+        "Comments" : "Fuel tank unit is integrated with thruster",
+        "8" :
         {
-            "dryMass" : 25,
-            "maxFuelMass" : 50,
-            "position" : [0,0,0]
+            "dryMass" : 0.568,
+            "maxFuelMass" : 0.200,
+            "position" : [0,0.025,0]
         }
     },
     "Rotators" :
     {
-        "Comments" : "",
-        "4" :
+        "Comments" : "3 rotators, 1 for each axis",
+        "9" :
         {
             "Torque" : 5,
+            "mass" : 0.214,
+            "moi" : 0.0000941,
             "storedMomentum" : 10,
-            "RotationSpeed" : 5
+            "RotationSpeed" : 1539,
+            "Normal Vector" : [1,0,0]
+        },
+        "10" :
+        {
+            "Torque" : 5,
+            "mass" : 0.214,
+            "moi" : 0.0000941,
+            "storedMomentum" : 10,
+            "RotationSpeed" : 1539,
+            "Normal Vector" : [0,1,0]
+        },
+        "11" :
+        {
+            "Torque" : 5,
+            "mass" : 0.214,
+            "moi" : 0.0000941,
+            "storedMomentum" : 10,
+            "RotationSpeed" : 1539,
+            "Normal Vector" : [0,0,1]
         }
     },
     "mTorquers" :
     {
-        "Comments" : "",
-        "5" :
+        "Comments" : "Magnetorquer for each axis",
+        "12" :
         {
-            "mFluxDensity" : 1
+            "maxDipoleMoment" : 0.37,
+            "mass" : 0.028,
+            "Normal Vector" : [1,0,0]
+        },
+        "13" :
+        {
+            "maxDipoleMoment" : 0.37,
+            "mass" : 0.028,
+            "Normal Vector" : [0,1,0]
+        },
+        "14" :
+        {
+            "maxDipoleMoment" : 0.37,
+            "mass" : 0.028,
+            "Normal Vector" : [0,0,1]
         }
     }
 
