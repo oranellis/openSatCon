@@ -355,6 +355,66 @@ eci ECEFtoECI(ecef arg, double siderealangle){
     return eciret;
 };
 
+eci VNBtoECI(eci posvel, vnb VNBdV){
+    eci ECIdV;
+    //precalculating as this needs to be run quite fast
+    eci rxv, vxrxv;
+    rxv.i=posvel.j*posvel.vk-posvel.k*posvel.vj;
+    rxv.j=posvel.k*posvel.vi-posvel.i*posvel.vk;
+    rxv.k=posvel.i*posvel.vj-posvel.j*posvel.vi;
+
+    vxrxv.i=posvel.vj*rxv.k-posvel.vk*rxv.j;
+    vxrxv.j=posvel.vk*rxv.i-posvel.vi*rxv.k;
+    vxrxv.k=posvel.vi*rxv.j-posvel.vj*rxv.i;
+
+    double absv, absrxv, absvxrxv;
+    absv= sqrt(pow(posvel.vi,2)+pow(posvel.vj,2)+pow(posvel.vk,2));
+    absrxv=sqrt(pow(rxv.i,2)+pow(rxv.j,2)+pow(rxv.k,2));
+    absvxrxv=sqrt(pow(vxrxv.i,2)+pow(vxrxv.j,2)+pow(vxrxv.k,2));
+
+
+
+    ECIdV.vi       =(posvel.vi/absv)*VNBdV.v
+                    +(rxv.i/absrxv)*VNBdV.n
+                    +(vxrxv.i/absvxrxv)*VNBdV.b;
+
+    ECIdV.vi       =(posvel.vj/absv)*VNBdV.v
+                    +(rxv.j/absrxv)*VNBdV.n
+                    +(vxrxv.j/absvxrxv)*VNBdV.b;
+
+    ECIdV.vi       =(posvel.vk/absv)*VNBdV.v
+                    +(rxv.k/absrxv)*VNBdV.n
+                    +(vxrxv.k/absvxrxv)*VNBdV.b;
+    return ECIdV;
+};
+
+//the following two are not exactly true axis transforms, and are only used for maneuvers and pointing command handling
+
+vnb ECItoVNB(eci posvel, eci ECIdV){
+    vnb VNBdV;
+    //precalculating as this needs to be run quite fast
+    eci rxv, vxrxv;
+    rxv.i=posvel.j*posvel.vk-posvel.k*posvel.vj;
+    rxv.j=posvel.k*posvel.vi-posvel.i*posvel.vk;
+    rxv.k=posvel.i*posvel.vj-posvel.j*posvel.vi;
+
+    vxrxv.i=posvel.vj*rxv.k-posvel.vk*rxv.j;
+    vxrxv.j=posvel.vk*rxv.i-posvel.vi*rxv.k;
+    vxrxv.k=posvel.vi*rxv.j-posvel.vj*rxv.i;
+
+    double absv, absrxv, absvxrxv;
+    absv= sqrt(pow(posvel.vi,2)+pow(posvel.vj,2)+pow(posvel.vk,2));
+    absrxv=sqrt(pow(rxv.i,2)+pow(rxv.j,2)+pow(rxv.k,2));
+    absvxrxv=sqrt(pow(vxrxv.i,2)+pow(vxrxv.j,2)+pow(vxrxv.k,2));
+
+    VNBdV.v       =(posvel.vi/absv)*ECIdV.vi+(posvel.vj/absv)*ECIdV.vj+(posvel.vk/absv)*ECIdV.vk;
+
+    VNBdV.n       =(rxv.i/absrxv)*ECIdV.vi+(rxv.j/absrxv)*ECIdV.vj+(rxv.k/absrxv)*ECIdV.vk;
+
+    VNBdV.b       =(vxrxv.i/absvxrxv)*ECIdV.vi+(vxrxv.j/absvxrxv)*ECIdV.vj+(vxrxv.k/absvxrxv)*ECIdV.vk;
+    return VNBdV;
+};
+
 };
 
     
