@@ -1,17 +1,36 @@
+#ifndef JSONPARSER_H
+#define JSONPARSER_H
+
 #include <iostream>
 #include "../../includes/json.hpp"
+#include "../components/component.hpp"
+#include "../components/fueltank.hpp"
+#include "../components/actuators/thruster.hpp"
+#include "../components/actuators/rotator.hpp"
 #include <list>
 
 using namespace std;
 using json = nlohmann::json;
 
-// change name to parse()
-int main() 
-{
-    std::cout << "start";
+namespace osc {
+
+struct craftconfig {
+    std::map<std::string, component> components;
+    std::map<std::string, fueltank> fueltanks;
+    std::map<std::string, thruster> thrusters;
+    std::map<std::string, rotator> rotators;
+
+    bool populated() {
+        if (components.empty()) return false;
+        else return true;
+    }
+};
+
+craftconfig parseJson(std::string jsonPath) {
+    // std::cout << "start"; // debug
     map<string, std::list<double> > Components;
     
-    json j = json::parse("craft.json");
+    json j = json::parse(jsonPath);
     // std::ifstream ifs("craft.json");
     // json j = json::parse(ifs);
 
@@ -29,7 +48,7 @@ int main()
         Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["powermodel"]));
     }
 
-    std::cout << "Components";
+    // std::cout << "Components"; // debug
     //parse thrust components
 }
 // take in json data 
@@ -37,3 +56,6 @@ int main()
 // map via ID name
 
 // access data via craft["ThrusterComponents"]["normal"] etc
+}
+
+#endif // JSONPARSER_H
