@@ -17,7 +17,7 @@ namespace osc{
         dotstates.q3=0.5*curstates.q3;
     };
 
-    posstates positiondynamicmodel(posstates curstates, double thrust, double Isp, double g0){//work in progress
+    posstates positiondynamicmodel(posstates curstates, double thrust, double Ve){//work in progress
     double r = sqrt(pow(curstates.i,2)+pow(curstates.j,2)+pow(curstates.k,2));
     double v = sqrt(pow(curstates.vi,2)+pow(curstates.vj,2)+pow(curstates.vk,2));
     double C =  (-3*planet.J2*planet.sgp*pow(planet.sMa,2))/(2*pow(r,5))
@@ -33,7 +33,7 @@ namespace osc{
             dotstates.vi=(-planet.sgp*curstates.i/pow(r,3)+accgrav.i+((thrust*curstates.vi)/(curstates.m*v)))*curstates.vi;
             dotstates.vj=(-planet.sgp*curstates.j/pow(r,3)+accgrav.j+((thrust*curstates.vj)/(curstates.m*v)))*curstates.vj;
             dotstates.vk=(-planet.sgp*curstates.k/pow(r,3)+accgrav.k+((thrust*curstates.vk)/(curstates.m*v)))*curstates.vk;
-            dotstates.m=-thrust/Isp/g0*curstates.m;
+            dotstates.m=-thrust/Ve*curstates.m;
     };
 
 }
