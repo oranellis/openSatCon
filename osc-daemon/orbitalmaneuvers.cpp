@@ -8,6 +8,15 @@
 
 namespace osc{
 
+
+void highlevelcommand(orbparam curKOE, orbparam aftKOE){
+    
+
+};
+
+
+
+
     double massburned(double dV, double mo, double Isp){
         double propuse;
 

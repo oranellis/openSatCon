@@ -26,12 +26,16 @@ namespace osc{
             accgrav.j=C*curstates.j;
             accgrav.k=C*curstates.k;
         posstates dotstates;
-            dotstates.i=curstates.vi+control.i; //ensure that these are ECI not ECEF
-            dotstates.j=curstates.vj+control.j;
-            dotstates.k=curstates.vk+control.k;
-            dotstates.vi=-planet.sgp*curstates.i/pow(r,3)+accgrav.i+control.vi;
-            dotstates.vj=-planet.sgp*curstates.j/pow(r,3)+accgrav.j+control.vj;
-            dotstates.vk=-planet.sgp*curstates.k/pow(r,3)+accgrav.k+control.vk;
+            dotstates.i=(curstates.vi+control.i)*curstates.i;
+            dotstates.j=(curstates.vj+control.j)*curstates.j;
+            dotstates.k=(curstates.vk+control.k)*curstates.k;
+            dotstates.vi=(-planet.sgp*curstates.i/pow(r,3)+accgrav.i+control.vi)*curstates.vi;
+            dotstates.vj=(-planet.sgp*curstates.j/pow(r,3)+accgrav.j+control.vj)*curstates.vj;
+            dotstates.vk=(-planet.sgp*curstates.k/pow(r,3)+accgrav.k+control.vk)*curstates.vk;
+            dotstates.m=control.m*curstates.m;
+            //control.ijk should equal 0
+            //control.vijk will equal (Thrust*ijk)/(Mass*Velocity)
+            //control.m will equal -Thrust/(Isp*g0)
     };
 
 }
