@@ -1,81 +1,98 @@
 {
     "Comments" : "Basic 1U cubesat with attitude determination system and micro cold-gas thruster system",
-    "MassComponentNo" : 7,
+    "MassComponentNo" : 8,
     "ThrusterComponentNo" : 1,
     "FuelTankNo" : 1,
     "ReactionWheelNo" : 3,
     "MagneticTorquerNo" : 3,
     "MassComponents" : 
     {
-        "Comments" : "6 structural plates and 1 microcontroller",
+        "Comments" : "6 structural faces, 1 microcontroller, thruster mass component",
         "0" :
         {
+            "key" : "plate_1",
             "componentType" : 0,
             "mass" : 0.015,
-            "moi" : 0.0000125,
+            "moi" : [0.0000125, 0.0000125, 0.00000025],
             "position" : [0.05,0,0],
-            "powermodel" : 0
+            "powermodel" : [0,0,0]
         },
         "1" :
         {
+            "key" : "plate_2",
             "componentType" : 0,
             "mass" : 0.015,
-            "moi" : 0.0000125,
+            "moi" : [0.0000125, 0.0000125, 0.00000025],
             "position" : [-0.05,0,0],
-            "powermodel" : 0
+            "powermodel" : [0,0,0]
         },
         "2" :
         {
+            "key" : "plate_3",
             "componentType" : 0,
             "mass" : 0.015,
-            "moi" : 0.0000125,
+            "moi" : [0.0000125, 0.0000125, 0.00000025],
             "position" : [0,0.05,0],
-            "powermodel" : 0
+            "powermodel" : [0,0,0]
         },
         "3" :
         {
+            "key" : "plate_4",
             "componentType" : 0,
             "mass" : 0.015,
-            "moi" : 0.0000125,
+            "moi" : [0.0000125, 0.0000125, 0.00000025],
             "position" : [0,-0.05,0],
-            "powermodel" : 0
+            "powermodel" : [0,0,0]
         },
         "4" :
         {
+            "key" : "plate_5",
             "componentType" : 0,
             "mass" : 0.015,
-            "moi" : 0.0000125,
+            "moi" : [0.0000125, 0.0000125, 0.00000025],
             "position" : [0,0,0.05],
-            "powermodel" : 0
+            "powermodel" : [0,0,0]
         },
         "5" :
         {
+            "key" : "plate_6",
             "componentType" : 0,
             "mass" : 0.015,
-            "moi" : 0.0000125,
+            "moi" : [0.0000125, 0.0000125, 0.00000025],
             "position" : [0,0,-0.05],
-            "powermodel" : 0
+            "powermodel" : [0,0,0]
         },
         "6" :
         {
+            "key" : "microcontroller",
+            "componentType" : 0,
+            "mass" : 0.04,
+            "moi" : [0.0000333, 0.0000333, 0.000000667],
+            "position" : [0,-0.025,0],
+            "powermodel" : [0, 0.05, 0.1]
+        },
+        "7" :
+        {
+            "key" : "thruster",
             "componentType" : 0,
             "mass" : 0.04,
             "moi" : 0.0000333,
-            "position" : [0,-0.025,0],
-            "powermodel" : 0
+            "position" : [0, 0.025,0],
+            "powermodel" : [0, 0.055, 15]
         }
 
     },
     "ThrusterComponents" : 
     {
         "Comments" : "0.5U warm gas thruster unit",
-        "7" : 
+        "0" : 
         {
+            "key" : "thruster",
             "maxThrust" : 0.0054,
             "minThrustFraction" : 1,
             "thrustFraction" : 1,
             "specificImpulse" : 70,
-            "thrustAxis" : [0,0,0],
+            "thrustAxis" : [1,0,0],
             "pin" : 1
         }
 
@@ -83,39 +100,42 @@
     "FuelTanks" : 
     {
         "Comments" : "Fuel tank unit is integrated with thruster",
-        "8" :
+        "0" :
         {
-            "dryMass" : 0.568,
-            "maxFuelMass" : 0.200,
+            "key" : "fuel_tank",
+            "FuelMass" : 0.200,
             "position" : [0,0.025,0]
         }
     },
     "Rotators" :
     {
         "Comments" : "3 rotators, 1 for each axis",
-        "9" :
+        "0" :
         {
+            "key" : "rotator_1",
             "Torque" : 5,
             "mass" : 0.214,
-            "moi" : 0.0000941,
+            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
             "Normal Vector" : [1,0,0]
         },
-        "10" :
+        "1" :
         {
+            "key" : "rotator_2",
             "Torque" : 5,
             "mass" : 0.214,
-            "moi" : 0.0000941,
+            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
             "Normal Vector" : [0,1,0]
         },
-        "11" :
+        "2" :
         {
+            "key" : "rotator_3",
             "Torque" : 5,
             "mass" : 0.214,
-            "moi" : 0.0000941,
+            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
             "Normal Vector" : [0,0,1]
@@ -124,20 +144,23 @@
     "mTorquers" :
     {
         "Comments" : "Magnetorquer for each axis",
-        "12" :
+        "0" :
         {
+            "key" : "magtorquer_1",
             "maxDipoleMoment" : 0.37,
             "mass" : 0.028,
             "Normal Vector" : [1,0,0]
         },
-        "13" :
+        "1" :
         {
+            "key" : "magtorquer_2",
             "maxDipoleMoment" : 0.37,
             "mass" : 0.028,
             "Normal Vector" : [0,1,0]
         },
-        "14" :
+        "2" :
         {
+            "key" : "magtorquer_3",
             "maxDipoleMoment" : 0.37,
             "mass" : 0.028,
             "Normal Vector" : [0,0,1]
