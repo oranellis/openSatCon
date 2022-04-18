@@ -148,12 +148,12 @@ vnb planeChangeTransfer(orbparam curKOE, orbparam aftKOE){
     return deltaV; //perform at apoapsis for delta V efficiency
 };
 
-vnb complexManeuver(double dVv, double dVn, double dVb, double theta_burn){
+task complexManeuver(double dVv, double dVn, double dVb, double theta_burn){
     vnb deltaV;
     double burnAngle=theta_burn;
     deltaV.v=dVv;
     deltaV.n=dVn;
     deltaV.b=dVb;
-    return deltaV; //return task with VNB values and req truanom
+    return task(deltaV, trueAnom); //return task with VNB values and req truanom
 };
 };

@@ -62,10 +62,10 @@ lla ECEFtoLLA(ecef arg){
     double secondeccentricity=planet.ecc/sqrt(1-pow2(planet.ecc));
     double p = sqrt(pow2(arg.x)+pow2(arg.y));
     double theta = atan2(arg.z*planet.sMa,p*planet.sma);
-    llaret.lon = atan2(arg.y,arg.x);
-    llaret.lat = atan2(arg.z+pow2(secondeccentricity)*planet.sma*pow3(sin(theta)),p-pow2(planet.ecc)*planet.sMa*pow3(sin(theta)));
+        llaret.lon = atan2(arg.y,arg.x);
+        llaret.lat = atan2(arg.z+pow2(secondeccentricity)*planet.sma*pow3(sin(theta)),p-pow2(planet.ecc)*planet.sMa*pow3(sin(theta)));
     double normaldistance = planet.sMa/sqrt(1-pow2(planet.ecc)*pow2(sin(llaret.lat)));
-    llaret.alt = (p/cos(llaret.lat))-normaldistance;
+        llaret.alt = (p/cos(llaret.lat))-normaldistance;
     return llaret;
 };
 
@@ -74,10 +74,13 @@ ned ECEFtoNED(ecef satpos, lla reflla){
     ned nedret;
     ecef refpos = LLAtoECEF(reflla);
     ecef relpos;
-    relpos.x=satpos.x-refpos.x;
-    relpos.y=satpos.y-refpos.y;
-    relpos.z=satpos.z-refpos.z;
+
+        relpos.x=satpos.x-refpos.x;
+        relpos.y=satpos.y-refpos.y;
+        relpos.z=satpos.z-refpos.z;
+
     lla reflla = ECEFtoLLA(refpos);
+
     nedret.n=   -sin(reflla.lat)*cos(reflla.lon)*relpos.x+
                 sin(reflla.lat)*sin(reflla.lon)*relpos.y+
                 cos(reflla.lat)*relpos.z;
@@ -89,6 +92,7 @@ ned ECEFtoNED(ecef satpos, lla reflla){
     nedret.d=   -cos(reflla.lat)*cos(reflla.lon)*relpos.x+
                 -cos(reflla.lat)*sin(reflla.lon)*relpos.y+
                 -sin(reflla.lat)*relpos.z;
+
     return nedret;
 };
 

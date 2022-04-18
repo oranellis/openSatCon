@@ -223,21 +223,13 @@ namespace osc {
     };
 
     struct rotstates{
-        double o1; //omega_i1
-        double o2; //omega_i2
-        double o3; //omega_i3
-        double q1; //quaternion vector
-        double q2;
-        double q3;
+        vec3 omega; //body rates
+        vec3 q; //quaternion vector part
     };
 
     struct posstates{
-        double i; //eci position (m)
-        double j;
-        double k; 
-        double vi; //eci velocity (m/s)
-        double vj;
-        double vk;
+        vec3 r; //eci position (m)
+        vec3 v; //eci velocity (m/s)
         double m; //spacecraft mass (kg)
     };
 
@@ -252,71 +244,68 @@ namespace osc {
         double truanom; // true anomaly (rad)
     };
 
-
-
-    struct eccentricityvector { //remove if unnecessary
-        double r; //radial component
-        double v; //velocity component
-    };
-
-
-
     struct pcs {
         // Orbital position of satellite in Perifocal Co-Ordinate System - satellite centred
-        double p; // points towards periapsis of orbit
-        double q; // right hand angle along orbital plane
-        double w; // normal to orbital plane
-        double vp, vq, vw;
+        // p - points towards periapsis of orbit
+        // q - right hand angle along orbital plane
+        // w - normal to orbital plane
+        vec3 rPCS;
+        vec3 vPCS;
     };
 
 
 
     struct eci {
         // Orbital position of satellite in Earth Centred Inertial Co-Ordinate System
-        double i; // vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
-        double j; // orthogonal towards Equator
-        double k; // passes through Celestial North Pole
-        double vi, vj, vk;
+        // i - vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
+        // j - orthogonal towards Equator
+        // k - passes through Celestial North Pole
+        vec3 rIJK;
+        vec3 vIJK;
     };
 
 
 
     struct ecef {
         // Orbital position of satellite in Earth Centred Earth Fixed Co-Ordinate System
-        double x; // vector passing through Greenwich Meridian
-        double y; // orthogonal towards Equator
-        double z; // passes through Celestial North Pole
-        double vx, vy, vz;
+        // x - vector passing through Greenwich Meridian
+        // y - orthogonal towards Equator
+        // z - passes through Celestial North Pole
+        vec3 rXYZ;
+        vec3 vXYZ;
     };
 
 
 
     struct ned {
         // Orbital position of satellite in North East Down Co-Ordinate System - satellite centred
-        double n; // points North
-        double e; // points East
-        double d; // points down
-        double vn, ve, vd;
+        // n - points North
+        // e - points East
+        // d - points down
+        vec3 rNED;
+        vec3 vNED;
     };
 
 
 
     struct enu {
         // Orbital position of satellite in East North Up Co-Ordinate System - Earth centred
-        double e; // points East
-        double n; // points North
-        double u; // points Up
-        double ve, vn, vu;
+        // e - points East
+        // n - points North
+        // u - points Up
+        vec3 rENU;
+        vec3 vENU;
     };
 
 
 
     struct thcs {
         // Orbital position of satellite in Topocentric Horizon Co-Ordinate System - centred on ground point
-        double s; // points South
-        double e; // points East
-        double z; // points up
-        double vs, ve, vz;
+        // s - points South
+        // e - points East
+        // z - points up
+        vec3 rSEZ;
+        vec3 vSEZ;
     };
     
 
@@ -341,21 +330,11 @@ namespace osc {
 
     struct vnb {
         // Orbital velocity of satellite in Velocity Normal Bi-Normal axes - used for orbital maneuvers
-        double v; // velocity vector - prograde
-        double n; // normal vector - normal to orbital plane
-        double b; // bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
+        // v - velocity vector - prograde
+        // n - normal vector - normal to orbital plane
+        // b - bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
+        vec3 vVNB;
     };
-
-
-
-    struct orbrot {//this needs fixed
-        // Orbital reference rotation is using the Velocity Normal Bi-Normal system
-        double q;
-        double x; // velocity vector - prograde
-        double y; // normal vector - normal to orbital plane
-        double z; // bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
-    };
-
 
     struct powermodel {
         // Using vec indices to indicate state, 0 for low power/off, 1 for idle, 2 for in use/max load, >2 custom. Usage in W
