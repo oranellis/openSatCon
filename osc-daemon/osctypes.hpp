@@ -69,12 +69,13 @@ namespace osc {
     };
 
     struct posstates{
-        double i;
+        double i; //eci position (m)
         double j;
         double k; 
-        double vi;
+        double vi; //eci velocity (m/s)
         double vj;
         double vk;
+        double m; //spacecraft mass (kg)
     };
 
     struct orbparam {
