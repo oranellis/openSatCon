@@ -17,8 +17,9 @@ namespace osc{
         dotstates.q3=0.5*curstates.q3;
     };
 
-    posstates positiondynamicmodel(posstates curstates, posstates control){//work in progress
+    posstates positiondynamicmodel(posstates curstates, double thrust, double Isp, double g0){//work in progress
     double r = sqrt(pow(curstates.i,2)+pow(curstates.j,2)+pow(curstates.k,2));
+    double v = sqrt(pow(curstates.vi,2)+pow(curstates.vj,2)+pow(curstates.vk,2));
     double C =  (-3*planet.J2*planet.sgp*pow(planet.sMa,2))/(2*pow(r,5))
                     *(1-(5*pow(curstates.k,2)/pow(r,2))); //constant value
         eci accgrav;
@@ -26,13 +27,13 @@ namespace osc{
             accgrav.j=C*curstates.j;
             accgrav.k=C*curstates.k;
         posstates dotstates;
-            dotstates.i=(curstates.vi+control.i)*curstates.i;
-            dotstates.j=(curstates.vj+control.j)*curstates.j;
-            dotstates.k=(curstates.vk+control.k)*curstates.k;
-            dotstates.vi=(-planet.sgp*curstates.i/pow(r,3)+accgrav.i+control.vi)*curstates.vi;
-            dotstates.vj=(-planet.sgp*curstates.j/pow(r,3)+accgrav.j+control.vj)*curstates.vj;
-            dotstates.vk=(-planet.sgp*curstates.k/pow(r,3)+accgrav.k+control.vk)*curstates.vk;
-            dotstates.m=control.m*curstates.m;
+            dotstates.i=(curstates.vi)*curstates.i;
+            dotstates.j=(curstates.vj)*curstates.j;
+            dotstates.k=(curstates.vk)*curstates.k;
+            dotstates.vi=(-planet.sgp*curstates.i/pow(r,3)+accgrav.i+((thrust*curstates.vi)/(curstates.m*v)))*curstates.vi;
+            dotstates.vj=(-planet.sgp*curstates.j/pow(r,3)+accgrav.j+((thrust*curstates.vj)/(curstates.m*v)))*curstates.vj;
+            dotstates.vk=(-planet.sgp*curstates.k/pow(r,3)+accgrav.k+((thrust*curstates.vk)/(curstates.m*v)))*curstates.vk;
+            dotstates.m=-thrust/Isp/g0*curstates.m;
             //control.ijk should equal 0
             //control.vijk will equal (Thrust*ijk)/(Mass*Velocity)
             //control.m will equal -Thrust/(Isp*g0)
