@@ -7,6 +7,7 @@
 
 namespace osc {
 
+    // Common data types
     struct vec3 {
         // Class variable initialisers
         std::array<double, 3> data = {0, 0, 0};
@@ -162,6 +163,49 @@ namespace osc {
             return result;
         }
     };
+    
+    
+    
+    struct forceTorqueModel {
+        /*
+        Represents the vector of forces and moments of an actuator at maximum actuation
+        */
+        
+        // Member vars
+        std::array<double, 6> forceTorqueVec {0, 0, 0, 0, 0, 0};
+        
+        // Initialisers
+        forceTorqueModel(double Fx, double Fy, double Fz, double Txx, double Tyy, double Tzz):forceTorqueVec({Fx, Fy, Fz, Txx, Tyy, Tzz}) {
+            /* 
+            Generic initialiser for the vector, directly assigning each component
+            */
+        }
+
+        forceTorqueModel(vec3 maxThrust, position thrusterPos) {
+            /*
+            Initialiser for thrusters with a thrust magnitude and direction of action
+            */
+            forceTorqueVec[0] = maxThrust[0]; // Resultant force on the object cg is off centre force
+            forceTorqueVec[1] = maxThrust[1];
+            forceTorqueVec[2] = maxThrust[2];
+
+            vec3 torque = ((vec3)thrusterPos).cross(maxThrust);
+
+            forceTorqueVec[3] = torque[0]; // Resultant force on the object cg is off centre force
+            forceTorqueVec[4] = torque[1]; // Resultant force on the object cg is off centre force
+            forceTorqueVec[5] = torque[2]; // Resultant force on the object cg is off centre force
+        }
+
+        forceTorqueModel(std::array<double, 6> initFTV):forceTorqueVec(initFTV) {}
+
+        // Implicit type converters
+        operator std::array<double, 6> () const { 
+            /*
+            Adds support for implicit conversion from forceTorqueModel to std::array<double, 6>
+            */
+            return forceTorqueVec; 
+        }
+    };
 
 
 
@@ -280,6 +324,11 @@ namespace osc {
         // Using vec indices to indicate state, 0 for low power/off, 1 for idle, 2 for in use/max load, >2 custom. Usage in W
         std::vector<double> pstates; 
     };
+
+
+
+    // Inline helper functions
+    inline double pow2(double arg) { return arg*arg; }
 }
 
 #endif // OSCTYPES_H
