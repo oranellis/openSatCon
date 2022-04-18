@@ -34,11 +34,11 @@ namespace osc {
         operator std::array<double, 3> () { return data; };
 
         // Member functions
-        vec3 dot(vec3 arg) {
+        double dot(vec3 arg) {
             /*
             Performs the vector dot product with the argument
             */
-            return vec3(data[0] * arg[0], data[1] * arg[1], data[2] * arg[2]);
+            return (data[0] * arg[0] + data[1] * arg[1] + data[2] * arg[2]);
         }
 
         vec3 cross(vec3 arg) {
@@ -46,6 +46,10 @@ namespace osc {
             Performs the vector cross product with the argument
             */
             return vec3(data[1]*arg[2] - data[2]*arg[1], data[2]*arg[0] - data[0]*arg[2], data[0]*arg[1] - data[1]*arg[0]);
+        }
+
+        double mag() {
+            return sqrt(dot(data));
         }
     };
 
@@ -138,15 +142,12 @@ namespace osc {
         // Initialisers
         quaternion() {}
 
-        quaternion(std::array<double, 3> vec1, std::array<double, 3> vec2) {
-            /*
-            Generates a quaternion rotation between two unit vectors in the same reference frame
-            */
-            qw =    sqrt(pow(pow(vec1[0],2)+pow(vec1[1],2)+pow(vec1[2],2),2)*(pow(pow(vec2[0],2)+pow(vec2[1],2)+pow(vec2[2],2),2)));
-                            +vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
-            qx =    vec1[1]*vec2[2]-vec1[2]*vec2[1];
-            qy =    vec1[2]*vec2[0]-vec1[0]*vec2[2];
-            qz =    vec1[0]*vec2[1]-vec1[1]*vec2[0];
+        quaternion(vec3 arg1, vec3 arg2) {
+            vec3 cross = arg1.cross(arg2);
+            qw =    sqrt(arg1.mag()*arg2.mag())+arg1.dot(arg2);
+            qx =    cross[0];
+            qy =    cross[1];
+            qz =    cross[2];
         }
 
         // Member functions
@@ -161,6 +162,15 @@ namespace osc {
             result[2] = {{2*qx*qz-2*qy*qw, 2*qy*qz+2*qx*qw, 1-2*qx*qx-2*qy*qy}};
             return result;
         }
+
+        quaternion quaternionderivative(quaternion argquat, vec3 angrate){
+            quaternion dotquat;
+            argquat.qw=sqrt(1-pow2(argquat.qx)-pow2(argquat.qy)-pow2(argquat.qz));
+            
+            dotquat.qx=0.5*(argquat.qw*angrate[0]-argquat.qz*angrate[1]+argquat.qy*angrate[2]);
+            dotquat.qy=0.5*(argquat.qz*angrate[0]+argquat.qw*angrate[1]-argquat.qx*angrate[2]);
+            dotquat.qz=0.5*(-argquat.qy*angrate[0]+argquat.qx*angrate[1]-argquat.qw*angrate[2]);
+        };
     };
     
     
@@ -212,7 +222,16 @@ namespace osc {
         }
     };
 
+    struct rotstates{
+        vec3 omega; //body rates
+        vec3 q; //quaternion vector part
+    };
 
+    struct posstates{
+        vec3 r; //eci position (m)
+        vec3 v; //eci velocity (m/s)
+        double m; //spacecraft mass (kg)
+    };
 
     struct orbparam {
         long int sma; // semi major axis (m)
@@ -225,65 +244,68 @@ namespace osc {
         double truanom; // true anomaly (rad)
     };
 
-
-
-    struct eccentricityvector { //remove if unnecessary
-        double r; //radial component
-        double v; //velocity component
-    };
-
-
-
     struct pcs {
         // Orbital position of satellite in Perifocal Co-Ordinate System - satellite centred
-        double p; // points towards periapsis of orbit
-        double q; // right hand angle along orbital plane
-        double w; // normal to orbital plane
+        // p - points towards periapsis of orbit
+        // q - right hand angle along orbital plane
+        // w - normal to orbital plane
+        vec3 rPCS;
+        vec3 vPCS;
     };
 
 
 
     struct eci {
         // Orbital position of satellite in Earth Centred Inertial Co-Ordinate System
-        double i; // vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
-        double j; // orthogonal towards Equator
-        double k; // passes through Celestial North Pole
+        // i - vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
+        // j - orthogonal towards Equator
+        // k - passes through Celestial North Pole
+        vec3 rIJK;
+        vec3 vIJK;
     };
 
 
 
     struct ecef {
         // Orbital position of satellite in Earth Centred Earth Fixed Co-Ordinate System
-        double x; // vector passing through Greenwich Meridian
-        double y; // orthogonal towards Equator
-        double z; // passes through Celestial North Pole
+        // x - vector passing through Greenwich Meridian
+        // y - orthogonal towards Equator
+        // z - passes through Celestial North Pole
+        vec3 rXYZ;
+        vec3 vXYZ;
     };
 
 
 
     struct ned {
         // Orbital position of satellite in North East Down Co-Ordinate System - satellite centred
-        double n; // points North
-        double e; // points East
-        double d; // points down
+        // n - points North
+        // e - points East
+        // d - points down
+        vec3 rNED;
+        vec3 vNED;
     };
 
 
 
     struct enu {
         // Orbital position of satellite in East North Up Co-Ordinate System - Earth centred
-        double e; // points East
-        double n; // points North
-        double u; // points Up
+        // e - points East
+        // n - points North
+        // u - points Up
+        vec3 rENU;
+        vec3 vENU;
     };
 
 
 
     struct thcs {
         // Orbital position of satellite in Topocentric Horizon Co-Ordinate System - centred on ground point
-        double s; // points South
-        double e; // points East
-        double z; // points up
+        // s - points South
+        // e - points East
+        // z - points up
+        vec3 rSEZ;
+        vec3 vSEZ;
     };
     
 
@@ -308,32 +330,20 @@ namespace osc {
 
     struct vnb {
         // Orbital velocity of satellite in Velocity Normal Bi-Normal axes - used for orbital maneuvers
-        double v; // velocity vector - prograde
-        double n; // normal vector - normal to orbital plane
-        double b; // bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
+        // v - velocity vector - prograde
+        // n - normal vector - normal to orbital plane
+        // b - bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
+        vec3 vVNB;
     };
-
-
-
-    struct orbrot {//this needs fixed
-        // Orbital reference rotation is using the Velocity Normal Bi-Normal system
-        double q;
-        double x; // velocity vector - prograde
-        double y; // normal vector - normal to orbital plane
-        double z; // bi-normal vector - orthangonal to x and y, in the direction of the angular momentum vector
-    };
-
-
 
     struct powermodel {
         // Using vec indices to indicate state, 0 for low power/off, 1 for idle, 2 for in use/max load, >2 custom. Usage in W
         std::vector<double> pstates; 
     };
-
-
-
+    
     // Inline helper functions
     inline double pow2(double arg) { return arg*arg; }
+    inline double pow3(double arg) { return arg*arg*arg; }
 }
 
 #endif // OSCTYPES_H
