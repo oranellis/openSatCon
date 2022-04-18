@@ -34,11 +34,11 @@ namespace osc {
         operator std::array<double, 3> () { return data; };
 
         // Member functions
-        vec3 dot(vec3 arg) {
+        double dot(vec3 arg) {
             /*
             Performs the vector dot product with the argument
             */
-            return vec3(data[0] * arg[0], data[1] * arg[1], data[2] * arg[2]);
+            return (data[0] * arg[0] + data[1] * arg[1] + data[2] * arg[2]);
         }
 
         vec3 cross(vec3 arg) {
@@ -46,6 +46,14 @@ namespace osc {
             Performs the vector cross product with the argument
             */
             return vec3(data[1]*arg[2] - data[2]*arg[1], data[2]*arg[0] - data[0]*arg[2], data[0]*arg[1] - data[1]*arg[0]);
+        }
+
+        double mag() {
+<<<<<<< HEAD
+            return sqrt(dot(data));
+=======
+            return dot(data);
+>>>>>>> eb22984a7899151372b095fb9327f2c61c3d9aa1
         }
     };
 
@@ -212,7 +220,24 @@ namespace osc {
         }
     };
 
+    struct rotstates{
+        double o1; //omega_i1
+        double o2; //omega_i2
+        double o3; //omega_i3
+        double q1; //quaternion vector
+        double q2;
+        double q3;
+    };
 
+    struct posstates{
+        double i; //eci position (m)
+        double j;
+        double k; 
+        double vi; //eci velocity (m/s)
+        double vj;
+        double vk;
+        double m; //spacecraft mass (kg)
+    };
 
     struct orbparam {
         long int sma; // semi major axis (m)
@@ -239,6 +264,7 @@ namespace osc {
         double p; // points towards periapsis of orbit
         double q; // right hand angle along orbital plane
         double w; // normal to orbital plane
+        double vp, vq, vw;
     };
 
 
@@ -248,6 +274,7 @@ namespace osc {
         double i; // vector from Earth to sun on J2000, 2000-01-01 at 12:00 TT
         double j; // orthogonal towards Equator
         double k; // passes through Celestial North Pole
+        double vi, vj, vk;
     };
 
 
@@ -257,6 +284,7 @@ namespace osc {
         double x; // vector passing through Greenwich Meridian
         double y; // orthogonal towards Equator
         double z; // passes through Celestial North Pole
+        double vx, vy, vz;
     };
 
 
@@ -266,6 +294,7 @@ namespace osc {
         double n; // points North
         double e; // points East
         double d; // points down
+        double vn, ve, vd;
     };
 
 
@@ -275,6 +304,7 @@ namespace osc {
         double e; // points East
         double n; // points North
         double u; // points Up
+        double ve, vn, vu;
     };
 
 
@@ -284,6 +314,7 @@ namespace osc {
         double s; // points South
         double e; // points East
         double z; // points up
+        double vs, ve, vz;
     };
     
 
@@ -324,16 +355,14 @@ namespace osc {
     };
 
 
-
     struct powermodel {
         // Using vec indices to indicate state, 0 for low power/off, 1 for idle, 2 for in use/max load, >2 custom. Usage in W
         std::vector<double> pstates; 
     };
-
-
-
+    
     // Inline helper functions
     inline double pow2(double arg) { return arg*arg; }
+    inline double pow3(double arg) { return arg*arg*arg; }
 }
 
 #endif // OSCTYPES_H
