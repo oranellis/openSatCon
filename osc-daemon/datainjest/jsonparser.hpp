@@ -82,4 +82,6 @@ craftconfig parseJson(std::string jsonPath) {
 // access data via craft["ThrusterComponents"]["normal"] etc
 }
 
+}
+
 #endif // JSONPARSER_H
