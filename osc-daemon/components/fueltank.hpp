@@ -1,9 +1,13 @@
+#ifndef SENSOR_H
+#define SENSOR_H
+
 #include "../osctypes.hpp"
 
 namespace osc {
 
   class fueltank {
 
+    std::string id; // Unique string identifier for the component
     std::string fuelType;
     double fuelMass;
     double fuelCapacity;
@@ -38,3 +42,5 @@ namespace osc {
     }
   }; //changing masses
 }
+
+#endif // SENSOR_H

@@ -1,3 +1,8 @@
+#ifndef ROTATOR_H
+#define ROTATOR_H
+
+#include <array>
+
 namespace osc {
 
   class magneticTorquer {
@@ -19,6 +24,7 @@ namespace osc {
   class reactionWheel {
     private:
       double Torque, StoredMomentum, RotationSpeed;
+      std::array<double,3> normal;
     public:
       double GetTorque(){
         return Torque;}
@@ -28,4 +34,10 @@ namespace osc {
         return RotationSpeed;}
         //Torque  = RotationSpeed * Something ()
   };
+
+  class rotator {
+
+  };
 }
+
+#endif // ROTATOR_H

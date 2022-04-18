@@ -1,40 +1,23 @@
-#include <iostream>
-#include <vector>
-#include <map>
-
-#include "../components/component.hpp"
-#include "../components/fueltank.cpp"
-#include "../osctypes.hpp"
+#include "craftcontroller.hpp"
 
 namespace osc {
 
-class craftcontroller {
+    bool craftcontroller::initModel() {
+        std::string pathString;
+        std::cout << "Enter path to craft configuration: ";
+        std::cin >> pathString;
 
-    private:
-
-    // Class vars (stack)
-    double mass;
-    double wetMass;
-    position cg;
-    momentofinertia moi;
-    orbparam orbit;
-    orbrot rotation;
-
-    std::map<std::string, component> components;
-    std::map<std::string, fueltank> fueltanks;
-
-    // Member functions
-    bool initModel() {
-        // read in the information from json file
-        // parse info into relevant data structures
+        craftconfig config = parseJson(pathString);
+        
+        if (!config.populated()) return false;
         return true;
     }
 
-    void recomputeComponentDeps() {
+    void craftcontroller::recomputeComponentDeps() {
         /*
         Recomputes craft parameters from a change in component configuiration
         */
-        cg = position();
+        cg = position(0,0,0);
         moi = momentofinertia();
         mass = 0;
         wetMass = 0;
@@ -58,19 +41,25 @@ class craftcontroller {
                     (i->second.getFuelMass() + mass + wetMass);
             wetMass += i->second.getFuelMass();
         }
-    }
-    
-    public:
 
-    // Initialiser
-    craftcontroller() {
+        for (auto i=thrusters.begin(); i!=thrusters.end(); i++) {
+            i->second.getMaxThrust();
+        }
+    }
+
+    // double nominalManoevureThrust() {
+    //  
+    // }
+
+    // double minRotationRate() {
+    //  
+    // }
+    
+    craftcontroller::craftcontroller() {
         if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
     }
 
-
-    // Getters and setters
-    // position getCG() {
-    //     return cg;
-    // }
+    void craftcontroller::beginControl() {
+        // scheduler* schedule = new scheduler();
+    }
 };
-}
