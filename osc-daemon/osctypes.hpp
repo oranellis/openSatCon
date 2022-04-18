@@ -162,6 +162,15 @@ namespace osc {
             result[2] = {{2*qx*qz-2*qy*qw, 2*qy*qz+2*qx*qw, 1-2*qx*qx-2*qy*qy}};
             return result;
         }
+
+        quaternion quaternionderivative(quaternion argquat, vec3 angrate){
+            quaternion dotquat;
+            argquat.qw=sqrt(1-pow2(argquat.qx)-pow2(argquat.qy)-pow2(argquat.qz));
+            
+            dotquat.qx=0.5*(argquat.qw*angrate[0]-argquat.qz*angrate[1]+argquat.qy*angrate[2]);
+            dotquat.qy=0.5*(argquat.qz*angrate[0]+argquat.qw*angrate[1]-argquat.qx*angrate[2]);
+            dotquat.qz=0.5*(-argquat.qy*angrate[0]+argquat.qx*angrate[1]-argquat.qw*angrate[2]);
+        };
     };
     
     
