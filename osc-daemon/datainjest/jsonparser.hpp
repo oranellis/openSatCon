@@ -2,15 +2,15 @@
 #define JSONPARSER_H
 
 #include <iostream>
+#include <list>
+#include <vector>
+#include <fstream>
+
 #include "../../includes/json.hpp"
 #include "../components/component.hpp"
 #include "../components/fueltank.hpp"
 #include "../components/actuators/thruster.hpp"
 #include "../components/actuators/rotator.hpp"
-#include <list>
-#include <vector>
-#include <fstream>
-//#include "../components/component.hpp"
 
 using namespace std;
 using json = nlohmann::json;

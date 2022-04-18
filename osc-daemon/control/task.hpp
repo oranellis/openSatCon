@@ -1,5 +1,5 @@
-#ifndef TASK
-#define TASK
+#ifndef TASK_H
+#define TASK_H
 
 #include <chrono>
 #include <iostream>
@@ -19,4 +19,4 @@ namespace osc {
     };
 }
 
-#endif
+#endif // TASK_H
