@@ -6,31 +6,35 @@
 #include "planet.cpp"
 #include "axistransforms.cpp"
 
-namespace osc{
+namespace osc::orbmnvrs{
 
 
 void highlevelcommand(orbparam curKOE, orbparam aftKOE){
-if (curKOE.inc!=aftKOE.inc){
-    vnb deltaV = planechange(curKOE, aftKOE);//perform this at the largest possible radius
-};
 if (curKOE.ecc==0&&aftKOE.ecc==0){
-bool HoBE = circorbitchoice(curKOE, aftKOE);
-if (HoBE == true){double deltaV = hohmann(curKOE, aftKOE);//first burn at periapsis for efficiency
-}else{double deltaV = bielliptic(curKOE, aftKOE);}//first burn at periapsis for efficiency
+    bool HoBE = circOrbitChoice(curKOE, aftKOE);
+    if (HoBE == true)
+        {double deltaV = hohmannTransfer(curKOE, aftKOE);//first burn at periapsis for efficiency
+}   else
+        {double deltaV = biellipticTransfer(curKOE, aftKOE);}//first burn at periapsis for efficiency
 }
+else{double deltaV = hohmannTransfer(curKOE, aftKOE);}
+
+if (curKOE.inc!=aftKOE.inc){
+    vnb deltaV = planeChangeTransfer(curKOE, aftKOE);//perform this at the largest possible radius (apoapsis)
+};
 };
 
-double hohmann(orbparam curKOE, orbparam aftKOE){
+double hohmannTransfer(orbparam curKOE, orbparam aftKOE){
     double MNVRdV;
     double rp1, ra1, rp2, ra2;
     rp1=curKOE.sma*(1-curKOE.ecc);
     ra1=curKOE.sma*(1+curKOE.ecc);
     rp2=aftKOE.sma*(1-aftKOE.ecc);
     ra2=aftKOE.sma*(1+aftKOE.ecc);
-    double  h1 =angularmomentum(rp1, ra1);
-    double  h2 =angularmomentum(rp2, ra2);
-    double  h3 =angularmomentum(rp1, ra2);
-    double  h3_=angularmomentum(ra1, rp2);
+    double  h1 =angularMomentum(rp1, ra1);
+    double  h2 =angularMomentum(rp2, ra2);
+    double  h3 =angularMomentum(rp1, ra2);
+    double  h3_=angularMomentum(ra1, rp2);
 
     double va1,vb2,va_1,vb_2,va3,vb3,va_3_,vb_3_;
     va1     =h1/rp1;
@@ -55,7 +59,7 @@ double hohmann(orbparam curKOE, orbparam aftKOE){
     return MNVRdV;
 };
 
-double bielliptic(orbparam curKOE, orbparam aftKOE){
+double biellipticTransfer(orbparam curKOE, orbparam aftKOE){
     double MNVRdV;
     double r1, rp2, ra2, rp3, ra3, r4;
     r1=curKOE.sma;//feel free to optimise this
@@ -65,8 +69,8 @@ double bielliptic(orbparam curKOE, orbparam aftKOE){
     ra3=ra2;
     r4=rp3;
     double  va1=sqrt(planet.sgp/r1);
-    double  h2=angularmomentum(rp2, ra2);
-    double  h3=angularmomentum(rp3, ra3);
+    double  h2=angularMomentum(rp2, ra2);
+    double  h3=angularMomentum(rp3, ra3);
     double  vc4=sqrt(planet.sgp/r4);
 
     double va2, vb2, vb3, vc3;
@@ -85,20 +89,20 @@ double bielliptic(orbparam curKOE, orbparam aftKOE){
     return MNVRdV;
 };
 
-    double massburned(double dV, double mo, double Isp){
-        double propuse;
+    // double massburned(double dV, double mo, double Isp){
+    //     double propuse;
 
-        double mf = mo * exp(-dV/Isp);
-        propuse=mo-mf;
-        return propuse;
-    };//calculate propellant mass used for a given delta V
+    //     double mf = mo * exp(-dV/Isp);
+    //     propuse=mo-mf;
+    //     return propuse;
+    // };//calculate propellant mass used for a given delta V
 
-double angularmomentum(double rp, double ra){
+double angularMomentum(double rp, double ra){
     double h=sqrt(2*planet.sgp)*sqrt((ra*rp)/(ra+rp));
     return h;
 }
 
-bool circorbitchoice(orbparam curKOE, orbparam aftKOE){
+bool circOrbitChoice(orbparam curKOE, orbparam aftKOE){
     double rc=aftKOE.sma;//final circle
     //double rb; apoapsis of biellipse
     double ra=curKOE.sma;//initial circle
@@ -113,7 +117,7 @@ bool circorbitchoice(orbparam curKOE, orbparam aftKOE){
     //double dVbe=sqrt((2*(a+b))/(a*b))-((1+sqrt(a))/(sqrt(a)))-sqrt(2/(b*(1+b)))*(1-b);
 };
 
-double phasing(orbparam curKOE, double phaseperiod){
+double phasingTransfer(orbparam curKOE, double phaseperiod){
     orbparam aftKOE;
     double deltaV;
     aftKOE.sma=pow(((phaseperiod*sqrt(planet.sgp))/(2*M_PI)),(2/3));
@@ -121,8 +125,8 @@ double phasing(orbparam curKOE, double phaseperiod){
     ra=curKOE.sma*(1-curKOE.ecc);   //initial periapsis
     rb=curKOE.sma*(1+curKOE.ecc);   //initial apoapsis 
     rc=2*aftKOE.sma-ra;             //phasing apoapsis
-    double h1=angularmomentum(ra, rb);
-    double h2=angularmomentum(ra, rc);
+    double h1=angularMomentum(ra, rb);
+    double h2=angularMomentum(ra, rc);
     double va1, va2, dV1, dV2;
     va1=h1/ra;
     va2=h2/ra;
@@ -133,7 +137,7 @@ double phasing(orbparam curKOE, double phaseperiod){
     return deltaV;
 };
 
-vnb planechange(orbparam curKOE, orbparam aftKOE){
+vnb planeChangeTransfer(orbparam curKOE, orbparam aftKOE){
     vnb deltaV;
     double deltainc=aftKOE.inc-curKOE.inc;
     double r = (curKOE.sma*(1-pow(curKOE.ecc,2)))/(1+curKOE.ecc*cos(curKOE.truanom));
@@ -144,4 +148,12 @@ vnb planechange(orbparam curKOE, orbparam aftKOE){
     return deltaV; //perform at apoapsis for delta V efficiency
 };
 
+vnb complexManeuver(double dVv, double dVn, double dVb, double theta_burn){
+    vnb deltaV;
+    double burnAngle=theta_burn;
+    deltaV.v=dVv;
+    deltaV.n=dVn;
+    deltaV.b=dVb;
+    return deltaV; //return task with VNB values and req truanom
+};
 };

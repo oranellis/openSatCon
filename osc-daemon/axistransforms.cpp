@@ -355,6 +355,8 @@ eci ECEFtoECI(ecef arg, double siderealangle){
     return eciret;
 };
 
+//the following two are not exactly true axis transforms, and are only used for maneuvers and pointing command handling
+
 eci VNBtoECI(eci posvel, vnb VNBdV){
     eci ECIdV;
     //precalculating as this needs to be run quite fast
@@ -387,8 +389,6 @@ eci VNBtoECI(eci posvel, vnb VNBdV){
                     +(vxrxv.k/absvxrxv)*VNBdV.b;
     return ECIdV;
 };
-
-//the following two are not exactly true axis transforms, and are only used for maneuvers and pointing command handling
 
 vnb ECItoVNB(eci posvel, eci ECIdV){
     vnb VNBdV;

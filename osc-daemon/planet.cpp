@@ -20,5 +20,6 @@ celestial moon(4.9048695e12,    1738100, 0.0012,            1736000,        0.04
 
 // add more planets if we have time or if i can be bothered
 celestial planet=earth;//initialisation value, have this in start-up of final code
+//might need copy constructor here
 
 
