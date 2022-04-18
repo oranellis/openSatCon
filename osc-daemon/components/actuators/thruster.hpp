@@ -21,6 +21,13 @@ namespace osc {
     position thrustCentre;
 
     public:
+    //Constructor
+    thruster(double initMaxThrust, double initMinFrac, double initThrustFrac, double initSpecificImpulse, 
+    bool initAttitudeControl, vec3 initThrustAxis, position initThrustCentre):
+      maxThrust(initMaxThrust), minThrustFraction(initMinFrac), thrustFraction(initThrustFrac),
+      specificImpulse(initSpecificImpulse), attitudeControl(initAttitudeControl), thrustAxis(initThrustAxis),
+      thrustCentre(initThrustCentre) { }
+
     double getMaxThrust() {
       return maxThrust;
     }
