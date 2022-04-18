@@ -2,15 +2,15 @@
 #define JSONPARSER_H
 
 #include <iostream>
+#include <list>
+#include <vector>
+#include <fstream>
+
 #include "../../includes/json.hpp"
 #include "../components/component.hpp"
 #include "../components/fueltank.hpp"
 #include "../components/actuators/thruster.hpp"
 #include "../components/actuators/rotator.hpp"
-#include <list>
-#include <vector>
-#include <fstream>
-//#include "../components/component.hpp"
 
 using namespace std;
 using json = nlohmann::json;
@@ -31,6 +31,9 @@ struct craftconfig {
 
 craftconfig parseJson(std::string jsonPath) {
     // std::cout << "start"; // debug
+
+    craftconfig config;
+
     map<string, std::list<double> > Components;
     
     json j = json::parse(jsonPath);
@@ -44,15 +47,17 @@ craftconfig parseJson(std::string jsonPath) {
     for(int i = 0; i < 2; i++)
     {
         //access data through j["name"]["name"]
-        Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["componentType"]));
-        Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["mass"]));
-        Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["moi"]));
-        Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["position"]));
-        Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["powermodel"]));
+        // Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["componentType"]));
+        // Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["mass"]));
+        // Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["moi"]));
+        // Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["position"]));
+        // Components.insert(std::make_pair(std::to_string(i), j["MassComponents"][std::to_string(i)]["powermodel"]));
     }
 
     // std::cout << "Components"; // debug
     //parse thrust components
+
+    return config;
 }
 // take in json data 
 // take a list of components each with component.cpp's data types

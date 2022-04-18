@@ -11,22 +11,43 @@ namespace osc {
   class component{
 
     private:
+    std::string id; // Unique string identifier for the component
     double mass;
     momentofinertia moi;
     position pos;
+    quaternion rot;
     powermodel power;
-    std::string id; // Unique string identifier for the component
 
     public:
-    component(double initMass, position initPos, powermodel initPower);
-    double getMass();
-    momentofinertia getMoi();
-    position getPos();
-    powermodel getPower();
+    
+    // Constructors
+    component(double initMass, position initPos, powermodel initPower):mass(initMass), pos(initPos), power(initPower) { }
 
-    void setMass(double mass);
-    void setPos(position position);
+    // Accessers
+    double getMass() {
+      return mass;
+    }
+
+    momentofinertia getMoi() {
+      return moi;
+    }
+    
+    position getPos() {
+      return pos;
+    }
+
+    powermodel getPower() {
+      return power;
+    }
+
+    void setMass(double argMass) {
+      mass = argMass;
+    }
+
+    void setPos(position argPos) {
+      pos = argPos;
+    }
   };
 }
 
-#endif
+#endif // COMPONENT_H

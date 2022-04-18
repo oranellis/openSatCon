@@ -1,48 +1,19 @@
-#include <iostream>
-#include <vector>
-#include <map>
-
-#include "../components/component.hpp"
-#include "../components/fueltank.cpp"
-#include "../components/actuators/thruster.cpp"
-#include "../components/actuators/rotator.cpp"
-#include "../osctypes.hpp"
-#include "scheduler.cpp"
+#include "craftcontroller.hpp"
 
 namespace osc {
 
-class craftcontroller {
+    bool craftcontroller::initModel() {
+        std::string pathString;
+        std::cout << "Enter path to craft configuration: ";
+        std::cin >> pathString;
 
-    private:
-
-    // Class vars (stack)
-    double mass;
-    double wetMass;
-    position cg;
-    momentofinertia moi;
-    orbparam orbit;
-    quaternion rotation;
-
-    std::map<std::string, component> components;
-    std::map<std::string, fueltank> fueltanks;
-    std::map<std::string, thruster> thrusters;
-    std::map<std::string, rotator> rotators;
-
-    // Member functions
-    bool initModel() {
-        // jsonModel model;
-        // model.read("Path to json file");
-        // if (model.hasData()) {
-        //     components = model.getComponents();
-        //     fueltanks = model.getFueltanks();
-            return true;
-        // }
-        // else {
-        //     return false;
-        // }
+        craftconfig config = parseJson(pathString);
+        
+        if (!config.populated()) return false;
+        return true;
     }
 
-    void recomputeComponentDeps() {
+    void craftcontroller::recomputeComponentDeps() {
         /*
         Recomputes craft parameters from a change in component configuiration
         */
@@ -70,23 +41,25 @@ class craftcontroller {
                     (i->second.getFuelMass() + mass + wetMass);
             wetMass += i->second.getFuelMass();
         }
-    }
-    
-    public:
 
-    // Initialiser
-    craftcontroller() {
+        for (auto i=thrusters.begin(); i!=thrusters.end(); i++) {
+            i->second.getMaxThrust();
+        }
+    }
+
+    // double nominalManoevureThrust() {
+    //  
+    // }
+
+    // double minRotationRate() {
+    //  
+    // }
+    
+    craftcontroller::craftcontroller() {
         if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
     }
 
-
-    // Getters and setters
-    // position getCG() {
-    //     return cg;
-    // }
-
-    void beginControl() {
+    void craftcontroller::beginControl() {
         // scheduler* schedule = new scheduler();
     }
 };
-}

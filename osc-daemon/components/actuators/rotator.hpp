@@ -1,3 +1,6 @@
+#ifndef ROTATOR_H
+#define ROTATOR_H
+
 #include <array>
 
 namespace osc {
@@ -36,3 +39,5 @@ namespace osc {
 
   };
 }
+
+#endif // ROTATOR_H
