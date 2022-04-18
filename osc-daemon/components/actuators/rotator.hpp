@@ -5,6 +5,52 @@
 
 namespace osc {
 
+  class rotator {
+    private:
+      //magnetorquer parameters
+      double maxDipoleMoment;
+      
+      //rotation wheel parameters
+      double torque;
+      double storedMomentum;
+      double maxRotationSpeed; 
+
+      //shared parameters
+      momentofinertia moi;
+      position pos;
+      std::array<double, 3> direction;
+
+    public:
+      // Constructor
+      rotator(double initMaxDipoleMoment, double initTorque, double initStoredMomentum, double initMaxRotationSpeed,
+       momentofinertia initMoi, position initPos, std::array<double, 3> initDireciton):
+        maxDipoleMoment(initMaxDipoleMoment), torque(initTorque), storedMomentum(initStoredMomentum),
+        maxRotationSpeed(initMaxRotationSpeed), moi(initMoi), pos(initPos), direction(initDireciton) { }
+
+
+      double getMaxDipoleMoment() {
+        return maxDipoleMoment;
+      }
+      double getTorque () {
+        return torque;
+      }
+      double getStoredMomentum() {
+        return storedMomentum;
+      }
+      double getMaxRotationSpeed() {
+        return maxRotationSpeed;
+      }
+      momentofinertia getMomentOfInertia() {
+        return moi;
+      }
+      position getPosition() {
+        return pos;
+      }
+      std::array<double, 3> getDirection() {
+        return direction;
+      }
+  };
+
   class magneticTorquer {
     private:
       double MagneticFluxDensity;

@@ -7,13 +7,16 @@ namespace osc {
 
   class fueltank {
 
-    std::string id; // Unique string identifier for the component
     std::string fuelType;
     double fuelMass;
     double fuelCapacity;
     position fuelMassPos;
 
     public:
+
+    //constructors
+    fueltank(std::string initfuelType, double initFuelMass, double initFuelCapacity, position initPosition):
+      fuelType(initfuelType), fuelMass(initFuelMass), fuelCapacity(initFuelCapacity), fuelMassPos(initPosition) { }
 
     fueltank(std::string initFuelType, double initFuelMass, position initFuelMassPos) {
       fuelType = initFuelType;
