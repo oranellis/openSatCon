@@ -69,7 +69,6 @@ namespace osc {
             Addition overload for addition of two positions
             */
             return position(x + rhs[0], y + rhs[1], z + rhs[2]);
-            vec3 thiun, aalsdkfj;
         }
 
         position operator-(vec3 rhs) {
