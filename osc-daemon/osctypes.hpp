@@ -183,6 +183,8 @@ namespace osc {
         std::vector<double> pstates; 
     };
 
+double pow2(double x){return x*x;}// use this to replace pow(x,n) if n=2 and speed must =fast.lots
+
 }
 
 #endif
