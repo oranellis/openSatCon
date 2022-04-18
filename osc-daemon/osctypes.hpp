@@ -142,15 +142,12 @@ namespace osc {
         // Initialisers
         quaternion() {}
 
-        quaternion(std::array<double, 3> vec1, std::array<double, 3> vec2) {
-            /*
-            Generates a quaternion rotation between two unit vectors in the same reference frame
-            */
-            qw =    sqrt(pow(pow(vec1[0],2)+pow(vec1[1],2)+pow(vec1[2],2),2)*(pow(pow(vec2[0],2)+pow(vec2[1],2)+pow(vec2[2],2),2)));
-                            +vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
-            qx =    vec1[1]*vec2[2]-vec1[2]*vec2[1];
-            qy =    vec1[2]*vec2[0]-vec1[0]*vec2[2];
-            qz =    vec1[0]*vec2[1]-vec1[1]*vec2[0];
+        quaternion(vec3 arg1, vec3 arg2) {
+            vec3 cross = arg1.cross(arg2);
+            qw =    sqrt(arg1.mag()*arg2.mag())+arg1.dot(arg2);
+            qx =    cross[0];
+            qy =    cross[1];
+            qz =    cross[2];
         }
 
         // Member functions
