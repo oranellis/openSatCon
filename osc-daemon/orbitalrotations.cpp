@@ -15,7 +15,7 @@ namespace osc{
         // and either return an identity quat for parallel vectors, or return a 
         // 180 degree rotation (about any axis) for opposite vectors. 
         quaternion retquat;
-        retquat.qw =    sqrt(pow(pow(arg_i.x,2)+pow(arg_i.y,2)+pow(arg_i.z,2),2)*(pow(pow(arg_f.x,2)+pow(arg_f.y,2)+pow(arg_f.z,2),2)));
+        retquat.qw =    sqrt(pow2(pow2(arg_i.x)+pow2(arg_i.y)+pow2(arg_i.z))*(pow2(pow2(arg_f.x)+pow2(arg_f.y)+pow2(arg_f.z))));
                         +arg_i.x*arg_f.x+arg_i.y*arg_f.y+arg_i.z*arg_f.z;
 
         retquat.qx =    arg_i.y*arg_f.z-arg_i.z*arg_f.y;
@@ -24,12 +24,12 @@ namespace osc{
         return retquat;
     };
 
-    quaternion quaternionderivative(quaternion argquat, bodyframe bodyrate){
+    quaternion quaternionderivative(quaternion argquat, vec3 bodyrate){
         quaternion dotquat;
-        argquat.qw=sqrt(1-pow(argquat.qx,2)-pow(argquat.qy,2)-pow(argquat.qz,2));
-        //dotquat.qw=0.5*(0-bodyrate.x*argquat.qx-bodyrate.y*argquat.qy-bodyrate.z*argquat.qz);
-        dotquat.qx=0.5*(argquat.qw*bodyrate.x-argquat.qz*bodyrate.y+argquat.qy*bodyrate.z);
-        dotquat.qy=0.5*(argquat.qz*bodyrate.x+argquat.qw*bodyrate.y-argquat.qx*bodyrate.z);
-        dotquat.qz=0.5*(-argquat.qy*bodyrate.x+argquat.qx*bodyrate.y-argquat.qw*bodyrate.z);
+        argquat.qw=sqrt(1-pow2(argquat.qx)-pow2(argquat.qy)-pow2(argquat.qz));
+        //dotquat.qw=0.5*(0-bodyrate[0]*argquat.qx-bodyrate.y*argquat.qy-bodyrate.z*argquat.qz);
+        dotquat.qx=0.5*(argquat.qw*bodyrate[0]-argquat.qz*bodyrate[1]+argquat.qy*bodyrate[2]);
+        dotquat.qy=0.5*(argquat.qz*bodyrate[0]+argquat.qw*bodyrate[1]-argquat.qx*bodyrate[2]);
+        dotquat.qz=0.5*(-argquat.qy*bodyrate[0]+argquat.qx*bodyrate[1]-argquat.qw*bodyrate[2]);
     };
 };

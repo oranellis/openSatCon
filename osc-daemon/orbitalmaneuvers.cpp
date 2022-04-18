@@ -140,7 +140,7 @@ double phasingTransfer(orbparam curKOE, double phaseperiod){
 vnb planeChangeTransfer(orbparam curKOE, orbparam aftKOE){
     vnb deltaV;
     double deltainc=aftKOE.inc-curKOE.inc;
-    double r = (curKOE.sma*(1-pow(curKOE.ecc,2)))/(1+curKOE.ecc*cos(curKOE.truanom));
+    double r = (curKOE.sma*(1-pow2(curKOE.ecc)))/(1+curKOE.ecc*cos(curKOE.truanom));
     double curV=sqrt(planet.sgp*((2/r)-(1/curKOE.sma)));
     deltaV.v=curV*sin(deltainc);
     deltaV.n=curV*(1-cos(deltainc));

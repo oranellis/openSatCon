@@ -11,7 +11,7 @@ namespace osc{
 double meantotrue(orbparam KOE){
     // converts mean anomaly to true anomaly
         if (KOE.ecc < 0.2){ //this is a handy calculation to save time for small eccentricities
-            KOE.truanom = KOE.meananom+2*KOE.ecc*sin(KOE.meananom)+1.25*pow(KOE.ecc,2)*sin(2*KOE.meananom)-pow(KOE.ecc,3)*(0.25*sin(KOE.meananom)-(13/12)*sin(3*KOE.meananom));
+            KOE.truanom = KOE.meananom+2*KOE.ecc*sin(KOE.meananom)+1.25*pow2(KOE.ecc)*sin(2*KOE.meananom)-pow3(KOE.ecc)*(0.25*sin(KOE.meananom)-(13/12)*sin(3*KOE.meananom));
         } else if(KOE.ecc < 1.0){// newton raphson's method must be used for higher eccentricities, e>1 is a parabolic orbit
             KOE.eccanom=KOE.meananom+((KOE.ecc*sin(KOE.meananom)/(cos(KOE.ecc)-(M_PI_2-KOE.ecc)*sin(KOE.ecc)+KOE.meananom*sin(KOE.ecc))));
             double dE=KOE.eccanom;
@@ -19,7 +19,7 @@ double meantotrue(orbparam KOE){
                 dE=(KOE.eccanom-KOE.ecc*sin(KOE.eccanom)-KOE.meananom)/(1-KOE.ecc*cos(KOE.eccanom));
                 KOE.eccanom=KOE.eccanom-dE;
             };
-            KOE.truanom=atan2(sqrt(1-pow(KOE.ecc,2)*sin(KOE.ecc)),cos(KOE.eccanom)-KOE.ecc);
+            KOE.truanom=atan2(sqrt(1-pow2(KOE.ecc)*sin(KOE.ecc)),cos(KOE.eccanom)-KOE.ecc);
         };
 };
 
@@ -52,19 +52,19 @@ ecef LLAtoECEF(lla arg) {
     double normaldistance=planet.sMa/sqrt(1-(planet.ecc*sin(arg.lat)));
     ecefret.x=(normaldistance+arg.alt)*cos(arg.lon)*cos(arg.lat);
     ecefret.y=(normaldistance+arg.alt)*sin(arg.lon)*cos(arg.lat);
-    ecefret.z=(normaldistance*(1-pow(planet.ecc,2))+arg.alt)*sin(arg.lat);
+    ecefret.z=(normaldistance*(1-pow2(planet.ecc))+arg.alt)*sin(arg.lat);
     return ecefret;
 };
 
 lla ECEFtoLLA(ecef arg){
     //returns ground position of sub satellite point and satellite altitude from ECEF co-ords
     lla llaret;
-    double secondeccentricity=planet.ecc/sqrt(1-pow(planet.ecc,2));
-    double p = sqrt(pow(arg.x,2)+pow(arg.y,2));
+    double secondeccentricity=planet.ecc/sqrt(1-pow2(planet.ecc));
+    double p = sqrt(pow2(arg.x)+pow2(arg.y));
     double theta = atan2(arg.z*planet.sMa,p*planet.sma);
     llaret.lon = atan2(arg.y,arg.x);
-    llaret.lat = atan2(arg.z+pow(secondeccentricity,2)*planet.sma*pow(sin(theta),3),p-pow(planet.ecc,2)*planet.sMa*pow(sin(theta),3));
-    double normaldistance = planet.sMa/sqrt(1-pow(planet.ecc,2)*pow(sin(llaret.lat),2));
+    llaret.lat = atan2(arg.z+pow2(secondeccentricity)*planet.sma*pow3(sin(theta)),p-pow2(planet.ecc)*planet.sMa*pow3(sin(theta)));
+    double normaldistance = planet.sMa/sqrt(1-pow2(planet.ecc)*pow2(sin(llaret.lat)));
     llaret.alt = (p/cos(llaret.lat))-normaldistance;
     return llaret;
 };
@@ -141,12 +141,12 @@ ear ECEFtoEAR(ecef satpos, lla reflla){
     relpos.z=-satpos.z+refpos.z;
 
     earret.e=   acos((refpos.x*relpos.x+refpos.y*relpos.y+refpos.z*relpos.z)
-                /sqrt((pow(refpos.x,2)+pow(refpos.y,2)+pow(refpos.z,2))*(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2))))-M_PI_2;
+                /sqrt((pow2(refpos.x)+pow2(refpos.y)+pow2(refpos.z))*(pow2(relpos.x)+pow2(relpos.y)+pow2(relpos.z))))-M_PI_2;
 
-    earret.a=   atan((-refpos.y*relpos.x+refpos.x*relpos.y/sqrt((pow(refpos.x,2)+pow(refpos.y,2)+pow(refpos.z,2))*(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2))))
-                /(-refpos.z*refpos.x*relpos.x-refpos.z*refpos.y*relpos.y+(pow(refpos.x,2)+pow(refpos.y,2))*relpos.z)/sqrt((pow(refpos.x,2)+pow(refpos.y,2))+(pow(refpos.x,2)+pow(refpos.y,2)+pow(refpos.z,2))*(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2))));
+    earret.a=   atan((-refpos.y*relpos.x+refpos.x*relpos.y/sqrt((pow2(refpos.x)+pow2(refpos.y)+pow2(refpos.z))*(pow2(relpos.x)+pow2(relpos.y)+pow2(relpos.z))))
+                /(-refpos.z*refpos.x*relpos.x-refpos.z*refpos.y*relpos.y+(pow2(refpos.x)+pow2(refpos.y))*relpos.z)/sqrt((pow2(refpos.x)+pow2(refpos.y))+(pow2(refpos.x)+pow2(refpos.y)+pow2(refpos.z))*(pow2(relpos.x)+pow2(relpos.y)+pow2(relpos.z))));
 
-    earret.r=   sqrt(pow(relpos.x,2)+pow(relpos.y,2)+pow(relpos.z,2));
+    earret.r=   sqrt(pow2(relpos.x)+pow2(relpos.y)+pow2(relpos.z));
     return earret;
 };
 
@@ -280,13 +280,13 @@ pcs KOEtoPCS(orbparam arg){
 
     pcs pcsret;
     double orbitradius;
-    orbitradius = (arg.sma*(1-pow(arg.ecc,2)))/(1+arg.ecc*cos(arg.truanom));
+    orbitradius = (arg.sma*(1-pow2(arg.ecc)))/(1+arg.ecc*cos(arg.truanom));
     pcsret.p = orbitradius * cos(arg.truanom); 
     pcsret.q = orbitradius * sin(arg.truanom);
     pcsret.w = 0;
 
-    double p = arg.sma*(1-pow(arg.ecc,2));
-    double thetadot = sqrt(planet.sgp*p)/pow(orbitradius,2);
+    double p = arg.sma*(1-pow2(arg.ecc));
+    double thetadot = sqrt(planet.sgp*p)/pow2(orbitradius);
     double rdot = sqrt(planet.sgp/p)*arg.ecc*sin(arg.truanom);
 
     pcsret.vp = rdot*cos(arg.truanom)-orbitradius*sin(arg.truanom)*thetadot;
@@ -300,12 +300,12 @@ orbparam ECItoKOE(eci posvel){
     eci argangmnt;
     eci nodalvect;
     pcs eccvect;
-    double orbitalradius = sqrt(pow(posvel.i,2)+pow(posvel.j,2)+pow(posvel.k,2));
-    double orbitalvelocity = sqrt(pow(posvel.vi,2)+pow(posvel.vj,2)+pow(posvel.vk,2));
+    double orbitalradius = sqrt(pow2(posvel.i)+pow2(posvel.j)+pow2(posvel.k));
+    double orbitalvelocity = sqrt(pow2(posvel.vi)+pow2(posvel.vj)+pow2(posvel.vk));
     argangmnt.i = (posvel.j*posvel.vk-posvel.vj*posvel.k);
     argangmnt.j = (posvel.k*posvel.vi-posvel.i*posvel.vk);
     argangmnt.k = (posvel.i*posvel.vj-posvel.j*posvel.vi);
-    double argangmntnorm=sqrt(pow(argangmnt.i,2)+pow(argangmnt.j,2)+pow(argangmnt.k,2));
+    double argangmntnorm=sqrt(pow2(argangmnt.i)+pow2(argangmnt.j)+pow2(argangmnt.k));
     koeret.inc = acos(argangmnt.k/argangmntnorm);
     nodalvect.i=-argangmnt.j;
     nodalvect.j=argangmnt.i;
@@ -316,20 +316,20 @@ orbparam ECItoKOE(eci posvel){
     if (nodalvect.j<0){
         koeret.asc=2*M_PI-koeret.asc;
     };
-    eccvect.p = (1/planet.sgp)*pow(orbitalvelocity,2);
+    eccvect.p = (1/planet.sgp)*pow2(orbitalvelocity);
     eccvect.q = (-1/planet.sgp)*(posvel.i*posvel.vi+posvel.j*posvel.j+posvel.k*posvel.vk);
     eccvect.w = 0;
     eccvect.vp = 0; eccvect.vq = 0; eccvect.vw;
     eci ecceci = PCStoECI(koeret, eccvect);// this may cause an error later
-    koeret.ecc = sqrt(pow(eccvect.p,2)+pow(eccvect.q,2));
-    koeret.sma=(pow(argangmntnorm,2)/planet.sgp)/(1-pow(koeret.ecc,2));
+    koeret.ecc = sqrt(pow2(eccvect.p)+pow2(eccvect.q));
+    koeret.sma=(pow2(argangmntnorm)/planet.sgp)/(1-pow2(koeret.ecc));
     koeret.aop=acos((nodalvect.i*eccvect.p+nodalvect.j*eccvect.q)/(nodalvectnorm*koeret.ecc));
     //if ecc_z > 0 then 0<aop<180
     //if ecc_z < 0 then 180<aop<360
     if(ecceci.k<0){
         koeret.aop=2*M_PI-koeret.aop;
     };
-    koeret.truanom=acos((koeret.sma*(1-pow(koeret.ecc,2))-orbitalradius)/(koeret.ecc*orbitalradius));
+    koeret.truanom=acos((koeret.sma*(1-pow2(koeret.ecc))-orbitalradius)/(koeret.ecc*orbitalradius));
     if(posvel.i*posvel.vi+posvel.j*posvel.vj*posvel.k*posvel.vk<0){//dot product of position and velocity
         koeret.truanom=2*M_PI-koeret.truanom;
     };
@@ -370,9 +370,9 @@ eci VNBtoECI(eci posvel, vnb VNBdV){
     vxrxv.k=posvel.vi*rxv.j-posvel.vj*rxv.i;
 
     double absv, absrxv, absvxrxv;
-    absv= sqrt(pow(posvel.vi,2)+pow(posvel.vj,2)+pow(posvel.vk,2));
-    absrxv=sqrt(pow(rxv.i,2)+pow(rxv.j,2)+pow(rxv.k,2));
-    absvxrxv=sqrt(pow(vxrxv.i,2)+pow(vxrxv.j,2)+pow(vxrxv.k,2));
+    absv= sqrt(pow2(posvel.vi)+pow2(posvel.vj)+pow2(posvel.vk));
+    absrxv=sqrt(pow2(rxv.i)+pow2(rxv.j)+pow2(rxv.k));
+    absvxrxv=sqrt(pow2(vxrxv.i)+pow2(vxrxv.j)+pow2(vxrxv.k));
 
 
 
@@ -403,9 +403,9 @@ vnb ECItoVNB(eci posvel, eci ECIdV){
     vxrxv.k=posvel.vi*rxv.j-posvel.vj*rxv.i;
 
     double absv, absrxv, absvxrxv;
-    absv= sqrt(pow(posvel.vi,2)+pow(posvel.vj,2)+pow(posvel.vk,2));
-    absrxv=sqrt(pow(rxv.i,2)+pow(rxv.j,2)+pow(rxv.k,2));
-    absvxrxv=sqrt(pow(vxrxv.i,2)+pow(vxrxv.j,2)+pow(vxrxv.k,2));
+    absv= sqrt(pow2(posvel.vi)+pow2(posvel.vj)+pow2(posvel.vk));
+    absrxv=sqrt(pow2(rxv.i)+pow2(rxv.j)+pow2(rxv.k));
+    absvxrxv=sqrt(pow2(vxrxv.i)+pow2(vxrxv.j)+pow2(vxrxv.k));
 
     VNBdV.v       =(posvel.vi/absv)*ECIdV.vi+(posvel.vj/absv)*ECIdV.vj+(posvel.vk/absv)*ECIdV.vk;
 

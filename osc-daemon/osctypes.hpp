@@ -127,24 +127,7 @@ namespace osc {
         }
     };
 
-    struct inertialframe {//used for attitude dynamics
-        double x;
-        double y;
-        double z;
-    };
 
-    struct bodyframe{
-        double x;
-        double y;
-        double z;
-    };
-
-    struct inertiamatrix {
-        double  J11, J12, J13,
-                J21, J22, J23, 
-                J31, J32, J33;
-
-    };
 
     struct quaternion {
         // Class variable initialisers
