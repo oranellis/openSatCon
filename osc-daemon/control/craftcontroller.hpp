@@ -7,12 +7,12 @@
 #include <iostream>
 
 #include "../osctypes.hpp"
-#include "../datainjest/jsonparser.hpp"
+#include "scheduler.hpp"
+// #include "../datainjest/jsonparser.hpp"
 #include "../components/component.hpp"
 #include "../components/fueltank.hpp"
 #include "../components/actuators/thruster.hpp"
 #include "../components/actuators/rotator.hpp"
-#include "scheduler.cpp"
 
 namespace osc {
 
@@ -33,6 +33,7 @@ namespace osc {
         std::map<std::string, fueltank> fueltanks;
         std::map<std::string, thruster> thrusters;
         std::map<std::string, rotator> rotators;
+        std::map<std::string, forceTorqueModel> attitudeActuators;
 
         // Member functions
         
@@ -41,14 +42,11 @@ namespace osc {
         // Initialiser
         craftcontroller();
 
+        // Member functions
         bool initModel();
 
         void recomputeComponentDeps();
 
-        // double nominalManoevureThrust();
-
-        // double minRotationRate();
-        
         void beginControl();
     };
 }
