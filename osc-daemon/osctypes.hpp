@@ -34,11 +34,11 @@ namespace osc {
         operator std::array<double, 3> () { return data; };
 
         // Member functions
-        vec3 dot(vec3 arg) {
+        double dot(vec3 arg) {
             /*
             Performs the vector dot product with the argument
             */
-            return vec3(data[0] * arg[0], data[1] * arg[1], data[2] * arg[2]);
+            return (data[0] * arg[0] + data[1] * arg[1] + data[2] * arg[2]);
         }
 
         vec3 cross(vec3 arg) {
@@ -46,6 +46,10 @@ namespace osc {
             Performs the vector cross product with the argument
             */
             return vec3(data[1]*arg[2] - data[2]*arg[1], data[2]*arg[0] - data[0]*arg[2], data[0]*arg[1] - data[1]*arg[0]);
+        }
+
+        double mag() {
+            return dot(data);
         }
     };
 
