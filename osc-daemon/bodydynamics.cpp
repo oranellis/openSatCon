@@ -34,9 +34,6 @@ namespace osc{
             dotstates.vj=(-planet.sgp*curstates.j/pow(r,3)+accgrav.j+((thrust*curstates.vj)/(curstates.m*v)))*curstates.vj;
             dotstates.vk=(-planet.sgp*curstates.k/pow(r,3)+accgrav.k+((thrust*curstates.vk)/(curstates.m*v)))*curstates.vk;
             dotstates.m=-thrust/Isp/g0*curstates.m;
-            //control.ijk should equal 0
-            //control.vijk will equal (Thrust*ijk)/(Mass*Velocity)
-            //control.m will equal -Thrust/(Isp*g0)
     };
 
 }

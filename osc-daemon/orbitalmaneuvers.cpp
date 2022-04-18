@@ -10,8 +10,14 @@ namespace osc{
 
 
 void highlevelcommand(orbparam curKOE, orbparam aftKOE){
-
-
+if (curKOE.inc!=aftKOE.inc){
+    vnb deltaV = planechange(curKOE, aftKOE);//perform this at the largest possible radius
+};
+if (curKOE.ecc==0&&aftKOE.ecc==0){
+bool HoBE = circorbitchoice(curKOE, aftKOE);
+if (HoBE == true){double deltaV = hohmann(curKOE, aftKOE);//first burn at periapsis for efficiency
+}else{double deltaV = bielliptic(curKOE, aftKOE);}//first burn at periapsis for efficiency
+}
 };
 
 double hohmann(orbparam curKOE, orbparam aftKOE){
