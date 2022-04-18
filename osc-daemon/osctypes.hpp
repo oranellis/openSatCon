@@ -49,11 +49,7 @@ namespace osc {
         }
 
         double mag() {
-<<<<<<< HEAD
             return sqrt(dot(data));
-=======
-            return dot(data);
->>>>>>> eb22984a7899151372b095fb9327f2c61c3d9aa1
         }
     };
 
