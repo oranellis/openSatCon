@@ -7,9 +7,9 @@ namespace osc {
         std::cout << "Enter path to craft configuration: ";
         std::cin >> pathString;
 
-        craftconfig config = parseJson(pathString);
+        // craftconfig config = parseJson(pathString);
         
-        if (!config.populated()) return false;
+        // if (!config.populated()) return false;
         return true;
     }
 
@@ -47,19 +47,12 @@ namespace osc {
         }
     }
 
-    // double nominalManoevureThrust() {
-    //  
-    // }
-
-    // double minRotationRate() {
-    //  
-    // }
-    
     craftcontroller::craftcontroller() {
         if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
     }
 
     void craftcontroller::beginControl() {
         // scheduler* schedule = new scheduler();
+        std::cout << "Beginning control" << std::endl;
     }
 };
