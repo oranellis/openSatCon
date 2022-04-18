@@ -49,11 +49,7 @@ namespace osc {
         }
 
         double mag() {
-<<<<<<< HEAD
             return sqrt(dot(data));
-=======
-            return dot(data);
->>>>>>> eb22984a7899151372b095fb9327f2c61c3d9aa1
         }
     };
 
@@ -146,15 +142,14 @@ namespace osc {
         // Initialisers
         quaternion() {}
 
-        quaternion(std::array<double, 3> vec1, std::array<double, 3> vec2) {
+        quaternion(vec3 arg1, vec3 arg2) {
             /*
             Generates a quaternion rotation between two unit vectors in the same reference frame
             */
-            qw =    sqrt(pow(pow(vec1[0],2)+pow(vec1[1],2)+pow(vec1[2],2),2)*(pow(pow(vec2[0],2)+pow(vec2[1],2)+pow(vec2[2],2),2)));
-                            +vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
-            qx =    vec1[1]*vec2[2]-vec1[2]*vec2[1];
-            qy =    vec1[2]*vec2[0]-vec1[0]*vec2[2];
-            qz =    vec1[0]*vec2[1]-vec1[1]*vec2[0];
+            qw =    sqrt(arg1.mag()*arg2.mag())+arg1.dot(arg2);
+            qx =    arg1[1]*arg2[2]-arg1[2]*arg2[1];
+            qy =    arg1[2]*arg2[0]-arg1[0]*arg2[2];
+            qz =    arg1[0]*arg2[1]-arg1[1]*arg2[0];
         }
 
         // Member functions
