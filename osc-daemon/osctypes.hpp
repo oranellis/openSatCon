@@ -8,16 +8,11 @@
 namespace osc {
 
     // Inline helper functions
-<<<<<<< HEAD
-    inline double pow2(double arg) { return arg*arg; }
-    inline double pow3(double arg) { return arg*arg*arg; }
-=======
     double pow2(double arg) { return arg * arg; }
 
     double pow3(double arg) { return arg * arg * arg; }
 
 
->>>>>>> 332c71e2306ef64efe96bad7f8186d9a7296337f
 
     // Common data types
     struct vec3 {
