@@ -35,6 +35,8 @@ We are a team of University of Glasgow students creating an open-source satellit
 - Desired pointing location and hold attitude (if applicable)
 #### Hardware Requirements
 - Satellite Controller with Linux
+- IMU
+- Microcontroller
 - Satellite Attitude Determination and Control System 
 - Satellite Thrusters (if applicable) 
 
@@ -66,6 +68,12 @@ Then in the openSatCon folder <br/>
 doxygen config.conf
 ```
 Open the index.html file in the html folder
+
+## How it works
+![Header Image](assets/logos/ControlInterface.png)
+
+The control flow diagram can be seen in the figure above. The IMU inputs orientation data to the microcontroller. The microcontroller then exchanges information with the scheduler. The scheduler handles the priority of tasks and based on the input from the IMU, will make a decision to prioritze a given task. This could range from a simple pointing manoeuvre to a burn for orbital transfers. The scheduler then gives information to the microcontroller which will then give the appropriate commands to the thrusters, magnetorquers, and reaction wheels. It should be noted, the scheduler is not a physical component, but just an important part of the controller. 
+
 
 ## How to use
 1. The control system is run with an input configuration of the satellite in the form of a json file. This json is given as a specific format and contains a template for all necessary parameters for the satellite that are required to make use of the control software.
