@@ -72,7 +72,7 @@
         },
         "7" :
         {
-            "key" : "thruster",
+            "key" : "thruster_mass",
             "componentType" : 0,
             "mass" : 0.04,
             "moi" : [0.0000333, 0.0000333, 0.000000667],
@@ -121,7 +121,7 @@
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
             "moi" : [0.0000941, 0.0000502, 0.0000401],
-            "Normal Vector" : [1,0,0]
+            "NormalVector" : [1,0,0]
         },
         "1" :
         {
@@ -131,7 +131,7 @@
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
             "moi" : [0.0000941, 0.0000502, 0.0000401],
-            "Normal Vector" : [0,1,0]
+            "NormalVector" : [0,1,0]
         },
         "2" :
         {
@@ -141,7 +141,7 @@
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
             "moi" : [0.0000941, 0.0000502, 0.0000401],
-            "Normal Vector" : [0,0,1]
+            "NormalVector" : [0,0,1]
         },
         "3" :
         {
@@ -151,7 +151,7 @@
             "storedMomentum" : 0,
             "RotationSpeed" : 0,
             "moi" : [0, 0, 0],
-            "Normal Vector" : [1,0,0]
+            "NormalVector" : [1,0,0]
         },
         "4" :
         {
@@ -161,7 +161,7 @@
             "storedMomentum" : 0,
             "RotationSpeed" : 0,
             "moi" : [0, 0, 0],
-            "Normal Vector" : [0,1,0]
+            "NormalVector" : [0,1,0]
         },
         "5" :
         {
@@ -171,7 +171,7 @@
             "storedMomentum" : 0,
             "RotationSpeed" : 0,
             "moi" : [0, 0, 0],
-            "Normal Vector" : [0,0,1]
+            "NormalVector" : [0,0,1]
         }
     }
 }
