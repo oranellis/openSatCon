@@ -14,8 +14,9 @@ orbParam meanToTrue(orbParam KOE) {
         KOE.truAnom = KOE.meanAnom + 2 * KOE.ecc * sin(KOE.meanAnom) 
                       +1.25 * pow2(KOE.ecc) * sin(2 * KOE.meanAnom) 
                       - pow3(KOE.ecc) * (0.25 * sin(KOE.meanAnom) - (13/12) * sin(3 * KOE.meanAnom));
-
-    } else if(KOE.ecc < 1.0) {// newton raphson's method must be used for higher eccentricities, e>1 is a parabolic orbit
+    }
+    
+    else if (KOE.ecc < 1.0) {// newton raphson's method must be used for higher eccentricities, e>1 is a parabolic orbit
         KOE.eccAnom = KOE.meanAnom + ((KOE.ecc * sin(KOE.meanAnom) / (cos(KOE.ecc) - (M_PI_2 - KOE.ecc) * sin(KOE.ecc) + KOE.meanAnom * sin(KOE.ecc))));
         double dE = KOE.eccAnom;
         while(abs(dE) > 10e-10) {
@@ -23,9 +24,8 @@ orbParam meanToTrue(orbParam KOE) {
             KOE.eccAnom = KOE.eccAnom - dE;
         };
         KOE.truAnom = atan2(sqrt(1 - pow2(KOE.ecc) * sin(KOE.ecc)), cos(KOE.eccAnom) - KOE.ecc);
-
-        return KOE;
     };
+        return KOE;
 };
 
 
