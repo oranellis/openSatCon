@@ -43,8 +43,51 @@ namespace osc {
         }
 
         for (auto i=thrusters.begin(); i!=thrusters.end(); i++) {
-            i->second.getMaxThrust();
+            if (i->second.getAttitudeControl()) {
+                attitudeActuators.insert({i->first, ftModel(i->second.getThrustAxis()*i->second.getMaxThrust(), components[i->first].getPos())}); // Add ftModel and string identifier to attitudeActuators
+            }
         }
+
+        for (auto i=rotators.begin(); i!=rotators.end(); i++) {
+            vec3 torqueVec = i->second.getDirection()*i->second.getTorque();
+            attitudeActuators.insert({i->first, ftModel(0, 0, 0, torqueVec[0], torqueVec[1], torqueVec[2])}); // Add ftModel and string identifier to attitudeActuators
+            std::cout << "_Debug_ rotator torque in x: " << torqueVec[0] << std::endl;
+        }
+    }
+
+    std::map<std::string, double> craftcontroller::forcesToCommands(ftModel setpoint) {
+        std::map<std::string, double> thrusterCommands;
+
+        bool matched = false;
+        ftModel sp = setpoint;
+        int count = 0;
+
+        while (!matched) {
+            int currAxis = sp.getDominantAxis();
+            std::string actuatorID;
+            for (auto i=attitudeActuators.begin(); i!= attitudeActuators.end(); i++) {
+                if (i->second.getDominantAxis() == currAxis) {
+                    double command = sp[currAxis]/i->second[currAxis]; // Eliminate command error in dominant axis
+
+                    if (thrusterCommands.count(i->first)>0) {
+                        thrusterCommands[i->first] = thrusterCommands[i->first] + command;
+                    }
+
+                    else {
+                        thrusterCommands.insert({i->first, command});
+                    }
+
+                    sp = sp - (i->second * command);
+                    count++;
+                    break;
+                }
+            }
+            if (sp.mag()<0.01*setpoint.mag() || count > 100) {
+                matched = true;
+            }
+        }
+
+        return thrusterCommands;
     }
 
     craftcontroller::craftcontroller() {

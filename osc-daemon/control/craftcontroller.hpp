@@ -26,14 +26,14 @@ namespace osc {
         double maxThrust;
         position cg;
         momentofinertia moi;
-        orbaram orbit;
+        orbParam orbit;
         quaternion rotation;
 
         std::map<std::string, component> components;
         std::map<std::string, fueltank> fueltanks;
         std::map<std::string, thruster> thrusters;
         std::map<std::string, rotator> rotators;
-        std::map<std::string, forceTorqueModel> attitudeActuators;
+        std::map<std::string, ftModel> attitudeActuators;
 
         // Member functions
         
@@ -46,6 +46,8 @@ namespace osc {
         bool initModel();
 
         void recomputeComponentDeps();
+    
+        std::map<std::string, double> craftcontroller::forcesToCommands(ftModel setpoint);
 
         void beginControl();
     };
