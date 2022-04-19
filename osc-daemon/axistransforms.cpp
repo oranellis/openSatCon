@@ -8,23 +8,23 @@
 
 namespace osc{
 
-double meanToTrue(orbParam KOE){
+double meanToTrue(orbParam KOE) {
     // converts mean anomaly to true anomaly
-        if (KOE.ecc < 0.2){ //this is a handy calculation to save time for small eccentricities
-            KOE.truAnom = KOE.meanAnom+2*KOE.ecc*sin(KOE.meanAnom)+1.25*pow2(KOE.ecc)*sin(2*KOE.meanAnom)-pow3(KOE.ecc)*(0.25*sin(KOE.meanAnom)-(13/12)*sin(3*KOE.meanAnom));
-        } else if(KOE.ecc < 1.0){// newton raphson's method must be used for higher eccentricities, e>1 is a parabolic orbit
-            KOE.eccAnom=KOE.meanAnom+((KOE.ecc*sin(KOE.meanAnom)/(cos(KOE.ecc)-(M_PI_2-KOE.ecc)*sin(KOE.ecc)+KOE.meanAnom*sin(KOE.ecc))));
-            double dE=KOE.eccAnom;
-            while(abs(dE)>10e-10){
-                dE=(KOE.eccAnom-KOE.ecc*sin(KOE.eccAnom)-KOE.meanAnom)/(1-KOE.ecc*cos(KOE.eccAnom));
-                KOE.eccAnom=KOE.eccAnom-dE;
-            };
-            KOE.truAnom=atan2(sqrt(1-pow2(KOE.ecc)*sin(KOE.ecc)),cos(KOE.eccAnom)-KOE.ecc);
+    if (KOE.ecc < 0.2) { //this is a handy calculation to save time for small eccentricities
+        KOE.truAnom = KOE.meanAnom+2*KOE.ecc*sin(KOE.meanAnom)+1.25*pow2(KOE.ecc)*sin(2*KOE.meanAnom)-pow3(KOE.ecc)*(0.25*sin(KOE.meanAnom)-(13/12)*sin(3*KOE.meanAnom));
+    } else if(KOE.ecc < 1.0) {// newton raphson's method must be used for higher eccentricities, e>1 is a parabolic orbit
+        KOE.eccAnom=KOE.meanAnom+((KOE.ecc*sin(KOE.meanAnom)/(cos(KOE.ecc)-(M_PI_2-KOE.ecc)*sin(KOE.ecc)+KOE.meanAnom*sin(KOE.ecc))));
+        double dE=KOE.eccAnom;
+        while(abs(dE)>10e-10) {
+            dE=(KOE.eccAnom-KOE.ecc*sin(KOE.eccAnom)-KOE.meanAnom)/(1-KOE.ecc*cos(KOE.eccAnom));
+            KOE.eccAnom=KOE.eccAnom-dE;
         };
+        KOE.truAnom=atan2(sqrt(1-pow2(KOE.ecc)*sin(KOE.ecc)),cos(KOE.eccAnom)-KOE.ecc);
+    };
 };
 
 
-double greenwichSiderealAngle(){
+double greenwichSiderealAngle() {
     //calculates the angle required for the transformation between ECI and ECEF
     double gsraret;
     time_t timer;
@@ -56,7 +56,7 @@ ecef LLAtoECEF(lla posLLA) {
     return posECEF;
 };
 
-lla ECEFtoLLA(ecef posECEF){
+lla ECEFtoLLA(ecef posECEF) {
     //returns ground position of sub satellite point and satellite altitude from ECEF co-ords
     lla llaret;
     double secondeccentricity=planet.ecc/sqrt(1-pow2(planet.ecc));
@@ -69,80 +69,79 @@ lla ECEFtoLLA(ecef posECEF){
     return llaret;
 };
 
-ned ECEFtoNED(ecef posECEF, lla refLLA){
+ned ECEFtoNED(ecef posECEF, lla refLLA) {
     // returns vector from satellite to ground station in North East Down reference frame
     ned posNED;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
     relECEF.rXYZ=posECEF.rXYZ.operator-(refECEF.rXYZ);
 
-    posNED.rNED.data[0] =   -sin(refLLA.lat)*cos(refLLA.lon)*relECEF.rXYZ.data[0]+
-                            sin(refLLA.lat)*sin(refLLA.lon)*relECEF.rXYZ.data[1]+
-                            cos(refLLA.lat)*relECEF.rXYZ.data[2];
+        posNED.rNED.data[0] = -sin(refLLA.lat)*cos(refLLA.lon)*relECEF.rXYZ.data[0]+
+                              sin(refLLA.lat)*sin(refLLA.lon)*relECEF.rXYZ.data[1]+
+                              cos(refLLA.lat)*relECEF.rXYZ.data[2];
 
-    posNED.rNED.data[1] =   -sin(refLLA.lon)*relECEF.rXYZ.data[0]+
-                            cos(refLLA.lon)*relECEF.rXYZ.data[1]+
-                            0;
+        posNED.rNED.data[1] = -sin(refLLA.lon)*relECEF.rXYZ.data[0]+
+                              cos(refLLA.lon)*relECEF.rXYZ.data[1]+
+                              0;
 
-    posNED.rNED.data[2] =   -cos(refLLA.lat)*cos(refLLA.lon)*relECEF.rXYZ.data[0]+
-                            -cos(refLLA.lat)*sin(refLLA.lon)*relECEF.rXYZ.data[1]+
-                            -sin(refLLA.lat)*relECEF.rXYZ.data[2];
+        posNED.rNED.data[2] = -cos(refLLA.lat)*cos(refLLA.lon)*relECEF.rXYZ.data[0]+
+                              -cos(refLLA.lat)*sin(refLLA.lon)*relECEF.rXYZ.data[1]+
+                              -sin(refLLA.lat)*relECEF.rXYZ.data[2];
 
     return posNED;
 };
 
-ecef NEDtoECEF(ned posNED, lla refLLA){
+ecef NEDtoECEF(ned posNED, lla refLLA) {
     // returns ECEF position from NED vector
     ecef posECEF;
 
-    posECEF.rXYZ.data[0] = -cos(refLLA.lon)*sin(refLLA.lat)*posNED.rNED.data[0]
-                           -sin(refLLA.lon)*posNED.rNED.data[1]
-                           -cos(refLLA.lon)*cos(refLLA.lat)*posNED.rNED.data[2];
+        posECEF.rXYZ.data[0] = -cos(refLLA.lon)*sin(refLLA.lat)*posNED.rNED.data[0]
+                               -sin(refLLA.lon)*posNED.rNED.data[1]
+                               -cos(refLLA.lon)*cos(refLLA.lat)*posNED.rNED.data[2];
 
-    posECEF.rXYZ.data[1] = -sin(refLLA.lon)*sin(refLLA.lat)*posNED.rNED.data[0]
-                           +cos(refLLA.lon)*posNED.rNED.data[1]
-                           -sin(refLLA.lon)*cos(refLLA.lat)*posNED.rNED.data[2];
+        posECEF.rXYZ.data[1] = -sin(refLLA.lon)*sin(refLLA.lat)*posNED.rNED.data[0]
+                               +cos(refLLA.lon)*posNED.rNED.data[1]
+                               -sin(refLLA.lon)*cos(refLLA.lat)*posNED.rNED.data[2];
 
-    posECEF.rXYZ.data[2] = cos(refLLA.lat)*posNED.rNED.data[0]
-                           +0
-                           -sin(refLLA.lat)*posNED.rNED.data[2];
+        posECEF.rXYZ.data[2] = cos(refLLA.lat)*posNED.rNED.data[0]
+                               +0
+                               -sin(refLLA.lat)*posNED.rNED.data[2];
+
     return posECEF;   
 };
 
-ecef EARtoECEF(ear posEAR, lla refLLA){
+ecef EARtoECEF(ear posEAR, lla refLLA) {
     // returns ECEF position from ground station Elevation Azimuth Range tracking
     // this method goes through SEZ co-ordinates, but seems to be the best method
     ecef posECEF;
     ecef refECEF = LLAtoECEF(refLLA);
-    posECEF.rXYZ.data[0] = sin(refLLA.lat)*cos(refLLA.lon)*(-posEAR.r*cos(posEAR.e)*cos(posEAR.a))
-                           -sin(refLLA.lon)*(posEAR.r*cos(posEAR.e)*sin(posEAR.a))
-                           +cos(refLLA.lat)*cos(refLLA.lon)*(posEAR.r*sin(posEAR.e)) + refECEF.rXYZ.data[0];
-    
-    posECEF.rXYZ.data[1] = sin(refLLA.lat)*sin(refLLA.lon)*(-posEAR.r*cos(posEAR.e)*cos(posEAR.a))
-                           +cos(refLLA.lon)*(posEAR.r*cos(posEAR.e)*sin(posEAR.a))
-                           +cos(refLLA.lat)*sin(refLLA.lon)*(posEAR.r*sin(posEAR.e)) + refECEF.rXYZ.data[1];
 
-    posECEF.rXYZ.data[2] = -cos(refLLA.lat)*(-posEAR.r*cos(posEAR.e)*cos(posEAR.a))
-                           +0
-                           +sin(refLLA.lat)*(posEAR.r*sin(posEAR.e)) + refECEF.rXYZ.data[2];
+        posECEF.rXYZ.data[0] = sin(refLLA.lat)*cos(refLLA.lon)*(-posEAR.r*cos(posEAR.e)*cos(posEAR.a))
+                            -sin(refLLA.lon)*(posEAR.r*cos(posEAR.e)*sin(posEAR.a))
+                            +cos(refLLA.lat)*cos(refLLA.lon)*(posEAR.r*sin(posEAR.e)) + refECEF.rXYZ.data[0];
+        
+        posECEF.rXYZ.data[1] = sin(refLLA.lat)*sin(refLLA.lon)*(-posEAR.r*cos(posEAR.e)*cos(posEAR.a))
+                            +cos(refLLA.lon)*(posEAR.r*cos(posEAR.e)*sin(posEAR.a))
+                            +cos(refLLA.lat)*sin(refLLA.lon)*(posEAR.r*sin(posEAR.e)) + refECEF.rXYZ.data[1];
+
+        posECEF.rXYZ.data[2] = -cos(refLLA.lat)*(-posEAR.r*cos(posEAR.e)*cos(posEAR.a))
+                            +0
+                            +sin(refLLA.lat)*(posEAR.r*sin(posEAR.e)) + refECEF.rXYZ.data[2];
 
     return posECEF;
 };
 
 
-ear ECEFtoEAR(ecef posECEF, lla refLLA){
+ear ECEFtoEAR(ecef posECEF, lla refLLA) {
     // returns the EAR values seen by a ground station of a satellite at the given ECEF position
     ear posEAR;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
     relECEF.rXYZ = posECEF.rXYZ.operator-(refECEF.rXYZ);
 
-    posEAR.r = relECEF.rXYZ.mag();
-
-    posEAR.e = asin(relECEF.rXYZ.data[2]/posEAR.r);
-
-    posEAR.a = atan2(relECEF.rXYZ.data[1],relECEF.rXYZ.data[0]);
-
+        posEAR.r = relECEF.rXYZ.mag();
+        posEAR.e = asin(relECEF.rXYZ.data[2]/posEAR.r);
+        posEAR.a = atan2(relECEF.rXYZ.data[1],relECEF.rXYZ.data[0]);
     
     return posEAR;
 };
@@ -162,22 +161,22 @@ ear ECEFtoEAR(ecef posECEF, lla refLLA){
 //     return sezvelret;
 // };
 
-ecef ENUtoECEF(enu posENU, lla refLLA){
+ecef ENUtoECEF(enu posENU, lla refLLA) {
     // returns the ECEF position of a satellite tracked by a ground station in East North Up
     ecef posECEF;
     ecef refECEF = LLAtoECEF(refLLA);
 
-    posECEF.rXYZ.data[0] = -sin(refLLA.lon)*posENU.rENU.data[0]
-                           -sin(refLLA.lat)*cos(refLLA.lon)*posENU.rENU.data[1]
-                           +cos(refLLA.lat)*cos(refLLA.lon)*posENU.rENU.data[2] + refECEF.rXYZ.data[0];
+        posECEF.rXYZ.data[0] = -sin(refLLA.lon)*posENU.rENU.data[0]
+                               -sin(refLLA.lat)*cos(refLLA.lon)*posENU.rENU.data[1]
+                               +cos(refLLA.lat)*cos(refLLA.lon)*posENU.rENU.data[2] + refECEF.rXYZ.data[0];
 
-    posECEF.rXYZ.data[1] = cos(refLLA.lon)*posENU.rENU.data[0]
-                           -sin(refLLA.lat)*sin(refLLA.lon)*posENU.rENU.data[1]
-                           +cos(refLLA.lat)*sin(refLLA.lon)*posENU.rENU.data[2] + refECEF.rXYZ.data[1];
+        posECEF.rXYZ.data[1] = cos(refLLA.lon)*posENU.rENU.data[0]
+                               -sin(refLLA.lat)*sin(refLLA.lon)*posENU.rENU.data[1]
+                               +cos(refLLA.lat)*sin(refLLA.lon)*posENU.rENU.data[2] + refECEF.rXYZ.data[1];
 
-    posECEF.rXYZ.data[2] = 0
-                           +cos(refLLA.lat)*posENU.rENU.data[1]
-                           +sin(refLLA.lat)*posENU.rENU.data[2]+ refECEF.rXYZ.data[2];
+        posECEF.rXYZ.data[2] = 0
+                               +cos(refLLA.lat)*posENU.rENU.data[1]
+                               +sin(refLLA.lat)*posENU.rENU.data[2]+ refECEF.rXYZ.data[2];
 
     return posECEF;
 };
@@ -189,115 +188,117 @@ enu ECEFtoENU(ecef posECEF, lla refLLA){
     ecef relECEF;
     relECEF.rXYZ = posECEF.rXYZ.operator-(refECEF.rXYZ);
 
-    posENU.rENU.data[1] = -sin(refLLA.lon)*(relECEF.rXYZ.data[0])
-                          +cos(refLLA.lon)*(relECEF.rXYZ.data[1])
-                          +0;
+        posENU.rENU.data[1] = -sin(refLLA.lon)*(relECEF.rXYZ.data[0])
+                               +cos(refLLA.lon)*(relECEF.rXYZ.data[1])
+                               +0;
 
-    posENU.rENU.data[1] = -sin(refLLA.lat)*cos(refLLA.lon)*(relECEF.rXYZ.data[0])
-                          -sin(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
-                          +cos(refLLA.lat)*(relECEF.rXYZ.data[2]);
+        posENU.rENU.data[1] = -sin(refLLA.lat)*cos(refLLA.lon)*(relECEF.rXYZ.data[0])
+                              -sin(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
+                              +cos(refLLA.lat)*(relECEF.rXYZ.data[2]);
 
-    posENU.rENU.data[1] = cos(refLLA.lat)*cos(refLLA.lon)+(relECEF.rXYZ.data[0])
-                          +cos(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
-                          +sin(refLLA.lat)*(relECEF.rXYZ.data[2]);
+        posENU.rENU.data[1] = cos(refLLA.lat)*cos(refLLA.lon)+(relECEF.rXYZ.data[0])
+                              +cos(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
+                              +sin(refLLA.lat)*(relECEF.rXYZ.data[2]);
 
     return posENU;
 };
 
-ecef SEZtoECEF(thcs posSEZ, lla refLLA){
+ecef SEZtoECEF(thcs posSEZ, lla refLLA) {
     // returns the ECEF position of a satellite tracked by a ground station in the Topocentric Horizon Co-ordinate System
     ecef posECEF;
     ecef refECEF = LLAtoECEF(refLLA);
     
-    posECEF.rXYZ.data[0] = cos(refLLA.lon)*posSEZ.rSEZ.data[0]
-                           +sin(refLLA.lat)*cos(refLLA.lon)*posSEZ.rSEZ.data[1]
-                           +refECEF.rXYZ.data[2];
+        posECEF.rXYZ.data[0] = cos(refLLA.lon)*posSEZ.rSEZ.data[0]
+                               +sin(refLLA.lat)*cos(refLLA.lon)*posSEZ.rSEZ.data[1]
+                               +refECEF.rXYZ.data[2];
 
-    posECEF.rXYZ.data[1] = -sin(refLLA.lat)*sin(refLLA.lon)*posSEZ.rSEZ.data[0]
-                           +sin(refLLA.lat)*cos(refLLA.lon)*posSEZ.rSEZ.data[1]
-                           +cos(refLLA.lat)*posSEZ.rSEZ.data[2] + refECEF.rXYZ.data[1];
+        posECEF.rXYZ.data[1] = -sin(refLLA.lat)*sin(refLLA.lon)*posSEZ.rSEZ.data[0]
+                               +sin(refLLA.lat)*cos(refLLA.lon)*posSEZ.rSEZ.data[1]
+                               +cos(refLLA.lat)*posSEZ.rSEZ.data[2] + refECEF.rXYZ.data[1];
 
-    posECEF.rXYZ.data[2] = cos(refLLA.lat)*sin(refLLA.lon)*posSEZ.rSEZ.data[0]
-                           -cos(refLLA.lat)*cos(refLLA.lon)*posSEZ.rSEZ.data[1]
-                           +sin(refLLA.lat)*posSEZ.rSEZ.data[2] + refECEF.rXYZ.data[2];
+        posECEF.rXYZ.data[2] = cos(refLLA.lat)*sin(refLLA.lon)*posSEZ.rSEZ.data[0]
+                               -cos(refLLA.lat)*cos(refLLA.lon)*posSEZ.rSEZ.data[1]
+                               +sin(refLLA.lat)*posSEZ.rSEZ.data[2] + refECEF.rXYZ.data[2];
 
     return posECEF;
 };
 
-thcs ECEFtoSEZ(ecef posECEF, lla refLLA){
+thcs ECEFtoSEZ(ecef posECEF, lla refLLA) {
     // returns the SEZ values seen by a ground station of a satellite at the given ECEF position
     thcs posSEZ;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
     relECEF.rXYZ = posECEF.rXYZ.operator-(refECEF.rXYZ);
 
-    posSEZ.rSEZ.data[0] = sin(refLLA.lat)*cos(refLLA.lon)*(relECEF.rXYZ.data[0])
-                          +sin(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
-                          -cos(refLLA.lat)*(relECEF.rXYZ.data[2]);
+        posSEZ.rSEZ.data[0] = sin(refLLA.lat)*cos(refLLA.lon)*(relECEF.rXYZ.data[0])
+                              +sin(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
+                              -cos(refLLA.lat)*(relECEF.rXYZ.data[2]);
 
-    posSEZ.rSEZ.data[1] = -sin(refLLA.lon)*(relECEF.rXYZ.data[0])
-                          +cos(refLLA.lon)*(relECEF.rXYZ.data[1])
-                          +0;
+        posSEZ.rSEZ.data[1] = -sin(refLLA.lon)*(relECEF.rXYZ.data[0])
+                              +cos(refLLA.lon)*(relECEF.rXYZ.data[1])
+                              +0;
 
-    posSEZ.rSEZ.data[2] = cos(refLLA.lat)*cos(refLLA.lon)+(relECEF.rXYZ.data[0])
-                          +cos(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
-                          +sin(refLLA.lat)*(relECEF.rXYZ.data[2]);
+        posSEZ.rSEZ.data[2] = cos(refLLA.lat)*cos(refLLA.lon)+(relECEF.rXYZ.data[0])
+                              +cos(refLLA.lat)*sin(refLLA.lon)*(relECEF.rXYZ.data[1])
+                              +sin(refLLA.lat)*(relECEF.rXYZ.data[2]);
 
     return posSEZ;
 };
 
-eci PCStoECI(orbParam KOE, pcs posvelPCS){
+eci PCStoECI(orbParam KOE, pcs posvelPCS) {
     eci posvelECI;
 
-    posvelECI.rIJK.data[0] = (cos(KOE.asc)*cos(KOE.aop)-sin(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[0] +
-                             (-cos(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[1] +
-                             (sin(KOE.asc)*sin(KOE.inc))*posvelPCS.rPCS.data[2];
+        posvelECI.rIJK.data[0] = (cos(KOE.asc)*cos(KOE.aop)-sin(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[0] +
+                                 (-cos(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[1] +
+                                 (sin(KOE.asc)*sin(KOE.inc))*posvelPCS.rPCS.data[2];
 
-    posvelECI.rIJK.data[1] = (sin(KOE.asc)*cos(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[0] +
-                             (-sin(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*cos(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[1] +
-                             (-cos(KOE.asc)*sin(KOE.inc))*posvelPCS.rPCS.data[2];
+        posvelECI.rIJK.data[1] = (sin(KOE.asc)*cos(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[0] +
+                                 (-sin(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*cos(KOE.aop)*cos(KOE.inc))*posvelPCS.rPCS.data[1] +
+                                 (-cos(KOE.asc)*sin(KOE.inc))*posvelPCS.rPCS.data[2];
 
-    posvelECI.rIJK.data[2] = sin(KOE.aop)*sin(KOE.inc)*posvelPCS.rPCS.data[0] +
-                             cos(KOE.aop)*sin(KOE.inc)*posvelPCS.rPCS.data[1] +
-                             cos(KOE.inc)*posvelPCS.rPCS.data[2];
+        posvelECI.rIJK.data[2] = sin(KOE.aop)*sin(KOE.inc)*posvelPCS.rPCS.data[0] +
+                                 cos(KOE.aop)*sin(KOE.inc)*posvelPCS.rPCS.data[1] +
+                                 cos(KOE.inc)*posvelPCS.rPCS.data[2];
 
-    posvelECI.vIJK.data[0] = (cos(KOE.asc)*cos(KOE.aop)-sin(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[0] +
-                             (-cos(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[1] +
-                             (sin(KOE.asc)*sin(KOE.inc))*posvelPCS.vPCS.data[2];
 
-    posvelECI.vIJK.data[1] = (sin(KOE.asc)*cos(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[0] +
-                             (-sin(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*cos(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[1] +
-                             (-cos(KOE.asc)*sin(KOE.inc))*posvelPCS.vPCS.data[2];
 
-    posvelECI.vIJK.data[2] = sin(KOE.aop)*sin(KOE.inc)*posvelPCS.vPCS.data[0] +
-                             cos(KOE.aop)*sin(KOE.inc)*posvelPCS.vPCS.data[1] +
-                             cos(KOE.inc)*posvelPCS.vPCS.data[2];
+        posvelECI.vIJK.data[0] = (cos(KOE.asc)*cos(KOE.aop)-sin(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[0] +
+                                 (-cos(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[1] +
+                                 (sin(KOE.asc)*sin(KOE.inc))*posvelPCS.vPCS.data[2];
+
+        posvelECI.vIJK.data[1] = (sin(KOE.asc)*cos(KOE.aop)-cos(KOE.asc)*sin(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[0] +
+                                 (-sin(KOE.asc)*sin(KOE.aop)-cos(KOE.asc)*cos(KOE.aop)*cos(KOE.inc))*posvelPCS.vPCS.data[1] +
+                                 (-cos(KOE.asc)*sin(KOE.inc))*posvelPCS.vPCS.data[2];
+
+        posvelECI.vIJK.data[2] = sin(KOE.aop)*sin(KOE.inc)*posvelPCS.vPCS.data[0] +
+                                 cos(KOE.aop)*sin(KOE.inc)*posvelPCS.vPCS.data[1] +
+                                 cos(KOE.inc)*posvelPCS.vPCS.data[2];
 
     return posvelECI;
 };
 
-pcs KOEtoPCS(orbParam KOE){
+pcs KOEtoPCS(orbParam KOE) {
     // gives the PCS position and velocity of a satellite given its Kepler Orbital Elements
 
     pcs posvelPCS;
-    double orbitRadius;
-    orbitRadius = (KOE.sma*(1-pow2(KOE.ecc)))/(1+KOE.ecc*cos(KOE.truAnom));
+    double orbitRadius = (KOE.sma*(1-pow2(KOE.ecc)))/(1+KOE.ecc*cos(KOE.truAnom));
 
-    posvelPCS.rPCS.data[0] = orbitRadius * cos(KOE.truAnom); 
-    posvelPCS.rPCS.data[1] = orbitRadius * sin(KOE.truAnom);
-    posvelPCS.rPCS.data[2] = 0;
+        posvelPCS.rPCS.data[0] = orbitRadius * cos(KOE.truAnom); 
+        posvelPCS.rPCS.data[1] = orbitRadius * sin(KOE.truAnom);
+        posvelPCS.rPCS.data[2] = 0;
 
     double p        = KOE.sma*(1-pow2(KOE.ecc));
     double thetaDot = sqrt(planet.sgp*p)/pow2(orbitRadius);
     double rDot     = sqrt(planet.sgp/p)*KOE.ecc*sin(KOE.truAnom);
 
-    posvelPCS.vPCS.data[0] = rDot*cos(KOE.truAnom)-orbitRadius*sin(KOE.truAnom)*thetaDot;
-    posvelPCS.vPCS.data[1] = rDot*sin(KOE.truAnom)-orbitRadius*cos(KOE.truAnom)*thetaDot;
-    posvelPCS.vPCS.data[2] = 0;
+        posvelPCS.vPCS.data[0] = rDot*cos(KOE.truAnom)-orbitRadius*sin(KOE.truAnom)*thetaDot;
+        posvelPCS.vPCS.data[1] = rDot*sin(KOE.truAnom)-orbitRadius*cos(KOE.truAnom)*thetaDot;
+        posvelPCS.vPCS.data[2] = 0;
+
     return posvelPCS;
 };
 
-orbParam ECItoKOE(eci posvelECI){
+orbParam ECItoKOE(eci posvelECI) {
     orbParam KOE;
     eci h;                           // angular momentum vector
     eci N;                           // ascending node vector
@@ -318,7 +319,7 @@ orbParam ECItoKOE(eci posvelECI){
     KOE.asc = acos(N.rIJK.data[0]/normN);
     //if Ny > 0 then 0<asc<180
     //if Ny < 0 then 180<asc<360
-    if (N.rIJK.data[1]<0){
+    if (N.rIJK.data[1]<0) {
         KOE.asc = 2*M_PI-KOE.asc;
     };
 
@@ -336,40 +337,45 @@ orbParam ECItoKOE(eci posvelECI){
     KOE.ecc = e.rIJK.mag();
     KOE.sma = (pow2(normH)/planet.sgp)/(1-pow2(KOE.ecc));
     KOE.aop = acos((N.rIJK.dot(e.rIJK)/(normN*KOE.ecc)));
+
     //if ecc_z > 0 then 0<aop<180
     //if ecc_z < 0 then 180<aop<360
-    if(e.rIJK.data[2]<0){
+
+    if(e.rIJK.data[2]<0) {
         KOE.aop = 2*M_PI-KOE.aop;
     };
+
     KOE.truAnom = acos((e.rIJK.dot(posvelECI.rIJK)/(r*KOE.ecc)));
-    if(posvelECI.rIJK.dot(posvelECI.vIJK)<0){//dot product of position and velocity
+
+    if(posvelECI.rIJK.dot(posvelECI.vIJK)<0) {//dot product of position and velocity
         KOE.truAnom = 2*M_PI-KOE.truAnom;
     };
-    KOE.eccAnom  = atan2(sqrt(1-KOE.ecc)*sin(KOE.truAnom/2),sqrt(1+KOE.ecc)*cos(KOE.truAnom/2));
+
+    KOE.eccAnom  = atan2(sqrt(1-KOE.ecc)*sin(KOE.truAnom/2), sqrt(1+KOE.ecc)*cos(KOE.truAnom/2));
     KOE.meanAnom = KOE.eccAnom-KOE.ecc*sin(KOE.eccAnom);
+
     return KOE;
 };
 
-ecef ECItoECEF(eci posvelECI,double siderealAngle){
+ecef ECItoECEF(eci posvelECI,double siderealAngle) {
     ecef posvelECEF;
-    posvelECEF.rXYZ.data[0] = cos(siderealAngle)*posvelECI.rIJK.data[0]-sin(siderealAngle)*posvelECI.rIJK.data[1];
-    posvelECEF.rXYZ.data[1] = sin(siderealAngle)*posvelECI.rIJK.data[0]+cos(siderealAngle)*posvelECI.rIJK.data[1];
-    posvelECEF.rXYZ.data[2] = posvelECI.rIJK.data[2]; //ignoring precession and nutation
+        posvelECEF.rXYZ.data[0] = cos(siderealAngle)*posvelECI.rIJK.data[0]-sin(siderealAngle)*posvelECI.rIJK.data[1];
+        posvelECEF.rXYZ.data[1] = sin(siderealAngle)*posvelECI.rIJK.data[0]+cos(siderealAngle)*posvelECI.rIJK.data[1];
+        posvelECEF.rXYZ.data[2] = posvelECI.rIJK.data[2]; //ignoring precession and nutation
     return posvelECEF;
 };
 
-eci ECEFtoECI(ecef posvelECEF, double siderealAngle){
+eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
     eci posvelECI;
-
-    posvelECI.rIJK.data[0] = cos(siderealAngle)*posvelECEF.rXYZ.data[0]+sin(siderealAngle)*posvelECEF.rXYZ.data[1];
-    posvelECI.rIJK.data[1] = -sin(siderealAngle)*posvelECEF.rXYZ.data[0]+cos(siderealAngle)*posvelECEF.rXYZ.data[1];
-    posvelECI.rIJK.data[2] = posvelECEF.rXYZ.data[2]; //ignoring precession and nutation
+        posvelECI.rIJK.data[0] = cos(siderealAngle)*posvelECEF.rXYZ.data[0]+sin(siderealAngle)*posvelECEF.rXYZ.data[1];
+        posvelECI.rIJK.data[1] = -sin(siderealAngle)*posvelECEF.rXYZ.data[0]+cos(siderealAngle)*posvelECEF.rXYZ.data[1];
+        posvelECI.rIJK.data[2] = posvelECEF.rXYZ.data[2]; //ignoring precession and nutation
     return posvelECI;
 };
 
 //the following two are not exactly true axis transforms, and are only used for maneuvers and pointing command handling
 
-eci VNBtoECI(eci posvelECI, vnb VNBdV){
+eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     eci ECIdV;
     //precalculating as this needs to be run quite fast
     eci rxv, vxrxv;
@@ -381,23 +387,21 @@ eci VNBtoECI(eci posvelECI, vnb VNBdV){
     absrxv   = rxv.rIJK.mag();
     absvxrxv = vxrxv.rIJK.mag();
 
+        ECIdV.vIJK.data[0] = (posvelECI.vIJK.data[0]/absv)*VNBdV.vVNB.data[0]
+                             +(rxv.rIJK.data[0]/absrxv)*VNBdV.vVNB.data[1]
+                             +(vxrxv.rIJK.data[0]/absvxrxv)*VNBdV.vVNB.data[2];
 
+        ECIdV.vIJK.data[1] = (posvelECI.vIJK.data[1]/absv)*VNBdV.vVNB.data[0]
+                             +(rxv.rIJK.data[1]/absrxv)*VNBdV.vVNB.data[1]
+                             +(vxrxv.rIJK.data[1]/absvxrxv)*VNBdV.vVNB.data[2];
 
-    ECIdV.vIJK.data[0] = (posvelECI.vIJK.data[0]/absv)*VNBdV.vVNB.data[0]
-                         +(rxv.rIJK.data[0]/absrxv)*VNBdV.vVNB.data[1]
-                         +(vxrxv.rIJK.data[0]/absvxrxv)*VNBdV.vVNB.data[2];
-
-    ECIdV.vIJK.data[1] = (posvelECI.vIJK.data[1]/absv)*VNBdV.vVNB.data[0]
-                         +(rxv.rIJK.data[1]/absrxv)*VNBdV.vVNB.data[1]
-                         +(vxrxv.rIJK.data[1]/absvxrxv)*VNBdV.vVNB.data[2];
-
-    ECIdV.vIJK.data[2] = (posvelECI.vIJK.data[2]/absv)*VNBdV.vVNB.data[0]
-                         +(rxv.rIJK.data[2]/absrxv)*VNBdV.vVNB.data[1]
-                         +(vxrxv.rIJK.data[2]/absvxrxv)*VNBdV.vVNB.data[2];
+        ECIdV.vIJK.data[2] = (posvelECI.vIJK.data[2]/absv)*VNBdV.vVNB.data[0]
+                             +(rxv.rIJK.data[2]/absrxv)*VNBdV.vVNB.data[1]
+                             +(vxrxv.rIJK.data[2]/absvxrxv)*VNBdV.vVNB.data[2];
     return ECIdV;
 };
 
-vnb ECItoVNB(eci posvelECI, eci ECIdV){
+vnb ECItoVNB(eci posvelECI, eci ECIdV) {
     vnb VNBdV;
     //precalculating as this needs to be run quite fast
     eci rxv, vxrxv;
@@ -409,11 +413,17 @@ vnb ECItoVNB(eci posvelECI, eci ECIdV){
     absrxv   = rxv.rIJK.mag();
     absvxrxv = vxrxv.rIJK.mag();
 
-    VNBdV.vVNB.data[0] = (posvelECI.vIJK.data[0]/absv)*ECIdV.vIJK.data[0]+(posvelECI.vIJK.data[1]/absv)*ECIdV.vIJK.data[1]+(posvelECI.vIJK.data[2]/absv)*ECIdV.vIJK.data[2];
+        VNBdV.vVNB.data[0] = (posvelECI.vIJK.data[0]/absv)*ECIdV.vIJK.data[0]+
+                             (posvelECI.vIJK.data[1]/absv)*ECIdV.vIJK.data[1]+
+                             (posvelECI.vIJK.data[2]/absv)*ECIdV.vIJK.data[2];
+        
+        VNBdV.vVNB.data[1] = (rxv.rIJK.data[0]/absrxv)*ECIdV.vIJK.data[0]+
+                             (rxv.rIJK.data[1]/absrxv)*ECIdV.vIJK.data[1]+
+                             (rxv.rIJK.data[2]/absrxv)*ECIdV.vIJK.data[2];
 
-    VNBdV.vVNB.data[1] = (rxv.rIJK.data[0]/absrxv)*ECIdV.vIJK.data[0]+(rxv.rIJK.data[1]/absrxv)*ECIdV.vIJK.data[1]+(rxv.rIJK.data[2]/absrxv)*ECIdV.vIJK.data[2];
-
-    VNBdV.vVNB.data[2] = (vxrxv.rIJK.data[0]/absvxrxv)*ECIdV.vIJK.data[0]+(vxrxv.rIJK.data[1]/absvxrxv)*ECIdV.vIJK.data[1]+(vxrxv.rIJK.data[2]/absvxrxv)*ECIdV.vIJK.data[2];
+        VNBdV.vVNB.data[2] = (vxrxv.rIJK.data[0]/absvxrxv)*ECIdV.vIJK.data[0]+
+                             (vxrxv.rIJK.data[1]/absvxrxv)*ECIdV.vIJK.data[1]+
+                             (vxrxv.rIJK.data[2]/absvxrxv)*ECIdV.vIJK.data[2];
     return VNBdV;
 };
 
