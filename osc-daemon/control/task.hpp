@@ -17,14 +17,24 @@ namespace osc {
         public:
         //initialiser
         
-        task(vnb deltaV, orbParam KOE) {//takes in KOE at impulse burn point
+        task(vnb deltaV, orbParam impulseKOE) {//takes in KOE at impulse burn point
+            pcs posvelPCSimpulse = KOEtoPCS(impulseKOE);
+            eci posvelECIimpulse = PCStoECI(posvelPCSimpulse);
             priority=10;
             double normDeltaV = deltaV.vVNB.mag();
-            pointingVec = VNBtoECI(unitVec(deltaV));
-            actionDuration = thrust/mass
-            //trueAnom(burnTime-actionDuration/2)
-            //ECI parallel to pointingVecECI -> VNB transform of parallelECI <-this is where to point at start of burn
+            eci intermediatePointingVec;
+            intermediatePointingVec.vIJK = VNBtoECI(posvelECIimpulse, deltaV.vVNB);
 
+            actionDuration = (startMass * exhaustVel / Thrust) 
+                             *(1 - exp(-normDeltaV / exhaustVel));
+
+            //trueAnom(burnTime-actionDuration/2)
+            impulseKOE.meanAnom = 2 * M_PI - (sqrt(planet.sgp / pow3(impulseKOE.sma)) * actionDuration / 2);
+            orbParam burnStartKOE = MeanToTrue(impulseKOE);
+            pcs posvelPCSburnStart = KOEtoPCS(burnStartKOE);
+            eci posvelECIburnStart = PCStoECI(posvelPCSburnStart);
+            //ECI parallel to pointingVecECI -> VNB transform of parallelECI <-this is where to point at start of burn
+            pointingVec = ECItoVNB(posvelECIburnStart, intermediatePointingVec);
             //rotation code (similar idea, find longest rotation time and perform task at that time before burnTime-actionDuration/2)
         };
         task(vec3 rotAng, double trueAnom, double duration) {
