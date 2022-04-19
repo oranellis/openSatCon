@@ -91,7 +91,7 @@
             "minThrustFraction" : 1,
             "thrustFraction" : 1,
             "specificImpulse" : 70,
-            "attitudeControl" : "0",
+            "attitudeControl" : 0,
             "thrustAxis" : [1,0,0],
             "thrustCenter" : [0, 0, 0],
             "pin" : 1
