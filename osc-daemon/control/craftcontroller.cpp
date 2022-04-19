@@ -2,7 +2,7 @@
 
 namespace osc {
 
-    /** \fn initModel
+    /** \fn initModel()
     Initialises the model, returning true when the model initialises 
     */
     bool craftcontroller::initModel() {
@@ -30,7 +30,7 @@ namespace osc {
         return transferISP;
     }
 
-    /** \fn recomputeComponentDeps
+    /** \fn recomputeComponentDeps()
     recomputes craft parameters from a change in component configuration
     */
     void craftcontroller::recomputeComponentDeps() {
@@ -73,7 +73,7 @@ namespace osc {
         }
     }
 
-    /** \fn forcesToCommands
+    /** \fn forcesToCommands()
     @param[in] setpoint input an ftModel of the setpoint
     returns a set of thruster commands
     */
@@ -118,7 +118,7 @@ namespace osc {
         if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
     }
 
-    /** \fn beginControl
+    /** \fn beginControl()
     control begins and scheduler is activated 
     */
     void craftcontroller::beginControl() {
