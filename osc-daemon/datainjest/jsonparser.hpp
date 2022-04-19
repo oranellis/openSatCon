@@ -157,4 +157,4 @@ craftconfig parseJson(std::string jsonPath) {
 };
 }
 
-#endif // JSONPARSER_H
+#endif // JSONPARSER_H.begin();

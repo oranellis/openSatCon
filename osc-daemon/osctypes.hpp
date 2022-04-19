@@ -603,13 +603,13 @@ namespace osc {
     struct powermodel {
         // 4 different states power states
         /// @param off power consumption during off state
-        double off;
+        double off = 0;
         /// @param idle power consumption during idle state
-        double idle;
+        double idle = 0;
         /// @param use power consumption during use state
-        double use;
+        double use = 0;
         /// @param max maxmium power consuption of component
-        double max;
+        double max = 0;
 
     };
 }
