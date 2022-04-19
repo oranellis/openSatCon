@@ -17,8 +17,11 @@ using namespace std;
 using json = nlohmann::json;
 
 namespace osc {
+    /** \mainpage openSatCon's project documentation */
+
 
     /** \struct craftconfig
+    \brief craft configuration
     craftconfiguration type containing components, fueltanks, thrusters and rotators
     */
 struct craftconfig {
