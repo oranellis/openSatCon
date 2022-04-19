@@ -39,7 +39,33 @@ We are a team of University of Glasgow students creating an open-source satellit
 - Satellite Thrusters (if applicable) 
 
 ## openSatCon Installation
-
+Install <br/>
+```sh
+$ sudo make install
+```
+Clone the repository <br/>
+```sh
+$ git init 
+$ git clone git@github.com:oranellis/openSatCon  
+```
+Build the repo<br/>
+```sh
+mkdir build
+cd build
+cmake ..
+make    
+./osc-daemon 
+```
+#### Documentation
+To open the documentation <br/>
+```sh
+sudo apt install doxygen
+```
+Then in the openSatCon folder <br/>
+```sh
+doxygen config.conf
+```
+Open the index.html file in the html folder
 
 ## How to use
 1. The control system is run with an input configuration of the satellite in the form of a json file. This json is given as a specific format and contains a template for all necessary parameters for the satellite that are required to make use of the control software.
