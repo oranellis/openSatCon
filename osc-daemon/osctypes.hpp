@@ -8,8 +8,16 @@
 namespace osc {
 
     // Inline helper functions
+<<<<<<< HEAD
     inline double pow2(double arg) { return arg*arg; }
     inline double pow3(double arg) { return arg*arg*arg; }
+=======
+    double pow2(double arg) { return arg * arg; }
+
+    double pow3(double arg) { return arg * arg * arg; }
+
+
+>>>>>>> 332c71e2306ef64efe96bad7f8186d9a7296337f
 
     // Common data types
     struct vec3 {
@@ -25,6 +33,8 @@ namespace osc {
 
         // Operator overloads
         vec3 operator+ (vec3 rhs) { return vec3(data[0] + rhs[0], data[1] + rhs[1], data[2] + rhs[2]); }
+
+        //vec3 operatorplus2 (vec3 term1, vec3 term2) { return vec3(data[0] + term1[0] + term2[0], data[1] + term1[1] + term2[1], data[2] + term1[2] + term2[2]); }
 
         vec3 operator- (vec3 rhs) { return vec3(data[0] - rhs[0], data[1] - rhs[1], data[2] - rhs[2]); }
 
@@ -55,6 +65,10 @@ namespace osc {
         double mag() {
             return sqrt(dot(data));
         }
+
+        vec3 unit() {
+            return vec3(data) / vec3(data).mag();
+        };
     };
 
 
@@ -139,12 +153,21 @@ namespace osc {
     struct quaternion {
         // Class variable initialisers
         double qw = 0;
-        double qx = 0;
+        double qx = 1;
         double qy = 0;
         double qz = 0;
 
         // Initialisers
         quaternion() {}
+
+        quaternion(double initW, double initX, double initY, double initZ): qw(initW), qx(initX), qy(initY), qz(initZ) {}
+
+        quaternion(vec3 axis, double angle) {
+            qw = cos(angle*0.5);
+            qx = sin(angle*0.5) * axis[0];
+            qy = sin(angle*0.5) * axis[1];
+            qz = sin(angle*0.5) * axis[2];
+        }
 
         quaternion(vec3 arg1, vec3 arg2) {
             vec3 cross = arg1.cross(arg2);
@@ -155,6 +178,28 @@ namespace osc {
         }
 
         // Member functions
+        quaternion conjugate() {
+            return quaternion(qw, -qx, -qy, -qz);
+        }
+
+        quaternion hprod(quaternion arg) {
+            /*
+            Performs the hamiltonion product of this and the argument quaternion 'arg'
+            */
+            vec3 thisU = vec3(qx, qy, qz); // The ijk vector of this quaternion
+            vec3 argU = vec3(arg.qx, arg.qy, arg.qz); // The ijk vector of the quaternion arg
+
+            vec3 qwDotArg = argU * qw;
+            vec3 argwDotThis = thisU * arg.qw;
+            vec3 thisArgCross = thisU.cross(argU);
+
+            return quaternion(
+                qw*arg.qw - thisU.dot(argU),
+                qx = qwDotArg[0] + argwDotThis[0] + thisArgCross[0],
+                qy = qwDotArg[1] + argwDotThis[1] + thisArgCross[1],
+                qz = qwDotArg[2] + argwDotThis[2] + thisArgCross[2]
+            ); // https://graphics.stanford.edu/courses/cs348a-17-winter/Papers/quaternion.pdf
+        }
         std::array<std::array<double, 3>, 3> toMat() {
             /*
             Information for conversion available at:
@@ -167,14 +212,34 @@ namespace osc {
             return result;
         }
 
-        quaternion quaternionDerivative(quaternion argquat, vec3 angrate){
-            quaternion dotquat;
-            argquat.qw=sqrt(1-pow2(argquat.qx)-pow2(argquat.qy)-pow2(argquat.qz));
+        quaternion quaternionDerivative(quaternion argQuat, vec3 argRate){
+            quaternion dotQuat;
+
+            argQuat.qw=sqrt(1 - pow2(argQuat.qx) - pow2(argQuat.qy) - pow2(argQuat.qz));
             
-            dotquat.qx=0.5*(argquat.qw*angrate[0]-argquat.qz*angrate[1]+argquat.qy*angrate[2]);
-            dotquat.qy=0.5*(argquat.qz*angrate[0]+argquat.qw*angrate[1]-argquat.qx*angrate[2]);
-            dotquat.qz=0.5*(-argquat.qy*angrate[0]+argquat.qx*angrate[1]-argquat.qw*angrate[2]);
-        };
+            dotQuat.qx = 0.5 * (argQuat.qw * argRate[0]
+                               -argQuat.qz * argRate[1]
+                               +argQuat.qy * argRate[2]);
+
+            dotQuat.qy = 0.5 * (argQuat.qz * argRate[0]
+                               +argQuat.qw * argRate[1]
+                               -argQuat.qx * argRate[2]);
+
+            dotQuat.qz = 0.5 * (-argQuat.qy * argRate[0]
+                                +argQuat.qx * argRate[1]
+                                -argQuat.qw * argRate[2]);
+
+            return dotQuat;
+        }
+
+        vec3 rotate(vec3 arg) {
+            /*
+            Rotates vec3 arg using by this quaternion
+            */
+           quaternion argq = quaternion(0, arg[0], arg[1], arg[2]);
+
+           quaternion returnq = hprod(argq.hprod(conjugate())); // for this quaternion p and argument quaternion q, this is the quaternion multiplication pqp*
+        }
     };
     
     
@@ -194,7 +259,7 @@ namespace osc {
             */
         }
 
-        forceTorqueModel(vec3 maxThrust, position thrusterPos) {
+        forceTorqueModel(vec3 maxThrust, vec3 thrusterPos) {
             /*
             Initialiser for thrusters with a thrust magnitude and direction of action
             */
@@ -202,7 +267,7 @@ namespace osc {
             ftVec[1] = maxThrust[1];
             ftVec[2] = maxThrust[2];
 
-            vec3 torque = ((vec3)thrusterPos).cross(maxThrust);
+            vec3 torque = thrusterPos.cross(maxThrust);
 
             ftVec[3] = torque[0]; // Resultant force on the object cg is off centre force
             ftVec[4] = torque[1]; // Resultant force on the object cg is off centre force
@@ -226,12 +291,12 @@ namespace osc {
         }
     };
 
-    struct rotStates{
+    struct rotStates {
         vec3 omega; //body rates
         vec3 q; //quaternion vector part
     };
 
-    struct posStates{
+    struct posStates {
         vec3 r; //eci position (m)
         vec3 v; //eci velocity (m/s)
         double m; //spacecraft mass (kg)
@@ -344,7 +409,7 @@ namespace osc {
         double max;
 
     };
-    
 }
+
 
 #endif // OSCTYPES_H

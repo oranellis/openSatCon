@@ -26,7 +26,7 @@ namespace osc {
         double maxThrust;
         position cg;
         momentofinertia moi;
-        orbparam orbit;
+        orbaram orbit;
         quaternion rotation;
 
         std::map<std::string, component> components;
