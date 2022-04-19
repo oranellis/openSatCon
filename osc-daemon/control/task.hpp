@@ -10,14 +10,22 @@
 #include "../orbitalmechanics/axistransforms.cpp"
 
 namespace osc {
+    /** \class task
+    defines the task class, which is how tasks are communicated
+    */
     class task {
 
         private:
-
+        /// @param priority integer indicating priority of task, with higher integers corresponding to higher priority
         int priority;
+        /// @param actionDuration time value of the action
         std::chrono::microseconds actionDuration;
+        /// @param pointingVec current pointing vector of the craft
         vec3 pointingVec; // this needs to be constantly changing throughout the burn so needs to be dynamic. Maybe make a seperate manoevure object that can be called for the current pointing vector that also includes the endpoint
 
+        /** \fn getPointingDirection
+        returns a vec3 indicating the current pointing direction of the craft
+        */
         vec3 getPointingDirection() {
             vec3 pointingVec;
             
@@ -32,6 +40,7 @@ namespace osc {
         public:
         //initialiser
         
+        /** takes in KOE at impulse burn point */
         task(craftcontroller *controller, vnb deltaV, orbParam impulseKOE, double startMass) {//takes in KOE at impulse burn point, has mean anomaly
             pcs posvelPCSimpulse = KOEtoPCS(impulseKOE); // impulse koe at burn centre, converted perifocal coordinate system
             eci posvelECIimpulse = PCStoECI(impulseKOE, posvelPCSimpulse); // to eci, current pos and vel at impulse burn before burn

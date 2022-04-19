@@ -17,24 +17,40 @@
 
 namespace osc {
 
+    /** \class craftcontroller
+    Craft Controller class that creates a controller object 
+    */
     class craftcontroller {
 
         private:
 
         // Class vars (stack)
+        /// @param mass Overall mass of craft
         double mass;
+        /// @param wetMass fuel mass available
         double wetMass;
+        /// @param maxThrust maximum thrust output
         double maxThrust;
+        /// @param transferISP required ISP for the orbital transfer
         double transferISP;
+        /// @param cg position of center of gravity of craft
         position cg;
+        /// @param moi moment of inertia of craft
         momentofinertia moi;
+        /// @param orbit Description of current orbit
         orbParam orbit;
+        /// @param rotation Description of current rotation
         quaternion rotation;
 
+        /// @param components Map of all component objects to associated IDs
         std::map<std::string, component> components;
+        /// @param fueltanks Map of all fueltank objects to associated IDs
         std::map<std::string, fueltank> fueltanks;
+        /// @param thrusters Map of all thruster objects to associated IDs
         std::map<std::string, thruster> thrusters;
+        /// @param rotators Map of all rotator objects to associated IDs
         std::map<std::string, rotator> rotators;
+        /// @param attitudeActuators Map of all ftModels to associated IDs
         std::map<std::string, ftModel> attitudeActuators;
 
         // Member functions
