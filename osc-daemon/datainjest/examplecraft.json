@@ -75,7 +75,7 @@
             "key" : "thruster",
             "componentType" : 0,
             "mass" : 0.04,
-            "moi" : 0.0000333,
+            "moi" : [0.0000333, 0.0000333, 0.000000667],
             "position" : [0, 0.025,0],
             "powermodel" : [0, 0.055, 15, 15]
         }
