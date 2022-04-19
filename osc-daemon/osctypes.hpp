@@ -437,8 +437,12 @@ namespace osc {
     };
 
     struct powermodel {
-        // Using vec indices to indicate state, 0 for low power/off, 1 for idle, 2 for in use/max load, >2 custom. Usage in W
-        std::vector<double> pstates; 
+        // 4 different states power states
+        double off;
+        double idle;
+        double use;
+        double max;
+
     };
 }
 

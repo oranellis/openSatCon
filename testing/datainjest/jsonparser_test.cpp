@@ -1,8 +1,32 @@
 #include "../../osc-daemon/datainjest/jsonparser.hpp"
-#include "iostream"
+#include <iostream>
+#include <fstream>
+
+using json = nlohmann::json;
 
 int main() {
-    osc::parseJson("../../osc-daemon/datainjest/examplecraft.json");
+
+    std::string path = "../../osc-daemon/datainjest/examplecraft.json";
+  
+    osc::craftconfig konfig; 
+
+    konfig = osc::parseJson(path);
+
+    for ( auto p : konfig.components)
+    {
+        std::cout << p.first << "\n";
+    }
+        for ( auto p : konfig.thrusters)
+    {
+        std::cout << p.first << "\n";
+    }
+        for ( auto p : konfig.fueltanks)
+    {
+        std::cout << p.first << "\n";
+    }
+        for ( auto p : konfig.rotators)
+    {
+        std::cout << p.first << "\n";
+    }
     return 0;
-    //std::cout << returnConfig.component["plate_3"]
 }
