@@ -3,7 +3,7 @@
 #include <math.h>
 #include <chrono>
 
-#include "osctypes.hpp"
+#include "../osctypes.hpp"
 #include "planet.cpp"
 
 namespace osc{

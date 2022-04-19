@@ -2,35 +2,44 @@
 #include <vector>
 #include <math.h>
 
-#include "osctypes.hpp"
+#include "../osctypes.hpp"
 #include "planet.cpp"
 #include "axistransforms.cpp"
+#include "../control/task.hpp"
 
 namespace osc {
 
 
-std::array<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
+std::vector<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
+    std::vector<task> taskList;
+    
     if (curKOE.ecc == 0 && aftKOE.ecc == 0) {
         bool HoBE = circOrbitChoice(curKOE, aftKOE);
         if (HoBE == true) {
-            task taskListHohmann = hohmannTransfer(curKOE, aftKOE);//first burn at periapsis for efficiency
+            std::vector<task> taskListHohmann = hohmannTransfer(curKOE, aftKOE);//first burn at periapsis for efficiency
+            for (int i=0; i<taskListHohmann.size(); i++) { taskList.push_back(taskListHohmann.at(i)); } // Adds all elements in list to taskList
         }
         else {
-            taskListBielliptic = biellipticTransfer(curKOE, aftKOE);
+            std::vector<task> taskListBielliptic = biellipticTransfer(curKOE, aftKOE);
+            for (int i=0; i<taskListBielliptic.size(); i++) { taskList.push_back(taskListBielliptic.at(i)); } // Adds all elements in list to taskList
         }//first burn at periapsis for efficiency
     }
     else {
-        taskListHohmann = hohmannTransfer(curKOE, aftKOE);
+        std::vector<task> taskListHohmann = hohmannTransfer(curKOE, aftKOE);
+        for (int i=0; i<taskListHohmann.size(); i++) { taskList.push_back(taskListHohmann.at(i)); } // Adds all elements in list to taskList
     }
 
     if (curKOE.inc != aftKOE.inc) {
-        taskPlaneChange = planeChangeTransfer(curKOE, aftKOE);//perform this at the largest possible radius (apoapsis)
+        std::vector<task> taskPlaneChange = planeChangeTransfer(curKOE, aftKOE);//perform this at the largest possible radius (apoapsis)
+        for (int i=0; i<taskPlaneChange.size(); i++) { taskList.push_back(taskPlaneChange.at(i)); } // Adds all elements in list to taskList
     };
     //make big task list and include plane change modification
     return taskList;
 };
 
-std::array<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
+std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
+
+    std::vector<task> taskListHohmann;
     vnb burn1dV, burn2dV;
 
     double rp1, ra1, rp2, ra2;
@@ -66,7 +75,7 @@ std::array<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
         burn1dV.vVNB.data[0] = dVa;
         burn2dV.vVNB.data[0] = dVb;
 
-        task burnOne = task(burn1dV, 0);
+        task burnOne = task(burn1dV, 0); // taskListHohmann.push_back(task(burn1dV, 0))
         task burnTwo = task(burn2dV, M_PI);
     }    //do first burn (dVa)  at the current periapsis, circularise (dVb) at intermediate apoapsis
     else {
@@ -83,6 +92,8 @@ std::array<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
 };
 
 std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
+
+    std::vector<task> taskListBielliptic;
     vnb burn1dV, burn2dV, burn3dV;
     double r1, rp2, ra2, rp3, ra3, r4;
 
@@ -109,7 +120,7 @@ std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
     burn2dV.vVNB.data[0] = vb3 - vb2; //prograde    at apoapsis
     burn3dV.vVNB.data[0] = vc4 - vc3; //retrograde  at periapsis
 
-    task burnOne   = task(burn1dV, 0);
+    task burnOne   = task(burn1dV, 0); // taskListBielliptic.push_back(task(burn1dV, 0))
     task burnTwo   = task(burn2dV, M_PI);
     task burnThree = task(burn3dV, 0);
     //taskList
@@ -137,13 +148,15 @@ bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
     if (rc / ra < 11.94) {
         return true;
     }//hohmann transfer is better in this case
+
     else if(rc / ra > 15.58) {
         return false;
     }//bielliptic is better in this case
+    
     else {
         return true;
     };  //bielliptic can be more dV efficient, but takes far longer
-    //this will require a user choice
+    //this will require a user choice, then take it as a function argument
     //double a=rc/ra;
     //double b=rb/ra;
     //double dVh=(1/sqrt(a))-((M_SQRT1_2*(1-a))/sqrt(a*(1+a)))-1;
@@ -151,6 +164,8 @@ bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
 };
 
 std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
+
+    std::vector<task> taskListPhasing;
     orbParam aftKOE;
     vnb burndV;
     double deltaV;
@@ -171,20 +186,22 @@ std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     burndV.vVNB.data[0] = va2 - va1;//first burn at periapsis
     //burns are prograde/retrograde if positive/negative
     task burnOne   = task(burndV, 0);
-    task burnTwo   = task(-burn2dV, 0);
+    task burnTwo   = task(-burndV, 2*M_PI);
 
     return taskListPhasing;
 };
 
 std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
+
+    std::vector<task> taskPlaneChange;
     vnb deltaV;
     double deltaInc = aftKOE.inc - curKOE.inc;
     double r        = (curKOE.sma * (1 - pow2(curKOE.ecc))) / (1 + curKOE.ecc * cos(curKOE.truAnom));
     double curV     = sqrt(planet.sgp * ((2 / r) - (1 / curKOE.sma)));
 
-        deltaV.vVNB.data[0] = curV * sin(deltaInc);
-        deltaV.vVNB.data[1] = curV * (1 - cos(deltaInc));
-        deltaV.vVNB.data[2] = 0;
+    deltaV.vVNB.data[0] = curV * sin(deltaInc);
+    deltaV.vVNB.data[1] = curV * (1 - cos(deltaInc));
+    deltaV.vVNB.data[2] = 0;
         
     task taskPlaneChange = task(deltaV, M_PI); //perform at min velocity for delta V efficiency
 
@@ -192,12 +209,15 @@ std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
 };
 
 task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom) {
+
+    std::vector<task> taskPlaneChange;
     vnb deltaV;
+
     double burnAngle = burnTrueAnom;
 
-        deltaV.vVNB.data[0] = dVv;
-        deltaV.vVNB.data[1] = dVn;
-        deltaV.vVNB.data[2] = dVb;
+    deltaV.vVNB.data[0] = dVv;
+    deltaV.vVNB.data[1] = dVn;
+    deltaV.vVNB.data[2] = dVb;
 
     return task(deltaV, burnAngle); //return task with VNB values and req truanom
 // };

@@ -148,12 +148,21 @@ namespace osc {
     struct quaternion {
         // Class variable initialisers
         double qw = 0;
-        double qx = 0;
+        double qx = 1;
         double qy = 0;
         double qz = 0;
 
         // Initialisers
         quaternion() {}
+
+        quaternion(double initW, double initX, double initY, double initZ): qw(initW), qx(initX), qy(initY), qz(initZ) {}
+
+        quaternion(vec3 axis, double angle) {
+            qw = cos(angle*0.5);
+            qx = sin(angle*0.5) * axis[0];
+            qy = sin(angle*0.5) * axis[1];
+            qz = sin(angle*0.5) * axis[2];
+        }
 
         quaternion(vec3 arg1, vec3 arg2) {
             vec3 cross = arg1.cross(arg2);
@@ -164,6 +173,28 @@ namespace osc {
         }
 
         // Member functions
+        quaternion conjugate() {
+            return quaternion(qw, -qx, -qy, -qz);
+        }
+
+        quaternion hprod(quaternion arg) {
+            /*
+            Performs the hamiltonion product of this and the argument quaternion 'arg'
+            */
+            vec3 thisU = vec3(qx, qy, qz); // The ijk vector of this quaternion
+            vec3 argU = vec3(arg.qx, arg.qy, arg.qz); // The ijk vector of the quaternion arg
+
+            vec3 qwDotArg = argU * qw;
+            vec3 argwDotThis = thisU * arg.qw;
+            vec3 thisArgCross = thisU.cross(argU);
+
+            return quaternion(
+                qw*arg.qw - thisU.dot(argU),
+                qx = qwDotArg[0] + argwDotThis[0] + thisArgCross[0],
+                qy = qwDotArg[1] + argwDotThis[1] + thisArgCross[1],
+                qz = qwDotArg[2] + argwDotThis[2] + thisArgCross[2]
+            ); // https://graphics.stanford.edu/courses/cs348a-17-winter/Papers/quaternion.pdf
+        }
         std::array<std::array<double, 3>, 3> toMat() {
             /*
             Information for conversion available at:
@@ -194,7 +225,16 @@ namespace osc {
                                 -argQuat.qw * argRate[2]);
 
             return dotQuat;
-        };
+        }
+
+        vec3 rotate(vec3 arg) {
+            /*
+            Rotates vec3 arg using by this quaternion
+            */
+           quaternion argq = quaternion(0, arg[0], arg[1], arg[2]);
+
+           quaternion returnq = hprod(argq.hprod(conjugate())); // for this quaternion p and argument quaternion q, this is the quaternion multiplication pqp*
+        }
     };
     
     
