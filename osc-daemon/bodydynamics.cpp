@@ -7,33 +7,33 @@
 
 namespace osc{
 
-    rotstates rotationdynamicmodel(rotstates curstates, rotstates control, std::array<std::array<double, 3>, 3> inverseinertia) { //someone make matrices inversible pls
-    rotstates dotstates;
-        dotstates.o1=inverseinertia[0][0]*control.o1+inverseinertia[0][1]*control.o2+inverseinertia[0][2]*control.o3;
-        dotstates.o2=inverseinertia[1][0]*control.o1+inverseinertia[1][1]*control.o2+inverseinertia[1][2]*control.o3;
-        dotstates.o3=inverseinertia[2][0]*control.o1+inverseinertia[2][1]*control.o2+inverseinertia[2][2]*control.o3;
-        dotstates.q1=0.5*curstates.q1;
-        dotstates.q2=0.5*curstates.q2;
-        dotstates.q3=0.5*curstates.q3;
+    rotStates rotationDynamicModel(rotStates curStates, rotStates control, std::array<std::array<double, 3>, 3> inverseInertia) { //someone make matrices inversible pls
+    rotStates dotStates;
+        dotStates.omega.data[0] = inverseInertia[0][0]*control.omega.data[0]+inverseInertia[0][1]*control.omega.data[1]+inverseInertia[0][2]*control.omega.data[2];
+        dotStates.omega.data[1] = inverseInertia[1][0]*control.omega.data[0]+inverseInertia[1][1]*control.omega.data[1]+inverseInertia[1][2]*control.omega.data[2];
+        dotStates.omega.data[2] = inverseInertia[2][0]*control.omega.data[0]+inverseInertia[2][1]*control.omega.data[1]+inverseInertia[2][2]*control.omega.data[2];
+        dotStates.q             = curStates.q.operator/(2);
     };
 
-    posstates positiondynamicmodel(posstates curstates, double thrust, double Ve) { //work in progress
-    double r = sqrt(pow2(curstates.i)+pow2(curstates.j)+pow2(curstates.k));
-    double v = sqrt(pow2(curstates.vi)+pow2(curstates.vj)+pow2(curstates.vk));
-    double C =  (-3*planet.J2*planet.sgp*pow2(planet.sMa))/(2*pow(r,5))
-                    *(1-(5*pow2(curstates.k)/pow2(r))); //constant value
-        eci accgrav;
-            accgrav.i=C*curstates.i;
-            accgrav.j=C*curstates.j;
-            accgrav.k=C*curstates.k;
-        posstates dotstates;
-            dotstates.i=(curstates.vi)*curstates.i;
-            dotstates.j=(curstates.vj)*curstates.j;
-            dotstates.k=(curstates.vk)*curstates.k;
-            dotstates.vi=(-planet.sgp*curstates.i/pow3(r)+accgrav.i+((thrust*curstates.vi)/(curstates.m*v)))*curstates.vi;
-            dotstates.vj=(-planet.sgp*curstates.j/pow3(r)+accgrav.j+((thrust*curstates.vj)/(curstates.m*v)))*curstates.vj;
-            dotstates.vk=(-planet.sgp*curstates.k/pow3(r)+accgrav.k+((thrust*curstates.vk)/(curstates.m*v)))*curstates.vk;
-            dotstates.m=-thrust/Ve*curstates.m;
+    posStates positiondynamicmodel(posStates curStates, double thrust, double Ve) { //work in progress
+    double r = curStates.r.mag();
+    double v = curStates.v.mag();
+    double C =  (3*planet.J2*planet.sgp*pow2(planet.sMa))/(2*pow(r,5)); //constant value
+    double accRelConst = (-planet.sgp/pow(r,1.5));
+
+        vec3 accRel = curStates.r.operator*(accRelConst);
+
+         vec3 accGrav;
+            accGrav.data[0] = C * (5*pow2(curStates.r.data[2]/r)-1) * curStates.r.data[0];
+            accGrav.data[1] = C * (5*pow2(curStates.r.data[2]/r)-1) * curStates.r.data[1];
+            accGrav.data[2] = C * (5*pow2(curStates.r.data[2]/r)-3) * curStates.r.data[2];
+
+        vec3 accThrust = curStates.v.operator*(thrust/curStates.m/v);
+
+        posStates dotStates;
+            dotStates.r = curStates.v;
+            dotStates.v = accRel.operatorplus2(accGrav, accThrust);
+            dotStates.m = -thrust/Ve*curStates.m;
     };
 
 }
