@@ -7,6 +7,13 @@
 
 namespace osc {
 
+    // Inline helper functions
+    double pow2(double arg) { return arg * arg; }
+
+    double pow3(double arg) { return arg * arg * arg; }
+
+
+
     // Common data types
     struct vec3 {
         // Class variable initialisers
@@ -353,10 +360,7 @@ namespace osc {
         // Using vec indices to indicate state, 0 for low power/off, 1 for idle, 2 for in use/max load, >2 custom. Usage in W
         std::vector<double> pstates; 
     };
-    
-    // Inline helper functions
-    inline double pow2(double arg) { return arg * arg; }
-    inline double pow3(double arg) { return arg * arg * arg; }
 }
+
 
 #endif // OSCTYPES_H
