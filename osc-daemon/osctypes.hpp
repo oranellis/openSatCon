@@ -165,13 +165,14 @@ namespace osc {
             return result;
         }
 
-        quaternion quaternionDerivative(quaternion argquat, vec3 angrate){
-            quaternion dotquat;
-            argquat.qw=sqrt(1-pow2(argquat.qx)-pow2(argquat.qy)-pow2(argquat.qz));
+        quaternion quaternionDerivative(quaternion argQuat, vec3 argRate){
+            quaternion dotQuat;
+            argQuat.qw=sqrt(1-osc::pow2(argQuat.qx)-osc::pow2(argQuat.qy)-osc::pow2(argQuat.qz));
             
-            dotquat.qx=0.5*(argquat.qw*angrate[0]-argquat.qz*angrate[1]+argquat.qy*angrate[2]);
-            dotquat.qy=0.5*(argquat.qz*angrate[0]+argquat.qw*angrate[1]-argquat.qx*angrate[2]);
-            dotquat.qz=0.5*(-argquat.qy*angrate[0]+argquat.qx*angrate[1]-argquat.qw*angrate[2]);
+            dotQuat.qx=0.5*(argQuat.qw*argRate[0]-argQuat.qz*argRate[1]+argQuat.qy*argRate[2]);
+            dotQuat.qy=0.5*(argQuat.qz*argRate[0]+argQuat.qw*argRate[1]-argQuat.qx*argRate[2]);
+            dotQuat.qz=0.5*(-argQuat.qy*argRate[0]+argQuat.qx*argRate[1]-argQuat.qw*argRate[2]);
+            return dotQuat;
         };
     };
     
