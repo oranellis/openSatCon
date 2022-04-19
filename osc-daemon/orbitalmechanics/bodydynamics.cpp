@@ -2,7 +2,7 @@
 #include <vector>
 #include <math.h>
 
-#include "osctypes.hpp"
+#include "../osctypes.hpp"
 #include "planet.cpp"
 
 namespace osc{
