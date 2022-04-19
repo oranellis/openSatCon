@@ -4,12 +4,18 @@
 
 //default values for Earth
 struct celestial{
-    double sgp; ///< standard gravitational parameter mu
-    double sMa; ///< equatorial radius of planet
-    double flat; ///< ellipticity of planet's surface
-    double sma; ///< polar radius of planet
-    double ecc; ///< ecccentricity of planet's surface
-    double J2; ///< second zonal gravitational harmonic
+    /// @param sgp standard gravitational parameter mu
+    double sgp;
+    /// @param sMa equatorial radius of planet
+    double sMa; 
+    /// @param flat ellipticity of planet's surface
+    double flat; 
+    /// @param sma polar radius of planet
+    double sma; 
+    /// @param ecc ecccentricity of planet's surface
+    double ecc; 
+    /// @param J2 second zonal gravitational harmonic
+    double J2; 
     celestial(double initsgp, double initsMa, double initfla, double initsma, double initecc, double initJ2):
         sgp(initsgp), sMa(initsMa), flat(initfla), sma(initsma), ecc(initecc), J2(initJ2){};
 };

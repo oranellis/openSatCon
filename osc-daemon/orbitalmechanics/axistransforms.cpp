@@ -8,9 +8,12 @@
 
 namespace osc{
 
-double greenwichSiderealAngle() { //not working
-    //calculates the angle required for the transformation between ECI and ECEF
-    //accounts for the rotation of the Earth
+    /** \fn greenwichSiderealAngle()
+    calculates the angle required for the transformation between ECI and ECEF
+    accounts for the rotation of the Earth
+    */
+double greenwichSiderealAngle() { //working
+
     double gsraret;
     time_t timer;
     //for Oran
@@ -31,10 +34,12 @@ double greenwichSiderealAngle() { //not working
     //this could be made down to sub-second accuracy if possible
 };
 
-
+    /** \fn LLAtoECEF(posLLA)
+    @param[in] posLLA position in LLA coordinates
+    converts the angular position of the satellite to the ECEF co-ordinate system
+    */
 ecef LLAtoECEF(lla posLLA) {//working
     ecef posECEF;
-    // converts the angular position of the satellite to the ECEF co-ordinate system
     // this gives the correct altitude of a non-spherical earth, note that altitude here is above the ground
     double normalDistance = planet.sMa / sqrt(1 - pow2(planet.ecc * sin(posLLA.lat)));
 
@@ -45,8 +50,12 @@ ecef LLAtoECEF(lla posLLA) {//working
     return posECEF;
 };
 
+    /** \fn ECEFtoLLA(posECEF)
+    @param[in] posECEF input ECEF coordinate position
+    returns ground position of sub satellite point and satellite altitude from ECEF co-ords
+    */
+
 lla ECEFtoLLA(ecef posECEF) {//working
-    //returns ground position of sub satellite point and satellite altitude from ECEF co-ords
     lla llaret;
     double secondeccentricity = planet.ecc / sqrt(1 - pow2(planet.ecc));
     double p = sqrt(pow2(posECEF.rXYZ.data[0]) + pow2(posECEF.rXYZ.data[1]));
@@ -63,8 +72,12 @@ lla ECEFtoLLA(ecef posECEF) {//working
     return llaret;
 };
 
+    /** \fn ECEFtoNED(posECEF, refLLA)
+    @param[in] posECEF ECEF coordinate position
+    @param[in] refLLA reference LLA position
+    returns vector from satellite to ground station in North East Down reference frame
+    */
 ned ECEFtoNED(ecef posECEF, lla refLLA) { //working
-    // returns vector from satellite to ground station in North East Down reference frame
     // this axis frame intuitively forms a local tangent plane, and has good axes for 
     // visualisation, unlike ECI or ECEF
     ned posNED;
@@ -87,6 +100,11 @@ ned ECEFtoNED(ecef posECEF, lla refLLA) { //working
     return posNED;
 };
 
+    /** \fn NEDtoECEF(posNED, refLLA)
+    @param[in] posNED NED coordinate position
+    @param[in] refLLA reference LLA
+    returns an ECEF from an input NED
+    */
 ecef NEDtoECEF(ned posNED, lla refLLA) {//working
     // inverse of ECEFtoNED, could be used for satellite measuring against a ground object
     ecef relECEF;
@@ -109,8 +127,12 @@ ecef NEDtoECEF(ned posNED, lla refLLA) {//working
     return posECEF;   
 };
 
+    /** EARtoECEF(posEAR, refLLA)
+    @param[in] posEAR position EAR coordinates
+    @param[in] refLLA reference LLA
+    returns ECEF position from ground station Elevation Azimuth Range tracking
+    */
 ecef EARtoECEF(ear posEAR, lla refLLA) {
-    // returns ECEF position from ground station Elevation Azimuth Range tracking
     // this method goes through SEZ co-ordinates, but seems to be the best method
     ecef posECEF;
     ecef relECEF;

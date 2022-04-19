@@ -49,7 +49,7 @@ namespace osc {
         operator std::array<double, 3> () { return data; };
 
         // Member functions
-        /** \fn dot 
+        /** \fn dot(arg)
         @param[in] arg
         @param[out] vec3 
         does the dot product with the vec3 and another vec3
@@ -61,7 +61,7 @@ namespace osc {
             return (data[0] * arg[0] + data[1] * arg[1] + data[2] * arg[2]);
         }
 
-        /** \fn cross 
+        /** \fn cross(arg)
         @param[in] arg
         @param[out] vec3 
         does the cross product with the vec3 and another vec3
@@ -72,14 +72,14 @@ namespace osc {
             */
             return vec3(data[1]*arg[2] - data[2]*arg[1], data[2]*arg[0] - data[0]*arg[2], data[0]*arg[1] - data[1]*arg[0]);
         }
-        /** \fn mag 
+        /** \fn mag()
         @param[out] double 
         calculates the magnitude of the vec3
         */
         double mag() {
             return sqrt(dot(data));
         }
-        /** \fn unit 
+        /** \fn unit()
         @param[out] vec3 
         calculates the unit vector of the vec3
         */
@@ -159,7 +159,7 @@ namespace osc {
         double Izz;
 
         // Member functions
-        /** \fn addMass
+        /** \fn addMass(I, m, r)
         Adds moment of inertia of a component with a mass m at position r from the cg
         */
         void addMass(momentofinertia I, double m, position r) {
@@ -204,14 +204,14 @@ namespace osc {
         }
 
         // Member functions
-        /** \fn conjugate
+        /** \fn conjugate()
         Finds the conjugate of the quaternion
         */
         quaternion conjugate() {
             return quaternion(qw, -qx, -qy, -qz);
         }
 
-        /** \fn hprod
+        /** \fn hprod(arg)
         Performs the hamiltonion product of this and the argument quaternion 'arg'
         */
         quaternion hprod(quaternion arg) {
@@ -245,7 +245,7 @@ namespace osc {
             result[2] = {{2*qx*qz-2*qy*qw, 2*qy*qz+2*qx*qw, 1-2*qx*qx-2*qy*qy}};
             return result;
         }
-        /** \fn quaternionDerivative
+        /** \fn quaternionDerivative(argQuat, argRate)
         Takes the derivative of an argument quaternion and corresponding argument rate
         */
         quaternion quaternionDerivative(quaternion argQuat, vec3 argRate){
@@ -268,7 +268,7 @@ namespace osc {
             return dotQuat;
         }
 
-        /** \fn rotate
+        /** \fn rotate(arg)
         Rotates an argument vector3 by this quaternion
         */
         vec3 rotate(vec3 arg) {
@@ -422,7 +422,7 @@ namespace osc {
         double truAnom; 
 
         //member functions
-        /** \fn meanToTrue
+        /** \fn meanToTrue(meanAnomaly)
         @param[in] meanAnomaly input mean anomaly
         Converts mean anomaly to true anomaly
         */
@@ -447,7 +447,7 @@ namespace osc {
             };
         };
 
-        /** \fn trueToMean
+        /** \fn trueToMean()
         converts the true anomaly to mean anomaly
         */
         double trueToMean() {

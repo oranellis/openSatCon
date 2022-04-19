@@ -7,7 +7,7 @@ namespace osc::attitudecontrol {
     /// @param KP KP of control loop
     const double KP = 0.01;
 
-    /** \fn controlLoopThread
+    /** \fn controlLoopThread(*interupt, *curTask, *controller)
     @param[in] interupt boolean value whether to interrupt current task
     @param[in] curTask current task
     @param[in] controller reference to craft controller

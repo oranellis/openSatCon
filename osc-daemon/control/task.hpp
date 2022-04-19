@@ -67,7 +67,7 @@ namespace osc {
         task(vec3 rotAng, double trueAnom, double duration) {
 
         }
-        /** \fn getPointingDirection
+        /** \fn getPointingDirection()
         Finds the pointing vector at an arbitrary time offset from a known pointing vector*/
         vec3 getPointingDirection() { //orbParam KOE, eci posvelECI, eci pointVector, double timeOffset
             //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
