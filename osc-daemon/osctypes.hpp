@@ -163,7 +163,7 @@ namespace osc {
             return result;
         }
 
-        quaternion quaternionderivative(quaternion argquat, vec3 angrate){
+        quaternion quaternionDerivative(quaternion argquat, vec3 angrate){
             quaternion dotquat;
             argquat.qw=sqrt(1-pow2(argquat.qx)-pow2(argquat.qy)-pow2(argquat.qz));
             
@@ -222,26 +222,26 @@ namespace osc {
         }
     };
 
-    struct rotstates{
+    struct rotStates{
         vec3 omega; //body rates
         vec3 q; //quaternion vector part
     };
 
-    struct posstates{
+    struct posStates{
         vec3 r; //eci position (m)
         vec3 v; //eci velocity (m/s)
         double m; //spacecraft mass (kg)
     };
 
-    struct orbparam {
+    struct orbParam {
         long int sma; // semi major axis (m)
         double ecc; // eccentricity
         double inc; // inclination (rad)
         double aop; // argument of periapsis (rad)
         double asc; // longitude of the ascending node (rad)
-        double meananom; // mean anomaly (rad)
-        double eccanom; // eccentric anomaly (rad)
-        double truanom; // true anomaly (rad)
+        double meanAnom; // mean anomaly (rad)
+        double eccAnom; // eccentric anomaly (rad)
+        double truAnom; // true anomaly (rad)
     };
 
     struct pcs {
@@ -286,8 +286,6 @@ namespace osc {
         vec3 vNED;
     };
 
-
-
     struct enu {
         // Orbital position of satellite in East North Up Co-Ordinate System - Earth centred
         // e - points East
@@ -296,8 +294,6 @@ namespace osc {
         vec3 rENU;
         vec3 vENU;
     };
-
-
 
     struct thcs {
         // Orbital position of satellite in Topocentric Horizon Co-Ordinate System - centred on ground point
