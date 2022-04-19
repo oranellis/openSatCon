@@ -6,26 +6,33 @@
 #include "planet.cpp"
 #include "axistransforms.cpp"
 
-namespace osc::orbmnvrs{
+namespace osc {
 
 
-void highlevelcommand(orbParam curKOE, orbParam aftKOE){
-if (curKOE.ecc==0&&aftKOE.ecc==0){
-    bool HoBE = circOrbitChoice(curKOE, aftKOE);
-    if (HoBE == true)
-        {double deltaV = hohmannTransfer(curKOE, aftKOE);//first burn at periapsis for efficiency
-}   else
-        {double deltaV = biellipticTransfer(curKOE, aftKOE);}//first burn at periapsis for efficiency
-}
-else{double deltaV = hohmannTransfer(curKOE, aftKOE);}
+std::array<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
+    if (curKOE.ecc==0&&aftKOE.ecc==0) {
+        bool HoBE = circOrbitChoice(curKOE, aftKOE);
+        if (HoBE == true) {
+            task taskListHohmann = hohmannTransfer(curKOE, aftKOE);//first burn at periapsis for efficiency
+        }
+        else {
+            taskListBielliptic = biellipticTransfer(curKOE, aftKOE);
+        }//first burn at periapsis for efficiency
+    }
+    else {
+        taskListHohmann = hohmannTransfer(curKOE, aftKOE);
+    }
 
-if (curKOE.inc!=aftKOE.inc){
-    vnb deltaV = planeChangeTransfer(curKOE, aftKOE);//perform this at the largest possible radius (apoapsis)
+    if (curKOE.inc!=aftKOE.inc) {
+        taskPlaneChange = planeChangeTransfer(curKOE, aftKOE);//perform this at the largest possible radius (apoapsis)
+    };
+    //make big task list and include plane change modification
+    return taskList;
 };
-};
 
-double hohmannTransfer(orbParam curKOE, orbParam aftKOE){
-    double MNVRdV;
+std::array<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
+    vnb burn1dV, burn2dV;
+
     double rp1, ra1, rp2, ra2;
     rp1 = curKOE.sma*(1-curKOE.ecc);
     ra1 = curKOE.sma*(1+curKOE.ecc);
@@ -48,20 +55,35 @@ double hohmannTransfer(orbParam curKOE, orbParam aftKOE){
     vb_3_   =h3_/rp2;
 
     double dVa, dVb, dVa_, dVb_;
-    dVa = abs(va3-va1); //maybe if statement these for prograde/retrograde
-    dVb = abs(vb2-vb3);
-    dVa_= abs(va_3_-va_1);
-    dVb_= abs(vb_2-vb_3_);
+    dVa = va3-va1; //maybe if statement these for prograde/retrograde
+    dVb = vb2-vb3;
+    dVa_= va_3_-va_1;
+    dVb_= vb_2-vb_3_;
 
-    double  dV = dVa + dVb;
-    double  dV_= dVa_+ dVb_;
-    if (dV<=dV_){MNVRdV=dV;}    //do first burn (dVa)  at the current periapsis, circularise (dVb) at intermediate apoapsis
-    else {MNVRdV = dV_;}          //do first burn (dVa_) at the current apoapsis, circularise (dVb_) at intermediate apoapsis
-    return MNVRdV;
+    double  dV = abs(dVa)  + abs(dVb);
+    double  dV_= abs(dVa_) + abs(dVb_);
+    if (dV<=dV_) {
+        burn1dV.vVNB.data[0]=dVa;
+        burn2dV.vVNB.data[0]=dVb;
+
+        task burnOne = task(burn1dV, 0);
+        task burnTwo = task(burn2dV, M_PI);
+    }    //do first burn (dVa)  at the current periapsis, circularise (dVb) at intermediate apoapsis
+    else {
+        burn1dV.vVNB.data[0]=dVa_;
+        burn2dV.vVNB.data[0]=dVb_;
+
+        task burnOne = task(burn1dV, M_PI);
+        task burnTwo = task(burn2dV, 0);
+
+    }          //do first burn (dVa_) at the current apoapsis, circularise (dVb_) at intermediate apoapsis
+
+    //make taskList
+    return taskListHohmann;
 };
 
-double biellipticTransfer(orbParam curKOE, orbParam aftKOE){
-    double MNVRdV;
+std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
+    vnb burn1dV, burn2dV, burn3dV;
     double r1, rp2, ra2, rp3, ra3, r4;
 
     r1  = curKOE.sma;//feel free to optimise this
@@ -83,13 +105,15 @@ double biellipticTransfer(orbParam curKOE, orbParam aftKOE){
     vc3 = h3/rp3;
 
 
-    double dVa, dVb, dVc;
-    dVa = abs(va2-va1);//prograde    at periapsis (true longitude=0)
-    dVb = abs(vb3-vb2);//prograde    at apoapsis
-    dVc = abs(vc4-vc3);//retrograde  at periapsis
+    burn1dV.vVNB.data[0] = va2-va1; //prograde    at periapsis (true longitude=0)
+    burn2dV.vVNB.data[0] = vb3-vb2; //prograde    at apoapsis
+    burn3dV.vVNB.data[0] = vc4-vc3; //retrograde  at periapsis
 
-    MNVRdV = dVa + dVb + dVc;
-    return MNVRdV;
+    task burnOne   = task(burn1dV, 0);
+    task burnTwo   = task(burn2dV, M_PI);
+    task burnThree = task(burn3dV, 0);
+    //taskList
+    return taskListBielliptic;
 };
 
     // double massburned(double dV, double mo, double Isp){
@@ -100,19 +124,25 @@ double biellipticTransfer(orbParam curKOE, orbParam aftKOE){
     //     return propuse;
     // };//calculate propellant mass used for a given delta V
 
-double angularMomentum(double rp, double ra){
+double angularMomentum(double rp, double ra) {
     double h = sqrt(2*planet.sgp)*sqrt((ra*rp)/(ra+rp));
     return h;
 }
 
-bool circOrbitChoice(orbParam curKOE, orbParam aftKOE){
+bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
     double rc = aftKOE.sma;//final circle
     //double rb; apoapsis of biellipse
     double ra = curKOE.sma;//initial circle
      
-    if (rc/ra<11.94){return true;}//hohmann transfer is better in this case
-    else if(rc/ra>15.58){return false;}//bielliptic is better in this case
-    else{return true;};//bielliptic can be more dV efficient, but takes far longer
+    if (rc/ra<11.94) {
+        return true;
+    }//hohmann transfer is better in this case
+    else if(rc/ra>15.58) {
+        return false;
+    }//bielliptic is better in this case
+    else {
+        return true;
+    };  //bielliptic can be more dV efficient, but takes far longer
     //this will require a user choice
     //double a=rc/ra;
     //double b=rb/ra;
@@ -120,8 +150,9 @@ bool circOrbitChoice(orbParam curKOE, orbParam aftKOE){
     //double dVbe=sqrt((2*(a+b))/(a*b))-((1+sqrt(a))/(sqrt(a)))-sqrt(2/(b*(1+b)))*(1-b);
 };
 
-double phasingTransfer(orbParam curKOE, double phasePeriod){
+std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     orbParam aftKOE;
+    vnb burndV;
     double deltaV;
     aftKOE.sma = pow(((phasePeriod*sqrt(planet.sgp))/(2*M_PI)),(2/3));
 
@@ -133,19 +164,19 @@ double phasingTransfer(orbParam curKOE, double phasePeriod){
 
     double h1 = angularMomentum(ra, rb);
     double h2 = angularMomentum(ra, rc);
-    double va1, va2, dV1, dV2;
+    double va1, va2, dV;
 
-    va1 = h1/ra;
-    va2 = h2/ra;
-    dV1 = va2-va1;//first burn at periapsis
-    dV2 = -dV1;//second burn at periapsis
+    va1                 = h1/ra;
+    va2                 = h2/ra;
+    burndV.vVNB.data[0] = va2-va1;//first burn at periapsis
     //burns are prograde/retrograde if positive/negative
+    task burnOne   = task(burndV, 0);
+    task burnTwo   = task(-burn2dV, 0);
 
-    deltaV = abs(2*dV1);
-    return deltaV;
+    return taskListPhasing;
 };
 
-vnb planeChangeTransfer(orbParam curKOE, orbParam aftKOE){
+std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
     vnb deltaV;
     double deltaInc = aftKOE.inc-curKOE.inc;
     double r        = (curKOE.sma*(1-pow2(curKOE.ecc)))/(1+curKOE.ecc*cos(curKOE.truAnom));
@@ -154,15 +185,18 @@ vnb planeChangeTransfer(orbParam curKOE, orbParam aftKOE){
     deltaV.vVNB.data[0] = curV*sin(deltaInc);
     deltaV.vVNB.data[1] = curV*(1-cos(deltaInc));
     deltaV.vVNB.data[2] = 0;
-    return deltaV; //perform at apoapsis for delta V efficiency
+    task taskPlaneChange = task(deltaV, M_PI); //perform at min velocity for delta V efficiency
+
+    return taskPlaneChange;
 };
 
-// task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom){
-//     vnb deltaV;
-//     double burnAngle=burnTrueAnom;
-//     deltaV.vVNB.data[0] = dVv;
-//     deltaV.vVNB.data[1] = dVn;
-//     deltaV.vVNB.data[2] = dVb;
-//     return task(deltaV, burnAngle); //return task with VNB values and req truanom
+task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom) {
+    vnb deltaV;
+    double burnAngle=burnTrueAnom;
+    deltaV.vVNB.data[0] = dVv;
+    deltaV.vVNB.data[1] = dVn;
+    deltaV.vVNB.data[2] = dVb;
+    return task(deltaV, burnAngle); //return task with VNB values and req truanom
 // };
 };
+}

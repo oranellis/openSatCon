@@ -53,6 +53,11 @@ namespace osc {
         double mag() {
             return sqrt(dot(data));
         }
+
+        vec3 unit() {
+            double norm = data.mag(); 
+            return data.operator/(norm);
+        };
     };
 
 
@@ -167,7 +172,7 @@ namespace osc {
 
         quaternion quaternionDerivative(quaternion argQuat, vec3 argRate){
             quaternion dotQuat;
-            argQuat.qw=sqrt(1-osc::pow2(argQuat.qx)-osc::pow2(argQuat.qy)-osc::pow2(argQuat.qz));
+            argQuat.qw=sqrt(1-pow2(argQuat.qx)-pow2(argQuat.qy)-pow2(argQuat.qz));
             
             dotQuat.qx=0.5*(argQuat.qw*argRate[0]-argQuat.qz*argRate[1]+argQuat.qy*argRate[2]);
             dotQuat.qy=0.5*(argQuat.qz*argRate[0]+argQuat.qw*argRate[1]-argQuat.qx*argRate[2]);
@@ -225,12 +230,12 @@ namespace osc {
         }
     };
 
-    struct rotStates{
+    struct rotStates {
         vec3 omega; //body rates
         vec3 q; //quaternion vector part
     };
 
-    struct posStates{
+    struct posStates {
         vec3 r; //eci position (m)
         vec3 v; //eci velocity (m/s)
         double m; //spacecraft mass (kg)
