@@ -22,6 +22,7 @@ namespace osc {
 
 
     /** \class task
+    \brief task definition
     Task class to define actions for the craft
     */
     class task {

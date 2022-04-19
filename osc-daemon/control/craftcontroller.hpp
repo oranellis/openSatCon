@@ -19,6 +19,7 @@
 namespace osc {
 
     /** \class craftcontroller
+    \brief controller object
     Craft Controller class that creates a controller object 
     */
     class craftcontroller {

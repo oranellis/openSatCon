@@ -17,7 +17,13 @@ using namespace std;
 using json = nlohmann::json;
 
 namespace osc {
+    /** \mainpage openSatCon's project documentation */
 
+
+    /** \struct craftconfig
+    \brief craft configuration
+    craftconfiguration type containing components, fueltanks, thrusters and rotators
+    */
 struct craftconfig {
     std::map<std::string, component> components;
     std::map<std::string, fueltank> fueltanks;
@@ -30,6 +36,12 @@ struct craftconfig {
     }
 };
 
+    /** \fn parseJson(jsonPath)
+    \brief parses a file at a path
+    @param[in] jsonPath path to json file
+    parses the json file from the path and produces a craft config object with mapped 
+    components
+    */
 craftconfig parseJson(std::string jsonPath) {
     // std::cout << "start"; // debug
     // map<string, std::list<double> > Components;

@@ -18,6 +18,7 @@ namespace osc {
 
     // Common data types
     /** \struct vec3
+    \brief vector3
     Vector3 datatype
     */
     struct vec3 {
@@ -90,6 +91,7 @@ namespace osc {
 
 
     /** \struct position
+    \brief x,y,z position
     position struct to define an object's position
     */
     struct position {
@@ -150,6 +152,7 @@ namespace osc {
 
 
     /** \struct momentofinertia
+    \brief Ixx, Iyy, Izz moments
     second moment of inertia for the object in three axes
     */
     struct momentofinertia {
@@ -172,6 +175,7 @@ namespace osc {
 
 
     /** \struct quaternion
+    \brief quaternion format
     quaternion struct for quaternion rotations 
     */
     struct quaternion {
@@ -296,6 +300,7 @@ namespace osc {
     
     
     /** \struct ftModel 
+    \brief force-torque model
     Represents the vector of forces and moments of an actuator at maximum actuation */
     struct ftModel {
         
@@ -384,6 +389,7 @@ namespace osc {
     };
 
     /** \struct rotStates
+    \brief rotation states
     a struct composed of 2 vec3s */
     struct rotStates {
         /// @param omega body rates
@@ -393,6 +399,7 @@ namespace osc {
     };
 
     /** \struct posStates
+    \brief position states
     a struct composed of the earth-centered inertial data */
     struct posStates {
         /// @param r earth-centered inertial position
@@ -404,6 +411,7 @@ namespace osc {
     };
 
     /** \struct orbParam
+    \brief orbital parameters
     structure of the orbital parameters */
     struct orbParam {
         /// @param sma semi major axis (m)
@@ -463,6 +471,7 @@ namespace osc {
     };
 
     /** \struct pcs
+    \brief PCS coordinate system
     Orbital position of satellite in Perifocal Co-Ordinate System - satellite centred
     */
     struct pcs {
@@ -477,6 +486,7 @@ namespace osc {
 
 
     /** \struct eci
+    \brief ECI coordinate system
     Orbital position of satellite in Earth Centred Inertial Co-Ordinate System
     */
     struct eci {
@@ -491,6 +501,7 @@ namespace osc {
 
 
     /** \struct ecef
+    \brief ECEF coordinate system
     Orbital position of satellite in Earth Centred Earth Fixed Co-Ordinate System
     */
     struct ecef {
@@ -505,6 +516,7 @@ namespace osc {
 
 
     /** \struct ned
+    \brief NED coordinate system
     Orbital position of satellite in North East Down Co-Ordinate System - satellite centred
     */
     struct ned {
@@ -518,6 +530,7 @@ namespace osc {
     };
 
     /** \struct enu
+    \brief ENU coordinate system
     Orbital position of satellite in East North Up Co-Ordinate System - Earth centred
     */
     struct enu {
@@ -531,6 +544,7 @@ namespace osc {
     };
 
     /** \struct thcs
+    \brief THCS coordinate system
     Orbital position of satellite in Topocentric Horizon Co-Ordinate System - centred on ground point
     */
     struct thcs {
@@ -544,6 +558,7 @@ namespace osc {
     };
     
     /** \struct lla
+    \brief LLA coordinate system
     Ground Sub-Vehicle Point on Earth's surface
     */
     struct lla {
@@ -556,6 +571,7 @@ namespace osc {
     };
 
     /** \struct ear
+    \brief EAR coordinate system
     Orbital position of satellite in Elevation Azimuth Range Co-Ordinate System - centred on ground point
     */
     struct ear {
@@ -569,6 +585,7 @@ namespace osc {
 
 
     /** \struct vnb
+    \brief VNB coordinate system
     Orbital velocity of satellite in Velocity Normal Bi-Normal axes - used for orbital maneuvers
     */ 
     struct vnb {
@@ -580,6 +597,7 @@ namespace osc {
     };
 
     /** \struct powermodel
+    \brief power states structure
     Structure to hold different power states of a component
     */
     struct powermodel {

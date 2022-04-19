@@ -8,6 +8,7 @@
 namespace osc {
 
     /** \class scheduler
+    \brief handles task processing
     scheduler class to define an object to handle task processing
     */
     class scheduler {
