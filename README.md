@@ -1,7 +1,13 @@
 # openSatCon
 We are a team of University of Glasgow students creating an open-source satellite control system for use in satellite applications, primarily micro-satellite users. The aim is to provide a lightweight modular system that can be adapted to fit the needs of numerous mission types.
 
-![Header Image](Assets/Logos/HeaderCandidateHQ.png)
+![Header Image](assets/logos/HeaderCandidateHQ.png)
+
+### Status
+<p><a href="LICENSE"><img src="https://img.shields.io/github/license/oranellis/openSatCon" alt="License" /></a>
+<a href="https://github.com/oranellis/openSatCon/issues"><img src="https://img.shields.io/github/issues/oranellis/openSatCon" alt="GitHub open issues" /></a> 
+<img src="https://img.shields.io/github/stars/oranellis/openSatCon" alt="GitHub stars" />
+</p>
 
 ### Table of Contents
 * [Feature List](#feature-list)
@@ -28,7 +34,9 @@ We are a team of University of Glasgow students creating an open-source satellit
 - Scheduled orbital manoeuvres (if applicable)
 - Desired pointing location and hold attitude (if applicable)
 #### Hardware Requirements
-- Linux
+- Satellite Controller with Linux
+- Satellite Attitude Determination and Control System 
+- Satellite Thrusters (if applicable) 
 
 ## openSatCon Installation
 

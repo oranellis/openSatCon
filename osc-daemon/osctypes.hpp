@@ -195,6 +195,7 @@ namespace osc {
                 qz = qwDotArg[2] + argwDotThis[2] + thisArgCross[2]
             ); // https://graphics.stanford.edu/courses/cs348a-17-winter/Papers/quaternion.pdf
         }
+
         std::array<std::array<double, 3>, 3> toMat() {
             /*
             Information for conversion available at:
@@ -234,12 +235,14 @@ namespace osc {
            quaternion argq = quaternion(0, arg[0], arg[1], arg[2]);
 
            quaternion returnq = hprod(argq.hprod(conjugate())); // for this quaternion p and argument quaternion q, this is the quaternion multiplication pqp*
+
+           return vec3(returnq.qx, returnq.qy, returnq.qz);
         }
     };
     
     
     
-    struct forceTorqueModel {
+    struct ftModel {
         /*
         Represents the vector of forces and moments of an actuator at maximum actuation
         */
@@ -248,13 +251,13 @@ namespace osc {
         std::array<double, 6> ftVec {0, 0, 0, 0, 0, 0};
         
         // Initialisers
-        forceTorqueModel(double Fx, double Fy, double Fz, double Txx, double Tyy, double Tzz):ftVec({Fx, Fy, Fz, Txx, Tyy, Tzz}) {
+        ftModel(double Fx, double Fy, double Fz, double Txx, double Tyy, double Tzz):ftVec({Fx, Fy, Fz, Txx, Tyy, Tzz}) {
             /* 
             Generic initialiser for the vector, directly assigning each component
             */
         }
 
-        forceTorqueModel(vec3 maxThrust, vec3 thrusterPos) {
+        ftModel(vec3 maxThrust, vec3 thrusterPos) {
             /*
             Initialiser for thrusters with a thrust magnitude and direction of action
             */
@@ -269,20 +272,60 @@ namespace osc {
             ftVec[5] = torque[2]; // Resultant force on the object cg is off centre force
         }
 
-        forceTorqueModel(std::array<double, 6> initFTV):ftVec(initFTV) {}
+        ftModel(std::array<double, 6> initFTV):ftVec(initFTV) {}
+
+        // Operators
+        double operator[] (int i) { return ftVec[i]; }
+
+        ftModel operator+(ftModel rhs) {
+            /*
+            Addition overload for addition of two ftModels
+            */
+            return ftModel(ftVec[0] + rhs[0], ftVec[1] + rhs[1], ftVec[2] + rhs[2], ftVec[3] + rhs[3], ftVec[4] + rhs[4], ftVec[5] + rhs[5]);
+        }
+
+        ftModel operator-(ftModel rhs) {
+            /*
+            Addition overload for addition of two ftModels
+            */
+            return ftModel(ftVec[0] - rhs[0], ftVec[1] - rhs[1], ftVec[2] - rhs[2], ftVec[3] - rhs[3], ftVec[4] - rhs[4], ftVec[5] - rhs[5]);
+        }
+
+        ftModel operator*(double rhs) {
+            /*
+            Addition overload for addition of two ftModels
+            */
+            return ftModel(ftVec[0] * rhs, ftVec[1] * rhs, ftVec[2] * rhs, ftVec[3] * rhs, ftVec[4] * rhs, ftVec[5] * rhs);
+        }
 
         // Implicit type converters
         operator std::array<double, 6> () const { 
             /*
-            Adds support for implicit conversion from forceTorqueModel to std::array<double, 6>
+            Adds support for implicit conversion from ftModel to std::array<double, 6>
             */
             return ftVec; 
         }
 
         // Member functions
-        forceTorqueModel normalise() {
-            double mag = 1/sqrt( pow2(ftVec[0]) + pow2(ftVec[0]) + pow2(ftVec[0]) + pow2(ftVec[0]) + pow2(ftVec[0]) + pow2(ftVec[0]) );
-            return std::array<double, 6> { ftVec[0]*mag, ftVec[1]*mag, ftVec[2]*mag, ftVec[3]*mag, ftVec[4]*mag, ftVec[5]*mag };
+        double mag() {
+            return sqrt( pow2(ftVec[0]) + pow2(ftVec[1]) + pow2(ftVec[2]) + pow2(ftVec[3]) + pow2(ftVec[4]) + pow2(ftVec[5]) );
+        }
+
+        ftModel normalise() {
+            double invmag = 1/mag();
+            return std::array<double, 6> { ftVec[0]*invmag, ftVec[1]*invmag, ftVec[2]*invmag, ftVec[3]*invmag, ftVec[4]*invmag, ftVec[5]*invmag };
+        }
+
+        int getDominantAxis() {
+            double maxVal = 0;
+            int maxValAxis = 0;
+            for (int i=0; i<6; i++) {
+                if (abs(ftVec[i]) > maxVal) {
+                    maxVal = abs(ftVec[i]);
+                    maxValAxis = i;
+                }
+            }
+            return maxValAxis;
         }
     };
 
