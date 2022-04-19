@@ -6,7 +6,7 @@
 #include <array>
 
 #include "../osctypes.hpp"
-#include "../control/craftcontroller.hpp"
+#include "craftcontroller.hpp"
 #include "../orbitalmechanics/axistransforms.cpp"
 
 namespace osc {
@@ -23,6 +23,7 @@ namespace osc {
         private:
 
         int priority;
+        taskType type;
         std::chrono::time_point<std::chrono::system_clock> startTime;
         std::chrono::microseconds actionDuration;
         orbParam KOE;
@@ -31,20 +32,18 @@ namespace osc {
         double timeOffset;
 
         public:
-        //initialiser
-        
-        task(craftcontroller *controller, vnb deltaV, orbParam impulseKOE, double startMass) {//takes in KOE at impulse burn point, has mean anomaly
+        task(double transferISP, double maxThrust, vnb deltaV, orbParam impulseKOE, double startMass) {//takes in KOE at impulse burn point, has mean anomaly
             pcs posvelPCSimpulse = KOEtoPCS(impulseKOE); // impulse koe at burn centre, converted perifocal coordinate system
             eci posvelECIimpulse = PCStoECI(impulseKOE, posvelPCSimpulse); // to eci, current pos and vel at impulse burn before burn
 
-            double exhaustVel = controller->getTransferISP()*9.81;
+            double exhaustVel = transferISP*9.81;
             priority=10;
 
             double normDeltaV = deltaV.vVNB.mag();
             eci intermediatePointingVec;
             intermediatePointingVec = VNBtoECI(posvelECIimpulse, deltaV);
 
-            actionDuration = std::chrono::microseconds((int)(startMass * exhaustVel / controller->getMaxThrust()
+            actionDuration = std::chrono::microseconds((int)(startMass * exhaustVel / maxThrust
                              *(1 - exp(-normDeltaV / exhaustVel))*1000000));
 
             //trueAnom(burnTime-actionDuration/2)
@@ -52,6 +51,7 @@ namespace osc {
 
             //rotation code (similar idea, find longest rotation time and perform task at that time before burnTime-actionDuration/2)
         };
+
         task(vec3 rotAng, double trueAnom, double duration) {
 
         }
@@ -103,7 +103,11 @@ namespace osc {
 
             vnb newPointVectorVNB = ECItoVNB(posvelECIoffset, newPointVector); //translates and returns the ECI vector into a VNB vector
             return newPointVectorVNB.vVNB;
-        };
+        }
+
+        auto getStartTime() {
+            return startTime;
+        }
     };
 
 }

@@ -9,7 +9,7 @@
 
 #include "../osctypes.hpp"
 #include "scheduler.hpp"
-// #include "../datainjest/jsonparser.hpp"
+#include "../datainjest/jsonparser.hpp"
 #include "../components/component.hpp"
 #include "../components/fueltank.hpp"
 #include "../components/actuators/thruster.hpp"
@@ -17,7 +17,7 @@
 
 namespace osc {
 
-    class craftcontroller {
+    struct craftcontroller {
 
         private:
 
@@ -42,10 +42,6 @@ namespace osc {
         // Member functions
         
         public:
-
-        // Initialiser
-        craftcontroller();
-
         // Member functions
         bool initModel();
 
@@ -59,7 +55,7 @@ namespace osc {
 
         void recomputeComponentDeps();
     
-        void craftcontroller::forcesToCommands(ftModel setpoint);
+        void forcesToCommands(ftModel setpoint);
 
         void beginControl();
     };

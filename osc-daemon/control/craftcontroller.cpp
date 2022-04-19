@@ -99,10 +99,6 @@ namespace osc {
         thrusterCommands = currThrusterCommands;
     }
 
-    craftcontroller::craftcontroller() {
-        if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
-    }
-
     void craftcontroller::beginControl() {
         scheduler schedule = scheduler();
         std::cout << "Beginning control" << std::endl;
