@@ -54,6 +54,38 @@ namespace osc {
         task(vec3 rotAng, double trueAnom, double duration) {
 
         }
+
+        vnb offsetVector(orbParam KOE, eci posvelECI, eci pointVector, double timeOffset){
+            //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
+
+            orbParam offsetKOE; //have this equal KOE for everything except truAnom
+
+            double meanAngularMotion = sqrt(planet.sgp/pow3(KOE.sma));
+
+            double a = sqrt(1-pow2(KOE.ecc))*sin(KOE.truAnom);  
+            double b = 1 + KOE.ecc*cos(KOE.truAnom);
+
+            double meanAnomalyKnown = KOE.trueToMean(); // this is the best that I can get for this equation
+            
+            double meanAnomalyOffset = meanAngularMotion * timeOffset;
+
+            double meanAnom = meanAnomalyKnown + meanAnomalyOffset; //this can be made into a double if required
+
+            offsetKOE.meanToTrue(meanAnom);
+
+            pcs posvelPCSoffset = KOEtoPCS(offsetKOE); //intermediate transform from KOE to ECI
+            eci posvelECIoffset = PCStoECI(offsetKOE, posvelPCSoffset); //gives ECI position and velocity at the offset point
+            // these position and velocity values are used for the ECItoVNB transform matrix,
+            // and to calculate the new pointing angle at the offset point;
+
+            eci newPointVector;
+                newPointVector = posvelECI.rIJK.operator-(targetPosECI); //calculate new pointing vector
+            // note that in some cases the target position in the ECI frame may have moved, and may need 
+            // recalculated, such as ground positions, fixed in ECEF, but moving in ECI.
+
+            vnb newPointVectorVNB = ECItoVNB(posvelECIoffset, newPointVector);
+            return newPointVectorVNB;
+        };
     };
 
 }

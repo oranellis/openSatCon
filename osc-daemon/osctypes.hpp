@@ -346,9 +346,42 @@ namespace osc {
         double inc; // inclination (rad)
         double aop; // argument of periapsis (rad)
         double asc; // longitude of the ascending node (rad)
-        double meanAnom; // mean anomaly (rad)
-        double eccAnom; // eccentric anomaly (rad)
+        //double meanAnom; // mean anomaly (rad)
+        //double eccAnom; // eccentric anomaly (rad)
         double truAnom; // true anomaly (rad)
+
+        //member functions
+        void meanToTrue(double meanAnomaly) {
+            // converts mean anomaly to true anomaly, used for calculating positions at different times
+            if (ecc < 0.2) { //this is a handy calculation to save time for small eccentricities
+                truAnom = meanAnomaly + 2 * ecc * sin(meanAnomaly) 
+                              +1.25 * pow2(ecc) * sin(2 * meanAnomaly) 
+                              - pow3(ecc) * (0.25 * sin(meanAnomaly) - (13/12) * sin(3 * meanAnomaly));
+            }
+    
+            else if (ecc < 1.0) {// newton raphson's method must be used for higher eccentricities, e>1 is a parabolic orbit
+                double EccAnomaly = meanAnomaly + ((ecc * sin(meanAnomaly) / (cos(ecc) - (M_PI_2 - ecc) * sin(ecc) + meanAnomaly * sin(ecc))));
+                double dE = EccAnomaly;
+
+                while(abs(dE) > 10e-10) {
+                    dE = (EccAnomaly - ecc * sin(EccAnomaly) - meanAnomaly) / (1 - ecc * cos(EccAnomaly));
+                    EccAnomaly = EccAnomaly - dE;
+                };
+
+            truAnom = atan2(sqrt(1 - pow2(ecc) * sin(ecc)), cos(EccAnomaly) - ecc);
+            };
+        };
+
+        double trueToMean() {
+            double meanAnomaly;
+            double a = sqrt(1-pow2(ecc))*sin(truAnom);
+            double b = 1 + ecc*cos(truAnom);
+
+            meanAnomaly = atan2((a / b), ((ecc+cos(truAnom)) / b)) - ecc * (a / b);
+
+            return meanAnomaly;
+        };
+
     };
 
     struct pcs {
