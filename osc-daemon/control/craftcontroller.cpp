@@ -2,6 +2,9 @@
 
 namespace osc {
 
+    /** \fn initModel
+    Initialises the model, returning true when the model initialises 
+    */
     bool craftcontroller::initModel() {
         std::string pathString;
         std::cout << "Enter path to craft configuration: ";
@@ -13,18 +16,25 @@ namespace osc {
         return true;
     }
 
+    /** /fn getMaxThrust()
+    returns the \p maxThrust parameter
+    */
     double craftcontroller::getMaxThrust() {
         return maxThrust;
     }
 
+    /** /fn getTransferISP()
+    returns the \p transferISP parameter
+    */
     double craftcontroller::getTransferISP() {
         return transferISP;
     }
 
+    /** \fn recomputeComponentDeps
+    recomputes craft parameters from a change in component configuration
+    */
     void craftcontroller::recomputeComponentDeps() {
-        /*
-        Recomputes craft parameters from a change in component configuiration
-        */
+
         cg = position(0,0,0);
         moi = momentofinertia();
         mass = 0;
@@ -63,8 +73,13 @@ namespace osc {
         }
     }
 
-    std::map<std::string, double> craftcontroller::forcesToCommands(ftModel setpoint) {
-        std::map<std::string, double> thrusterCommands;
+    /** \fn forcesToCommands
+    @param[in] setpoint input an ftModel of the setpoint
+    returns a set of thruster commands
+    */
+    void craftcontroller::forcesToCommands(ftModel setpoint) {
+
+        std::map<std::string, double> currThrusterCommands;
 
         bool matched = false;
         ftModel sp = setpoint;
@@ -77,12 +92,12 @@ namespace osc {
                 if (i->second.getDominantAxis() == currAxis) {
                     double command = sp[currAxis]/i->second[currAxis]; // Eliminate command error in dominant axis
 
-                    if (thrusterCommands.count(i->first)>0) {
-                        thrusterCommands[i->first] = thrusterCommands[i->first] + command;
+                    if (currThrusterCommands.count(i->first)>0) {
+                        currThrusterCommands[i->first] = currThrusterCommands[i->first] + command;
                     }
 
                     else {
-                        thrusterCommands.insert({i->first, command});
+                        currThrusterCommands.insert({i->first, command});
                     }
 
                     sp = sp - (i->second * command);
@@ -95,13 +110,17 @@ namespace osc {
             }
         }
 
-        return thrusterCommands;
+        thrusterCommands = currThrusterCommands;
     }
 
+    /// If model fails to initialise
     craftcontroller::craftcontroller() {
         if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
     }
 
+    /** \fn beginControl
+    control begins and scheduler is activated 
+    */
     void craftcontroller::beginControl() {
         scheduler schedule = scheduler();
         std::cout << "Beginning control" << std::endl;

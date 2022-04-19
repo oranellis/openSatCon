@@ -10,32 +10,36 @@
 #include "../orbitalmechanics/axistransforms.cpp"
 
 namespace osc {
+
+    /** \enum taskType
+    enum describing the type of task
+    */
+    enum taskType {
+        grountTrack,
+        manoeuvre
+    };
+
+
     /** \class task
-    defines the task class, which is how tasks are communicated
+    Task class to define actions for the craft
     */
     class task {
 
         private:
         /// @param priority integer indicating priority of task, with higher integers corresponding to higher priority
         int priority;
-        /// @param actionDuration time value of the action
+        /// @param startTime start time of the action
+        std::chrono::time_point<std::chrono::system_clock> startTime;
+        /// @param actionDuration duration of the action of the task
         std::chrono::microseconds actionDuration;
-        /// @param pointingVec current pointing vector of the craft
-        vec3 pointingVec; // this needs to be constantly changing throughout the burn so needs to be dynamic. Maybe make a seperate manoevure object that can be called for the current pointing vector that also includes the endpoint
-
-        /** \fn getPointingDirection
-        returns a vec3 indicating the current pointing direction of the craft
-        */
-        vec3 getPointingDirection() {
-            vec3 pointingVec;
-            
-            impulseKOE.meanAnom = 2 * M_PI - (sqrt(planet.sgp / pow3(impulseKOE.sma)) * (actionDuration.count()/1000000) / 2);
-            orbParam burnStartKOE = meanToTrue(impulseKOE); // converts to true anomaly
-            pcs posvelPCSburnStart = KOEtoPCS(burnStartKOE);
-            eci posvelECIburnStart = PCStoECI(impulseKOE, posvelPCSburnStart);
-            //ECI parallel to pointingVecECI -> VNB transform of parallelECI <-this is where to point at start of burn
-            pointingVec = ECItoVNB(posvelECIburnStart, intermediatePointingVec);
-        }
+        /// @param KOE KOE parameters of the orbit
+        orbParam KOE;
+        /// @param posvelECI the eci coordinate system position and velocity
+        eci posvelECI;
+        /// @param pointVector the pointing vector in eci coordinates
+        eci pointVector;
+        /// @param timeOffset double of offset time
+        double timeOffset;
 
         public:
         //initialiser
@@ -63,12 +67,13 @@ namespace osc {
         task(vec3 rotAng, double trueAnom, double duration) {
 
         }
-
-        vnb offsetVector(orbParam KOE, eci posvelECI, eci pointVector, double timeOffset){
+        /** \fn getPointingDirection
+        Finds the pointing vector at an arbitrary time offset from a known pointing vector*/
+        vec3 getPointingDirection() { //orbParam KOE, eci posvelECI, eci pointVector, double timeOffset
             //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
             //a function to create a new pointing vector for multiple input types is explained below
 
-            orbParam offsetKOE; //have this equal KOE for everything except truAnom, other elements do not change while in motion
+            orbParam offsetKOE = KOE; //have this equal KOE for everything except truAnom, other elements do not change while in motion
 
             double meanAngularMotion = sqrt(planet.sgp/pow3(KOE.sma)); // this is mean anomaly (radians) travelled by the craft per second
             // not accurate when ecc>0 therefore must convert to true anomaly
@@ -86,7 +91,7 @@ namespace osc {
             // and to calculate the new pointing angle at the offset point;
 
             eci newPointVector;
-                newPointVector = posvelECI.rIJK.operator-(targetPosECI); //calculate new pointing vector, this is placeholder
+            // newPointVector = posvelECI.rIJK - targetPosECI); //calculate new pointing vector, this is placeholder
             // note that in some cases the target position in the ECI frame may have moved, and may need 
             // recalculated, such as ground positions, fixed in ECEF, but moving in ECI.
 
@@ -110,7 +115,7 @@ namespace osc {
                 //actionDuration = std::chrono::microseconds((int)(startMass * exhaustVel / controller->getMaxThrust()*(1 - exp(-normDeltaV / exhaustVel))*1000000));
 
             vnb newPointVectorVNB = ECItoVNB(posvelECIoffset, newPointVector); //translates and returns the ECI vector into a VNB vector
-            return newPointVectorVNB;
+            return newPointVectorVNB.vVNB;
         };
     };
 
