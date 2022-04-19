@@ -23,7 +23,7 @@ double greenwichSiderealAngle() { //not working
 
     seconds = difftime(timer,mktime(&J2000));
     double julianDays = seconds/86400;
-    std::cout<<julianDays<<std::endl<<std::endl;
+    
     gsraret = 2 * M_PI * (0.77905722732640 + 1.00273781191135448 * (julianDays));
 
     return gsraret;
