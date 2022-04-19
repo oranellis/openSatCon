@@ -238,6 +238,17 @@ namespace osc {
 
            return vec3(returnq.qx, returnq.qy, returnq.qz);
         }
+
+        std::array<double, 4> getAxisAngle() {
+            
+            vec3 axis = vec3(qx, qy, qz) / vec3(qx, qy, qx).mag();
+            return {
+                acos(qw)*2,
+                axis[0],
+                axis[1],
+                axis[2]
+            };
+        }
     };
     
     

@@ -37,6 +37,8 @@ namespace osc {
         std::map<std::string, rotator> rotators;
         std::map<std::string, ftModel> attitudeActuators;
 
+        std::map<std::string, double> thrusterCommands;
+
         // Member functions
         
         public:
@@ -51,11 +53,13 @@ namespace osc {
 
         double getTransferISP();
 
+        quaternion getRotation();
+
         void setRotation(quaternion argRotation) { rotation = argRotation; }
 
         void recomputeComponentDeps();
     
-        std::map<std::string, double> craftcontroller::forcesToCommands(ftModel setpoint);
+        void craftcontroller::forcesToCommands(ftModel setpoint);
 
         void beginControl();
     };

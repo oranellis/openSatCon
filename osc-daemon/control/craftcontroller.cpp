@@ -63,8 +63,9 @@ namespace osc {
         }
     }
 
-    std::map<std::string, double> craftcontroller::forcesToCommands(ftModel setpoint) {
-        std::map<std::string, double> thrusterCommands;
+    void craftcontroller::forcesToCommands(ftModel setpoint) {
+
+        std::map<std::string, double> currThrusterCommands;
 
         bool matched = false;
         ftModel sp = setpoint;
@@ -77,12 +78,12 @@ namespace osc {
                 if (i->second.getDominantAxis() == currAxis) {
                     double command = sp[currAxis]/i->second[currAxis]; // Eliminate command error in dominant axis
 
-                    if (thrusterCommands.count(i->first)>0) {
-                        thrusterCommands[i->first] = thrusterCommands[i->first] + command;
+                    if (currThrusterCommands.count(i->first)>0) {
+                        currThrusterCommands[i->first] = currThrusterCommands[i->first] + command;
                     }
 
                     else {
-                        thrusterCommands.insert({i->first, command});
+                        currThrusterCommands.insert({i->first, command});
                     }
 
                     sp = sp - (i->second * command);
@@ -95,7 +96,7 @@ namespace osc {
             }
         }
 
-        return thrusterCommands;
+        thrusterCommands = currThrusterCommands;
     }
 
     craftcontroller::craftcontroller() {
