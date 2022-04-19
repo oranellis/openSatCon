@@ -9,7 +9,7 @@
 namespace osc::orbmnvrs{
 
 
-void highlevelcommand(orbparam curKOE, orbparam aftKOE){
+void highlevelcommand(orbParam curKOE, orbParam aftKOE){
 if (curKOE.ecc==0&&aftKOE.ecc==0){
     bool HoBE = circOrbitChoice(curKOE, aftKOE);
     if (HoBE == true)
@@ -24,7 +24,7 @@ if (curKOE.inc!=aftKOE.inc){
 };
 };
 
-double hohmannTransfer(orbparam curKOE, orbparam aftKOE){
+double hohmannTransfer(orbParam curKOE, orbParam aftKOE){
     double MNVRdV;
     double rp1, ra1, rp2, ra2;
     rp1=curKOE.sma*(1-curKOE.ecc);
@@ -59,7 +59,7 @@ double hohmannTransfer(orbparam curKOE, orbparam aftKOE){
     return MNVRdV;
 };
 
-double biellipticTransfer(orbparam curKOE, orbparam aftKOE){
+double biellipticTransfer(orbParam curKOE, orbParam aftKOE){
     double MNVRdV;
     double r1, rp2, ra2, rp3, ra3, r4;
     r1=curKOE.sma;//feel free to optimise this
@@ -102,7 +102,7 @@ double angularMomentum(double rp, double ra){
     return h;
 }
 
-bool circOrbitChoice(orbparam curKOE, orbparam aftKOE){
+bool circOrbitChoice(orbParam curKOE, orbParam aftKOE){
     double rc=aftKOE.sma;//final circle
     //double rb; apoapsis of biellipse
     double ra=curKOE.sma;//initial circle
@@ -117,8 +117,8 @@ bool circOrbitChoice(orbparam curKOE, orbparam aftKOE){
     //double dVbe=sqrt((2*(a+b))/(a*b))-((1+sqrt(a))/(sqrt(a)))-sqrt(2/(b*(1+b)))*(1-b);
 };
 
-double phasingTransfer(orbparam curKOE, double phaseperiod){
-    orbparam aftKOE;
+double phasingTransfer(orbParam curKOE, double phaseperiod){
+    orbParam aftKOE;
     double deltaV;
     aftKOE.sma=pow(((phaseperiod*sqrt(planet.sgp))/(2*M_PI)),(2/3));
     double ra, rb, rc;
@@ -137,7 +137,7 @@ double phasingTransfer(orbparam curKOE, double phaseperiod){
     return deltaV;
 };
 
-vnb planeChangeTransfer(orbparam curKOE, orbparam aftKOE){
+vnb planeChangeTransfer(orbParam curKOE, orbParam aftKOE){
     vnb deltaV;
     double deltainc=aftKOE.inc-curKOE.inc;
     double r = (curKOE.sma*(1-pow2(curKOE.ecc)))/(1+curKOE.ecc*cos(curKOE.truanom));
