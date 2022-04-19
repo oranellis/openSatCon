@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <thread>
 
 #include "../osctypes.hpp"
 #include "scheduler.hpp"
@@ -49,6 +50,8 @@ namespace osc {
         double getMaxThrust();
 
         double getTransferISP();
+
+        void setRotation(quaternion argRotation) { rotation = argRotation; }
 
         void recomputeComponentDeps();
     

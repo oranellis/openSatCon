@@ -103,7 +103,13 @@ namespace osc {
     }
 
     void craftcontroller::beginControl() {
-        // scheduler* schedule = new scheduler();
+        scheduler schedule = scheduler();
         std::cout << "Beginning control" << std::endl;
+        
+        // spawnThread(sensorinput(this)); // pass pointer to this instance
+
+        while(schedule.active()) {
+            schedule.getNext();
+        }
     }
 };
