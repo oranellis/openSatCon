@@ -24,6 +24,7 @@ namespace osc {
         double mass;
         double wetMass;
         double maxThrust;
+        double transferISP;
         position cg;
         momentofinertia moi;
         orbParam orbit;
@@ -44,6 +45,10 @@ namespace osc {
 
         // Member functions
         bool initModel();
+
+        double getMaxThrust();
+
+        double getTransferISP();
 
         void recomputeComponentDeps();
     

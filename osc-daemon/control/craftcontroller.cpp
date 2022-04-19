@@ -13,6 +13,14 @@ namespace osc {
         return true;
     }
 
+    double craftcontroller::getMaxThrust() {
+        return maxThrust;
+    }
+
+    double craftcontroller::getTransferISP() {
+        return transferISP;
+    }
+
     void craftcontroller::recomputeComponentDeps() {
         /*
         Recomputes craft parameters from a change in component configuiration

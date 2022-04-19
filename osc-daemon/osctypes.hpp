@@ -195,6 +195,7 @@ namespace osc {
                 qz = qwDotArg[2] + argwDotThis[2] + thisArgCross[2]
             ); // https://graphics.stanford.edu/courses/cs348a-17-winter/Papers/quaternion.pdf
         }
+
         std::array<std::array<double, 3>, 3> toMat() {
             /*
             Information for conversion available at:
@@ -234,6 +235,8 @@ namespace osc {
            quaternion argq = quaternion(0, arg[0], arg[1], arg[2]);
 
            quaternion returnq = hprod(argq.hprod(conjugate())); // for this quaternion p and argument quaternion q, this is the quaternion multiplication pqp*
+
+           return vec3(returnq.qx, returnq.qy, returnq.qz);
         }
     };
     
