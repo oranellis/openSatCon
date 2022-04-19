@@ -14,8 +14,7 @@ namespace osc {
     enum taskType {
         grountTrack,
         manoeuvre
-
-    }
+    };
 
 
 
@@ -26,6 +25,10 @@ namespace osc {
         int priority;
         std::chrono::time_point<std::chrono::system_clock> startTime;
         std::chrono::microseconds actionDuration;
+        orbParam KOE;
+        eci posvelECI;
+        eci pointVector;
+        double timeOffset;
 
         public:
         //initialiser
@@ -53,7 +56,7 @@ namespace osc {
 
         }
 
-        vec3 getPointingDirection(orbParam KOE, eci posvelECI, eci pointVector, double timeOffset){
+        vec3 getPointingDirection() { //orbParam KOE, eci posvelECI, eci pointVector, double timeOffset
             //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
             //a function to create a new pointing vector for multiple input types is explained below
 
@@ -75,7 +78,7 @@ namespace osc {
             // and to calculate the new pointing angle at the offset point;
 
             eci newPointVector;
-                newPointVector = posvelECI.rIJK - targetPosECI); //calculate new pointing vector, this is placeholder
+            // newPointVector = posvelECI.rIJK - targetPosECI); //calculate new pointing vector, this is placeholder
             // note that in some cases the target position in the ECI frame may have moved, and may need 
             // recalculated, such as ground positions, fixed in ECEF, but moving in ECI.
 
