@@ -169,7 +169,7 @@ namespace osc {
             /// @param interupt Acts as a control flag to stop the attitude control thread
             bool interupt = false;
 
-            std::thread attitudeControlThread(controlLoopThread, this, &currTask, &interupt);
+            std::thread attitudeControlThread(controlLoopThread, &currTask, &interupt);
         }
     }
 };
