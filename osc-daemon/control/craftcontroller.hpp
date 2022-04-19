@@ -9,6 +9,7 @@
 
 #include "../osctypes.hpp"
 #include "scheduler.hpp"
+#include "attitudecontroller.hpp"
 #include "../datainjest/jsonparser.hpp"
 #include "../components/component.hpp"
 #include "../components/fueltank.hpp"
@@ -72,6 +73,8 @@ namespace osc {
         void recomputeComponentDeps();
     
         void forcesToCommands(ftModel setpoint);
+        
+        void craftcontroller::controlLoopThread(bool *interupt, task *curTask);
 
         void beginControl();
     };

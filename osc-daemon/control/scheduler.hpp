@@ -31,7 +31,7 @@ namespace osc {
         /** getNext
         @param[out] closestTaskIndex output index of the next task
         Returns the index of the next task */
-        int getNext() {
+        task getNext() {
             
             std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
             int closestTaskIndex = -1;
@@ -46,8 +46,10 @@ namespace osc {
                         closestTaskIndex = i;
                     }
                 }
-                
-                return closestTaskIndex;
+                if (closestTaskIndex >= 0) {
+                    return ptasks->at(closestTaskIndex);
+                }
+                return task();
             }
         }
 

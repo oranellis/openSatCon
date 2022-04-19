@@ -16,7 +16,8 @@ namespace osc {
     */
     enum taskType {
         grountTrack,
-        manoeuvre
+        manoeuvre,
+        empty
     };
 
 
@@ -43,6 +44,11 @@ namespace osc {
         double timeOffset;
 
         public:
+
+        task() {
+            type = taskType::empty;
+        }
+
         task(double transferISP, double maxThrust, vnb deltaV, orbParam impulseKOE, double startMass) {//takes in KOE at impulse burn point, has mean anomaly
             pcs posvelPCSimpulse = KOEtoPCS(impulseKOE); // impulse koe at burn centre, converted perifocal coordinate system
             eci posvelECIimpulse = PCStoECI(impulseKOE, posvelPCSimpulse); // to eci, current pos and vel at impulse burn before burn
@@ -119,6 +125,10 @@ namespace osc {
 
         auto getStartTime() {
             return startTime;
+        }
+
+        taskType getTaskType() {
+            return type;
         }
     };
 
