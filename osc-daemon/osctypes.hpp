@@ -172,11 +172,21 @@ namespace osc {
 
         quaternion quaternionDerivative(quaternion argQuat, vec3 argRate){
             quaternion dotQuat;
-            argQuat.qw=sqrt(1-pow2(argQuat.qx)-pow2(argQuat.qy)-pow2(argQuat.qz));
+
+            argQuat.qw=sqrt(1 - pow2(argQuat.qx) - pow2(argQuat.qy) - pow2(argQuat.qz));
             
-            dotQuat.qx=0.5*(argQuat.qw*argRate[0]-argQuat.qz*argRate[1]+argQuat.qy*argRate[2]);
-            dotQuat.qy=0.5*(argQuat.qz*argRate[0]+argQuat.qw*argRate[1]-argQuat.qx*argRate[2]);
-            dotQuat.qz=0.5*(-argQuat.qy*argRate[0]+argQuat.qx*argRate[1]-argQuat.qw*argRate[2]);
+            dotQuat.qx = 0.5 * (argQuat.qw * argRate[0]
+                               -argQuat.qz * argRate[1]
+                               +argQuat.qy * argRate[2]);
+
+            dotQuat.qy = 0.5 * (argQuat.qz * argRate[0]
+                               +argQuat.qw * argRate[1]
+                               -argQuat.qx * argRate[2]);
+
+            dotQuat.qz = 0.5 * (-argQuat.qy * argRate[0]
+                                +argQuat.qx * argRate[1]
+                                -argQuat.qw * argRate[2]);
+
             return dotQuat;
         };
     };
@@ -346,8 +356,8 @@ namespace osc {
     };
     
     // Inline helper functions
-    inline double pow2(double arg) { return arg*arg; }
-    inline double pow3(double arg) { return arg*arg*arg; }
+    inline double pow2(double arg) { return arg * arg; }
+    inline double pow3(double arg) { return arg * arg * arg; }
 }
 
 #endif // OSCTYPES_H
