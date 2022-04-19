@@ -22,6 +22,8 @@ namespace osc {
         // Operator overloads
         vec3 operator+ (vec3 rhs) { return vec3(data[0] + rhs[0], data[1] + rhs[1], data[2] + rhs[2]); }
 
+        vec3 operatorplus2 (vec3 term1, vec3 term2) { return vec3(data[0] + term1[0] + term2[0], data[1] + term1[1] + term2[1], data[2] + term1[2] + term2[2]); }
+
         vec3 operator- (vec3 rhs) { return vec3(data[0] - rhs[0], data[1] - rhs[1], data[2] - rhs[2]); }
 
         vec3 operator* (double rhs) { return vec3(data[0] * rhs, data[1] * rhs, data[2] * rhs); }

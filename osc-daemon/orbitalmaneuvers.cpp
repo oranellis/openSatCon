@@ -157,12 +157,12 @@ vnb planeChangeTransfer(orbParam curKOE, orbParam aftKOE){
     return deltaV; //perform at apoapsis for delta V efficiency
 };
 
-task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom){
-    vnb deltaV;
-    double burnAngle=burnTrueAnom;
-    deltaV.vVNB.data[0] = dVv;
-    deltaV.vVNB.data[1] = dVn;
-    deltaV.vVNB.data[2] = dVb;
-    return task(deltaV, burnAngle); //return task with VNB values and req truanom
-};
+// task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom){
+//     vnb deltaV;
+//     double burnAngle=burnTrueAnom;
+//     deltaV.vVNB.data[0] = dVv;
+//     deltaV.vVNB.data[1] = dVn;
+//     deltaV.vVNB.data[2] = dVb;
+//     return task(deltaV, burnAngle); //return task with VNB values and req truanom
+// };
 };
