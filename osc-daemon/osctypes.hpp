@@ -214,7 +214,7 @@ namespace osc {
             */
         }
 
-        forceTorqueModel(vec3 maxThrust, position thrusterPos) {
+        forceTorqueModel(vec3 maxThrust, vec3 thrusterPos) {
             /*
             Initialiser for thrusters with a thrust magnitude and direction of action
             */
@@ -222,7 +222,7 @@ namespace osc {
             ftVec[1] = maxThrust[1];
             ftVec[2] = maxThrust[2];
 
-            vec3 torque = ((vec3)thrusterPos).cross(maxThrust);
+            vec3 torque = thrusterPos.cross(maxThrust);
 
             ftVec[3] = torque[0]; // Resultant force on the object cg is off centre force
             ftVec[4] = torque[1]; // Resultant force on the object cg is off centre force
