@@ -103,9 +103,9 @@ craftconfig parseJson(std::string jsonPath) {
     // parse and map fuel tanks
     for(int i = 0; i < j["FuelTankNo"]; i++)
     {
-        double fuelmass = j["FuelTanks"][std::to_string(i)]["FuelMass"];
-        double fuelcap = j["FuelTanks"][std::to_string(i)]["FuelCapacity"];
-        std::string fueltype = j["FuelTanks"][std::to_string(i)]["FuelType"];
+        double fuelmass = j["FuelTanks"][std::to_string(i)]["fuelMass"];
+        double fuelcap = j["FuelTanks"][std::to_string(i)]["fuelCapacity"];
+        std::string fueltype = j["FuelTanks"][std::to_string(i)]["fuelType"];
         position pos;
         pos.x = j["FuelTanks"][std::to_string(i)]["position"][0u];
         pos.y = j["FuelTanks"][std::to_string(i)]["position"][1u];
@@ -121,17 +121,17 @@ craftconfig parseJson(std::string jsonPath) {
     for(int i = 0; i < j["RotatorNo"]; i++)
     {
         double mDipole = j["Rotators"][std::to_string(i)]["maxDipoleMoment"];
-        double torque = j["Rotators"][std::to_string(i)]["Torque"];
+        double torque = j["Rotators"][std::to_string(i)]["torque"];
         double storedMomentum = j["Rotators"][std::to_string(i)]["storedMomentum"];
-        double rotSpeed = j["Rotators"][std::to_string(i)]["RotationSpeed"];
+        double rotSpeed = j["Rotators"][std::to_string(i)]["rotationSpeed"];
         momentofinertia moi;
         moi.Ixx = j["Rotators"][std::to_string(i)]["moi"][0u];
         moi.Iyy = j["Rotators"][std::to_string(i)]["moi"][1u];
         moi.Izz = j["Rotators"][std::to_string(i)]["moi"][2u];
         std::array<double, 3> direction;
-        direction[0] = j["Rotators"][std::to_string(i)]["NormalVector"][0u];
-        direction[1] = j["Rotators"][std::to_string(i)]["NormalVector"][1u];
-        direction[2] = j["Rotators"][std::to_string(i)]["NormalVector"][2u];
+        direction[0] = j["Rotators"][std::to_string(i)]["normalVector"][0u];
+        direction[1] = j["Rotators"][std::to_string(i)]["normalVector"][1u];
+        direction[2] = j["Rotators"][std::to_string(i)]["normalVector"][2u];
 
         rotator RotatorComponent(mDipole, torque, storedMomentum, rotSpeed, moi, direction);
 
