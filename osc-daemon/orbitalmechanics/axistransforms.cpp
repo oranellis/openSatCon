@@ -10,6 +10,7 @@ namespace osc{
 
 double greenwichSiderealAngle() { //not working
     //calculates the angle required for the transformation between ECI and ECEF
+    //accounts for the rotation of the Earth
     double gsraret;
     time_t timer;
     //for Oran
@@ -64,6 +65,8 @@ lla ECEFtoLLA(ecef posECEF) {//working
 
 ned ECEFtoNED(ecef posECEF, lla refLLA) { //working
     // returns vector from satellite to ground station in North East Down reference frame
+    // this axis frame intuitively forms a local tangent plane, and has good axes for 
+    // visualisation, unlike ECI or ECEF
     ned posNED;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
@@ -85,7 +88,7 @@ ned ECEFtoNED(ecef posECEF, lla refLLA) { //working
 };
 
 ecef NEDtoECEF(ned posNED, lla refLLA) {//working
-    // returns ECEF position from NED vector
+    // inverse of ECEFtoNED, could be used for satellite measuring against a ground object
     ecef relECEF;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef posECEF;
@@ -132,6 +135,8 @@ ecef EARtoECEF(ear posEAR, lla refLLA) {
 
 ecef ENUtoECEF(enu posENU, lla refLLA) {
     // returns the ECEF position of a satellite tracked by a ground station in East North Up
+    // this is simply an axis shift of NED, but is used when ground stations track satellites
+    // instead of vice versa
     ecef posECEF;
     ecef relECEF;
     ecef refECEF = LLAtoECEF(refLLA);
@@ -155,6 +160,7 @@ ecef ENUtoECEF(enu posENU, lla refLLA) {
 
 enu ECEFtoENU(ecef posECEF, lla refLLA){
     // returns the ENU values seen by a ground station of a satellite at the given ECEF position
+    // used as an intermediate step for the following transform
     enu posENU;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
@@ -253,7 +259,9 @@ thcs ECEFtoSEZ(ecef posECEF, lla refLLA) {
     return posSEZ;
 };
 
-eci PCStoECI(orbParam KOE, pcs posvelPCS) { //working
+eci PCStoECI(orbParam KOE, pcs posvelPCS) {
+    // this is the second step for getting ECI positon and velocity from Keplerian elements,
+    // by using a co-ordinate system with two vectors in the plane of the orbit 
     eci posvelECI;
 
         posvelECI.rIJK.data[0] = (cos(KOE.aop) * cos(KOE.asc) - sin(KOE.asc) * sin(KOE.aop) * cos(KOE.inc))   * posvelPCS.rPCS.data[0]
@@ -286,7 +294,8 @@ eci PCStoECI(orbParam KOE, pcs posvelPCS) { //working
 };
 
 pcs KOEtoPCS(orbParam KOE) { //working
-    // gives the PCS position and velocity of a satellite given its Kepler Orbital Elements
+    // gives the PCS position and velocity of a satellite given its Keplerian Erbital Elements
+    // used to determine the ECI and ECEF position from Keplerian elements
 
     pcs posvelPCS;
     double orbitRadius = (KOE.sma * (1 - pow2(KOE.ecc)))/(1 + KOE.ecc * cos(KOE.truAnom));
@@ -307,6 +316,10 @@ pcs KOEtoPCS(orbParam KOE) { //working
 };
 
 orbParam ECItoKOE(eci posvelECI) {
+    // this returns the kepler orbital elements of an orbit from a satellite tracked at a single position and velocity
+    // this allows orbits to be determined from a single detection of a satellite
+    // this can also be used tosee how a burn in ECI co-ordinates affects the orbital elements,
+    // by increasing the velocity vector by the deltaV in the ECI frame
     orbParam KOE;
     eci h;                           // angular momentum vector
     eci N;                           // ascending node vector
@@ -346,9 +359,6 @@ orbParam ECItoKOE(eci posvelECI) {
     KOE.sma = (pow2(normH) / planet.sgp) / (1 - pow2(KOE.ecc));
     KOE.aop = acos((N.rIJK.dot(e.rIJK) / (normN * KOE.ecc)));
 
-    //if ecc_z > 0 then 0<aop<180
-    //if ecc_z < 0 then 180<aop<360
-
     if(e.rIJK.data[2] < 0) {
         KOE.aop = 2 * M_PI - KOE.aop;
     };
@@ -362,7 +372,10 @@ orbParam ECItoKOE(eci posvelECI) {
     return KOE;
 };
 
-ecef ECItoECEF(eci posvelECI,double siderealAngle) {//working
+ecef ECItoECEF(eci posvelECI,double siderealAngle) {
+    //changes from the inertial ECI frame to the non-enertial ECEF frame
+    //the ECEF frame is more useful for ground positions, whereas the 
+    //ECI frame is more useful for orbits and celestial objects
     ecef posvelECEF;
 
         posvelECEF.rXYZ.data[0] = cos(siderealAngle) * posvelECI.rIJK.data[0] + sin(siderealAngle) * posvelECI.rIJK.data[1];
@@ -372,7 +385,9 @@ ecef ECItoECEF(eci posvelECI,double siderealAngle) {//working
     return posvelECEF;
 };
 
-eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {//working
+eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
+    //rotation in the opposite direction. Complicated effects of precession and nutation have been ignored,
+    //but can be simply implemented into the transforms
     eci posvelECI;
 
         posvelECI.rIJK.data[0] = cos(-siderealAngle) * posvelECEF.rXYZ.data[0] + sin(-siderealAngle)  * posvelECEF.rXYZ.data[1];
@@ -383,6 +398,11 @@ eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {//working
 };
 
 //the following two are not exactly true axis transforms, and are only used for maneuvers and pointing command handling
+//the second called in value in a vector relative to the spacecraft, in either the Velocity Normal Bi-Normal or ECI frames
+//the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
+// the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
+// to decrease), but it also allows for easy integrated plane changes during another planned orbital maneuver. In comparison
+// to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found
 
 eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     eci ECIdV;
@@ -434,6 +454,8 @@ vnb ECItoVNB(eci posvelECI, eci ECIdV) {
         VNBdV.vVNB.data[2] = (vxrxv.rIJK.data[0] / absvxrxv)  * ECIdV.vIJK.data[0]
                              +(vxrxv.rIJK.data[1] /absvxrxv)  * ECIdV.vIJK.data[1]
                              +(vxrxv.rIJK.data[2] /absvxrxv)  * ECIdV.vIJK.data[2];
+        //these could have been replaced with vector maths but it seemed wise to 
+        //keep both matrices similar in form as a visual aid
                              
     return VNBdV;
 };

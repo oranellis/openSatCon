@@ -11,6 +11,8 @@ namespace osc {
 
 
 std::vector<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
+    //this command will take in a set of desired orbital parameters and attempt to automatically create an efficicient 
+    //burn to reach them
     std::vector<task> taskList;
     
     if (curKOE.ecc == 0 && aftKOE.ecc == 0) {
@@ -38,7 +40,8 @@ std::vector<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
 };
 
 std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
-
+//a Hohmann transfer is a series of two burns in order to change both the periapse and apoapsis of an orbit.
+//it is both deltaV and time efficient
     std::vector<task> taskListHohmann;
     vnb burn1dV, burn2dV;
 
@@ -64,7 +67,7 @@ std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
     vb_3_ = h3_ / rp2;
 
     double dVa, dVb, dVa_, dVb_;
-    dVa  = va3   - va1; //maybe if statement these for prograde/retrograde
+    dVa  = va3   - va1; 
     dVb  = vb2   - vb3;
     dVa_ = va_3_ - va_1;
     dVb_ = vb_2  - vb_3_;
@@ -92,7 +95,8 @@ std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
 };
 
 std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
-
+//A bielleptic transfer consists of three burns, with one large inital burn, followed by two correctional burns
+//while it can be more deltaV efficient, it is much slower than a Hohmann transfer
     std::vector<task> taskListBielliptic;
     vnb burn1dV, burn2dV, burn3dV;
     double r1, rp2, ra2, rp3, ra3, r4;
@@ -136,11 +140,16 @@ std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
     // };//calculate propellant mass used for a given delta V
 
 double angularMomentum(double rp, double ra) {
+    //just a useful function to have
     double h = sqrt(2 * planet.sgp) * sqrt((ra * rp) / (ra + rp));
     return h;
 }
 
 bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
+    //above a ratio of orbit radii of 15.58, the Bielliptic transfer is always more deltaV efficient
+    //between 11.94 and 15.58, the Bielliptic will only be more efficient if its first burn is above
+    //a certain radius, which increases as the ratio of radii appoaches 11.94, below which the 
+    //Hohmann transfer is always more efficent
     double rc = aftKOE.sma;//final circle
     //double rb; apoapsis of biellipse
     double ra = curKOE.sma;//initial circle
@@ -164,7 +173,8 @@ bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
 };
 
 std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
-
+    //this is a series of two burns that seek to change the timing of the orbit,
+    //without affecting the positioning of it by any more than is necessary.
     std::vector<task> taskListPhasing;
     orbParam aftKOE;
     vnb burndV;
@@ -192,7 +202,9 @@ std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
 };
 
 std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
-
+    //this burn allows for the inclination of the orbit to be changed.
+    //it is most deltaV efficient to perform this burn at the lowest
+    //orbital veloctiy
     std::vector<task> taskPlaneChange;
     vnb deltaV;
     double deltaInc = aftKOE.inc - curKOE.inc;
@@ -209,7 +221,8 @@ std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
 };
 
 task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom) {
-
+//this allows the user to choose their own burns at any vector they desire, which
+//greatly increases the flexibility of the system over only simple burns
     std::vector<task> taskPlaneChange;
     vnb deltaV;
 
