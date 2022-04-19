@@ -16,10 +16,12 @@ namespace osc {
 
         public:
         //initialiser
-        task(vec3 deltaV, double trueAnom) {
+        
+        task(vnb deltaV, orbParam KOE) {//takes in KOE at impulse burn point
             priority=10;
-            //pointingVec=unitVec(deltaV) -> ECI transform of pointingVec
-            //actionDuration=maths
+            double normDeltaV = deltaV.vVNB.mag();
+            pointingVec = VNBtoECI(unitVec(deltaV));
+            actionDuration = thrust/mass
             //trueAnom(burnTime-actionDuration/2)
             //ECI parallel to pointingVecECI -> VNB transform of parallelECI <-this is where to point at start of burn
 
