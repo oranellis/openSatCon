@@ -84,12 +84,17 @@ namespace osc {
 
             //if targeting LLA position
                 //LLA->ECEF->ECI
+                //
+                //ecef posECEF = LLAtoECEF(posLLA);
+                //eci posECI = ECEFtoECI(posECEF, siderealTime) <--this needs to be the sidereal time at the offset time
 
             //if targeting ground ECEF position
                 //ECEF->ECI
+                //
+                //eci posECI = ECEFtoECI(posECEF, siderealTime)
 
             //if targeting point in space
-                //already done
+                //already done, its already an ECI position
 
             //if doing an mnvr
                 //use relative velocity instead of relative position

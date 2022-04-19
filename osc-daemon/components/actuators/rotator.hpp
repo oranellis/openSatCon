@@ -5,22 +5,34 @@
 
 namespace osc {
 
+  /** \class rotator
+  Rotator Class to store rotating attitude control systems, like reaction wheels or magnetorquers
+  */
   class rotator {
     private:
-      //magnetorquer parameters
+      /** magnetorquer specific parameters, zero for a reaction wheel
+      @param maxDipoleMoment maxmimum dipole moment
+      */
       double maxDipoleMoment;
       
-      //rotation wheel parameters
+      /** rotation wheel specific parameters, zero for a magnetorquer
+      @param torque torque exerted by reaction wheel
+      @param storedMomentum momentum currently stored by reaction wheel
+      @param maxRotationSpeed maximum rotation speed of reaction wheel
+      */
       double torque;
       double storedMomentum;
       double maxRotationSpeed; 
 
-      //shared parameters
+      /** shared parameters
+      @param moi Moment of inertia of the rotator
+      @param direction Direction of vector of the axis of rotation
+      */
       momentofinertia moi;
       vec3 direction;
 
     public:
-      // Constructor
+      /// Constructor
       rotator(double initMaxDipoleMoment, double initTorque, double initStoredMomentum, double initMaxRotationSpeed, 
         momentofinertia initMoi, std::array<double, 3> initDireciton):
         maxDipoleMoment(initMaxDipoleMoment), 
@@ -30,22 +42,27 @@ namespace osc {
         moi(initMoi),
         direction(initDireciton) { }
 
-
+      /// returns \p maxDipoleMoment
       double getMaxDipoleMoment() {
-        return maxDipoleMoment;
+        return maxDipoleMoment; 
       }
+      /// returns \p torque
       double getTorque () {
         return torque;
       }
+      /// returns \p storedMomentum
       double getStoredMomentum() {
         return storedMomentum;
       }
+      /// returns \p maxRotationSpeed
       double getMaxRotationSpeed() {
         return maxRotationSpeed;
       }
+      /// returns \p moi
       momentofinertia getMomentOfInertia() {
         return moi;
       }
+      /// returns \p direction
       vec3 getDirection() {
         return direction;
       }
