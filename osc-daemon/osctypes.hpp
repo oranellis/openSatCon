@@ -7,6 +7,10 @@
 
 namespace osc {
 
+    // Inline helper functions
+    inline double pow2(double arg) { return arg*arg; }
+    inline double pow3(double arg) { return arg*arg*arg; }
+
     // Common data types
     struct vec3 {
         // Class variable initialisers
@@ -337,9 +341,6 @@ namespace osc {
         std::vector<double> pstates; 
     };
     
-    // Inline helper functions
-    inline double pow2(double arg) { return arg*arg; }
-    inline double pow3(double arg) { return arg*arg*arg; }
 }
 
 #endif // OSCTYPES_H
