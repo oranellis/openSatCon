@@ -17,15 +17,14 @@ namespace osc {
 
       //shared parameters
       momentofinertia moi;
-      position pos;
       std::array<double, 3> direction;
 
     public:
       // Constructor
       rotator(double initMaxDipoleMoment, double initTorque, double initStoredMomentum, double initMaxRotationSpeed,
-       momentofinertia initMoi, position initPos, std::array<double, 3> initDireciton):
+       momentofinertia initMoi, std::array<double, 3> initDireciton):
         maxDipoleMoment(initMaxDipoleMoment), torque(initTorque), storedMomentum(initStoredMomentum),
-        maxRotationSpeed(initMaxRotationSpeed), moi(initMoi), pos(initPos), direction(initDireciton) { }
+        maxRotationSpeed(initMaxRotationSpeed), moi(initMoi), direction(initDireciton) { }
 
 
       double getMaxDipoleMoment() {
@@ -42,9 +41,6 @@ namespace osc {
       }
       momentofinertia getMomentOfInertia() {
         return moi;
-      }
-      position getPosition() {
-        return pos;
       }
       std::array<double, 3> getDirection() {
         return direction;

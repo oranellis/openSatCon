@@ -3,8 +3,7 @@
     "MassComponentNo" : 8,
     "ThrusterComponentNo" : 1,
     "FuelTankNo" : 1,
-    "ReactionWheelNo" : 3,
-    "MagneticTorquerNo" : 3,
+    "RotatorNo" : 6,
     "MassComponents" : 
     {
         "Comments" : "6 structural faces, 1 microcontroller, thruster mass component",
@@ -92,7 +91,9 @@
             "minThrustFraction" : 1,
             "thrustFraction" : 1,
             "specificImpulse" : 70,
+            "attitudeControl" : "0",
             "thrustAxis" : [1,0,0],
+            "thrustCenter" : [0, 0, 0],
             "pin" : 1
         }
 
@@ -103,68 +104,74 @@
         "0" :
         {
             "key" : "fuel_tank",
+            "FuelType" : "Warm Gas",
             "FuelMass" : 0.200,
+            "FuelCapacity" : 0.200,
             "position" : [0,0.025,0]
         }
     },
     "Rotators" :
     {
-        "Comments" : "3 rotators, 1 for each axis",
+        "Comments" : "6 rotators, 1 reaction wheel and mtorquer for each axis",
         "0" :
         {
             "key" : "rotator_1",
+            "maxDipoleMoment" : 0,
             "Torque" : 5,
-            "mass" : 0.214,
-            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
+            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "Normal Vector" : [1,0,0]
         },
         "1" :
         {
             "key" : "rotator_2",
+            "maxDipoleMoment" : 0,
             "Torque" : 5,
-            "mass" : 0.214,
-            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
+            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "Normal Vector" : [0,1,0]
         },
         "2" :
         {
             "key" : "rotator_3",
+            "maxDipoleMoment" : 0,
             "Torque" : 5,
-            "mass" : 0.214,
-            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "storedMomentum" : 10,
             "RotationSpeed" : 1539,
+            "moi" : [0.0000941, 0.0000502, 0.0000401],
             "Normal Vector" : [0,0,1]
-        }
-    },
-    "mTorquers" :
-    {
-        "Comments" : "Magnetorquer for each axis",
-        "0" :
+        },
+        "3" :
         {
             "key" : "magtorquer_1",
             "maxDipoleMoment" : 0.37,
-            "mass" : 0.028,
+            "Torque" : 0,
+            "storedMomentum" : 0,
+            "RotationSpeed" : 0,
+            "moi" : [0, 0, 0],
             "Normal Vector" : [1,0,0]
         },
-        "1" :
+        "4" :
         {
             "key" : "magtorquer_2",
             "maxDipoleMoment" : 0.37,
-            "mass" : 0.028,
+            "Torque" : 0,
+            "storedMomentum" : 0,
+            "RotationSpeed" : 0,
+            "moi" : [0, 0, 0],
             "Normal Vector" : [0,1,0]
         },
-        "2" :
+        "5" :
         {
             "key" : "magtorquer_3",
             "maxDipoleMoment" : 0.37,
-            "mass" : 0.028,
+            "Torque" : 0,
+            "storedMomentum" : 0,
+            "RotationSpeed" : 0,
+            "moi" : [0, 0, 0],
             "Normal Vector" : [0,0,1]
         }
     }
-
 }
