@@ -9,19 +9,19 @@ double rad2deg(double rad) {
 };
 
 int main() {
-    osc::orbParam testKOE;
-    testKOE.sma = 6786230;
-    testKOE.ecc = 0.01;
-    testKOE.inc = deg2rad(52);
-    testKOE.asc = deg2rad(95);
-    testKOE.truAnom = deg2rad(300);
-    osc::pcs posvelPCS = osc::KOEtoPCS(testKOE);
-    std::cout << posvelPCS.rPCS.data[0] << std::endl << posvelPCS.rPCS.data[1] << std::endl << posvelPCS.rPCS.data[2] << std::endl; 
-    std::cout << std::endl;
-    std::cout << posvelPCS.rPCS.data[0] << std::endl << posvelPCS.rPCS.data[1] << std::endl << posvelPCS.rPCS.data[2] << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
+    // osc::orbParam testKOE;
+    // testKOE.sma = 6786230;
+    // testKOE.ecc = 0.01;
+    // testKOE.inc = deg2rad(52);
+    // testKOE.asc = deg2rad(95);
+    // testKOE.truAnom = deg2rad(300);
+    // osc::pcs posvelPCS = osc::KOEtoPCS(testKOE);
+    // std::cout << posvelPCS.rPCS.data[0] << std::endl << posvelPCS.rPCS.data[1] << std::endl << posvelPCS.rPCS.data[2] << std::endl; 
+    // std::cout << std::endl;
+    // std::cout << posvelPCS.rPCS.data[0] << std::endl << posvelPCS.rPCS.data[1] << std::endl << posvelPCS.rPCS.data[2] << std::endl;
+    // std::cout << std::endl;
+    // std::cout << std::endl;
+    // std::cout << std::endl;
     osc::eci testPosVel;
     testPosVel.rIJK.data[0]=-2981784;
     testPosVel.rIJK.data[1]=5207055;
