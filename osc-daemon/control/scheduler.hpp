@@ -6,19 +6,31 @@
 #include <vector>
 
 namespace osc {
+
+    /** \class scheduler
+    scheduler class to define an object to handle task processing
+    */
     class scheduler {
 
         private:
 
+        /// @param state state of the scheduler, true being active
         bool state = true;
+        /// @param ptasks vector of tasks 
         std::vector<task> * ptasks = new std::vector<task>;
 
         public:
 
+        /** \fn active()
+        returns the state of the scheduler 
+        */
         bool active() {
             return state;
         }
 
+        /** getNext
+        @param[out] closestTaskIndex output index of the next task
+        Returns the index of the next task */
         int getNext() {
             
             std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
@@ -39,6 +51,10 @@ namespace osc {
             }
         }
 
+        /** \fn addTask(argTask)
+        @param[in] argTask task to add
+        adds a task to put into the tasks list
+        */
         void addTask(task argTask) {
             ptasks->push_back(argTask);
         }

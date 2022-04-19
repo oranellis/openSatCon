@@ -2,9 +2,17 @@
 
 namespace osc::attitudecontrol {
 
+    /// @param CONTROL_LOOP_FREQ frequency of control loop
     const int CONTROL_LOOP_FREQ = 8000;
+    /// @param KP KP of control loop
     const double KP = 0.01;
 
+    /** \fn controlLoopThread(*interupt, *curTask, *controller)
+    @param[in] interupt boolean value whether to interrupt current task
+    @param[in] curTask current task
+    @param[in] controller reference to craft controller
+    PID control loop 
+    */
     void controlLoopThread(bool *interupt, task *curTask, craftcontroller *controller) {
         vec3 allignmentAxis = vec3(1, 0, 0);
 

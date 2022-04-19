@@ -9,7 +9,12 @@
 
 namespace osc {
 
-
+    /** \fn highlevelcommand(curKOE, aftKOE)
+    @param[in] curKOE current KOE of craft
+    @param[in] aftKOE desired KOE of craft
+    @param[out] taskList outputs a series of tasks to complete the change in KOE
+    Function calculates and outputs a vector of tasks to complete a change in KOEs
+    */
 std::vector<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
     //this command will take in a set of desired orbital parameters and attempt to automatically create an efficicient 
     //burn to reach them
@@ -38,10 +43,16 @@ std::vector<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
     //make big task list and include plane change modification
     return taskList;
 };
-
+    /** \fn hohmannTransfer(curKOE, aftKOE)
+    @param[in] curKOE current KOE of craft
+    @param[in] aftKOE desired KOE of craft
+    @param[out] taskListHohmann outputs a vector of tasks
+    Calculates and outputs a vector of tasks to complete a Hohmann transfer between two orbits. 
+    a Hohmann transfer is a series of two burns in order to change both 
+    the periapse and apoapsis of an orbit; it is both deltaV and time efficient
+    */
 std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
-//a Hohmann transfer is a series of two burns in order to change both the periapse and apoapsis of an orbit.
-//it is both deltaV and time efficient
+//
     std::vector<task> taskListHohmann;
     vnb burn1dV, burn2dV;
 
@@ -93,10 +104,16 @@ std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
     //make taskList
     return taskListHohmann;
 };
-
+    /** \fn biellipticTransfer(curKOE, aftKOE)
+    @param[in] curKOE current KOE of craft
+    @param[in] aftKOE desired KOE of craft
+    @param[out] taskListBielliptic outputs a vector of tasks
+    Calculates and outputs a vector of tasks to complete a Bielliptic transfer between two orbits. 
+    A bielleptic transfer consists of three burns, with one large inital burn, followed by two correctional burns
+    while it can be more deltaV efficient, it is much slower than a Hohmann transfer
+    */
 std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
-//A bielleptic transfer consists of three burns, with one large inital burn, followed by two correctional burns
-//while it can be more deltaV efficient, it is much slower than a Hohmann transfer
+
     std::vector<task> taskListBielliptic;
     vnb burn1dV, burn2dV, burn3dV;
     double r1, rp2, ra2, rp3, ra3, r4;
@@ -139,12 +156,25 @@ std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
     //     return propuse;
     // };//calculate propellant mass used for a given delta V
 
+    /** \fn angularMomentum(rp, ra)
+    @param[in] rp radius of periapsis
+    @param[in] ra radius of apoapsis
+    @param[out] h output angular momentum
+    returns the angular momentum around a given apo- and periapsis
+    */
 double angularMomentum(double rp, double ra) {
     //just a useful function to have
     double h = sqrt(2 * planet.sgp) * sqrt((ra * rp) / (ra + rp));
     return h;
 }
 
+    /** \fn circOrbitChoice(curKOE, aftKOE)
+    @param[in] curKOE current KOE of craft
+    @param[in] aftKOE desired KOE of craft
+    @param[out] bool Output bool for orbit choice
+    Function calculates which orbit is more efficient and returns true whether
+    the Hohmann orbit is better, false for the bielliptic orbit
+    */
 bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
     //above a ratio of orbit radii of 15.58, the Bielliptic transfer is always more deltaV efficient
     //between 11.94 and 15.58, the Bielliptic will only be more efficient if its first burn is above
@@ -172,6 +202,11 @@ bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
     //double dVbe=sqrt((2*(a+b))/(a*b))-((1+sqrt(a))/(sqrt(a)))-sqrt(2/(b*(1+b)))*(1-b);
 };
 
+    /** \fn phasingTransfer(curKOE, phasePeriod)
+    @param[in] curKOE current KOE of craft 
+    @param[in] phasePeriod phase period of the orbit
+    @param[out] taskListPhasing outputs an array of tasks to complete the Phasing Transfer
+    */
 std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     //this is a series of two burns that seek to change the timing of the orbit,
     //without affecting the positioning of it by any more than is necessary.
@@ -201,6 +236,11 @@ std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     return taskListPhasing;
 };
 
+    /** \fn planeChangeTransfer(curKOE, aftKOE)
+    @param[in] curKOE current KOE of craft
+    @param[in] aftKOE desired KOE of craft
+    @param[out] taskPlaneChange list of tasks to complete plane change
+    */
 std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
     //this burn allows for the inclination of the orbit to be changed.
     //it is most deltaV efficient to perform this burn at the lowest
@@ -219,6 +259,14 @@ std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
 
     return taskPlaneChange;
 };
+
+    /** \fn complexManeuver(dVv, dVn, dVb, burnTrueAnom)
+    @param[in] dVv change in velocity velocity direction of VNB coordinates
+    @param[in] dVn change in velocity normal direction of VNB coordinates
+    @param[in] dVb change in velocity bi-normal direction of VNB coordinates
+    @param[in] burnTrueAnom true anomaly of the burn
+    define a custom burn
+    */
 
 task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom) {
 //this allows the user to choose their own burns at any vector they desire, which

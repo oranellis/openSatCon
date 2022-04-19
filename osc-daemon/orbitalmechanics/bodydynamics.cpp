@@ -7,6 +7,13 @@
 
 namespace osc{
 
+    /** \fn rotationDynamicModel(curStates, control, inverseInertia)
+    @param[in] curStates current state of the model
+    @param[in] control control state of model
+    @param[in] inverseInertia inverse of the model inertia matrix
+    @param[out] dotStates dotStates of the rotation 
+    Outputs a set of rotations
+    */
     rotStates rotationDynamicModel(rotStates curStates, rotStates control, std::array<std::array<double, 3>, 3> inverseInertia) { //someone make matrices inversible pls
     //this model will handle the rotational dynamics of the craft, and has six state vectors: 3 body rates and three quaternion vector parts
         //a simple RK4 integrated can be used to save computational power while retaining accuracy

@@ -52,12 +52,16 @@ namespace osc {
       return power;
     }
 
-    /// sets the mass of an object
+    /** sets the mass of an object
+    @param[in] argMass the mass the object is set to
+    */
     void setMass(double argMass) {
       mass = argMass;
     }
     
-    /// sets the position of an object
+    /** sets the position of an object
+    @param[in] argPos the position the object is set to
+    */
     void setPos(position argPos) {
       pos = argPos;
     }

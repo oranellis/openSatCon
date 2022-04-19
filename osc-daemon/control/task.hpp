@@ -11,24 +11,35 @@
 
 namespace osc {
 
+    /** \enum taskType
+    enum describing the type of task
+    */
     enum taskType {
         grountTrack,
         manoeuvre
     };
 
 
-
+    /** \class task
+    Task class to define actions for the craft
+    */
     class task {
 
         private:
-
+        /// @param priority integer indicating priority of task, with higher integers corresponding to higher priority
         int priority;
         taskType type;
+        /// @param startTime start time of the action
         std::chrono::time_point<std::chrono::system_clock> startTime;
+        /// @param actionDuration duration of the action of the task
         std::chrono::microseconds actionDuration;
+        /// @param KOE KOE parameters of the orbit
         orbParam KOE;
+        /// @param posvelECI the eci coordinate system position and velocity
         eci posvelECI;
+        /// @param pointVector the pointing vector in eci coordinates
         eci pointVector;
+        /// @param timeOffset double of offset time
         double timeOffset;
 
         public:
@@ -55,7 +66,8 @@ namespace osc {
         task(vec3 rotAng, double trueAnom, double duration) {
 
         }
-
+        /** \fn getPointingDirection()
+        Finds the pointing vector at an arbitrary time offset from a known pointing vector*/
         vec3 getPointingDirection() { //orbParam KOE, eci posvelECI, eci pointVector, double timeOffset
             //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
             //a function to create a new pointing vector for multiple input types is explained below
