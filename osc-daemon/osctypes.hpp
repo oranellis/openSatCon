@@ -8,9 +8,9 @@
 namespace osc {
 
     // Inline helper functions
-    double pow2(double arg) { return arg * arg; }
+    inline double pow2(double arg) { return arg * arg; }
 
-    double pow3(double arg) { return arg * arg * arg; }
+    inline double pow3(double arg) { return arg * arg * arg; }
 
 
 
