@@ -99,39 +99,27 @@ namespace osc {
                     else {
                         currThrusterCommands.insert({i->first, command});
                     }
-
-                    sp = sp - (i->second * command);
-                    count++;
-                    break;
+                }
+                if (sp.mag()<0.01*setpoint.mag() || count > 100) {
+                    matched = true;
                 }
             }
-            if (sp.mag()<0.01*setpoint.mag() || count > 100) {
-                matched = true;
-            }
-        }
 
-        thrusterCommands = currThrusterCommands;
+            thrusterCommands = currThrusterCommands;
+        }
     }
 
-    /// @param CONTROL_LOOP_FREQ frequency of control loop
-    const int CONTROL_LOOP_FREQ = 8000;
-    /// @param KP KP of control loop
-    const double KP = 0.01;
-
-    /** \fn controlLoopThread(*interupt, *curTask, *controller)
-    @param[in] interupt boolean value whether to interrupt current task
-    @param[in] curTask current task
-    @param[in] controller reference to craft controller
-    PID control loop 
+    /** \fn controlLoopThread()
+    the function that is run in a thread responsible for generating the actuator outputs based on the current task
     */
-    void craftcontroller::controlLoopThread(bool *interupt, task *curTask) {
+    void craftcontroller::controlLoopThread() {
+
         vec3 allignmentAxis = vec3(1, 0, 0);
 
-
-        while (!*interupt) {
+        while (!taskInterupt) {
 
             auto loopStartTime = std::chrono::steady_clock::now();
-            vec3 setpointAxis = curTask->getPointingDirection();
+            vec3 setpointAxis = currTask.getPointingDirection();
             vec3 currentAxis = rotation.rotate(allignmentAxis);
 
             std::array<double, 4> axisAngleSetpoint = quaternion(currentAxis, setpointAxis).getAxisAngle();
@@ -145,8 +133,14 @@ namespace osc {
             forcesToCommands(ftCommand);
 
             std::chrono::time_point suspendUntil = loopStartTime + std::chrono::microseconds(1000000/CONTROL_LOOP_FREQ); // Period represented in microseconds, sets the time to start the next control loop
-            std::this_thread::sleep_until(loopStartTime); // Will run slow if loop takes longer than 250us
+            std::this_thread::sleep_until(loopStartTime); // Will run slow if loop takes longer than 125us
         }
+    }
+
+    void craftcontroller::outputThread() {
+
+
+        
     }
 
     /// If model fails to initialise
@@ -157,19 +151,21 @@ namespace osc {
     /** \fn beginControl()
     control begins and scheduler is activated 
     */
-    void craftcontroller::beginControl() {
+    void craftcontroller::beginExampleControl() {
         scheduler schedule = scheduler();
         std::cout << "Beginning control" << std::endl;
         
-        // spawnThread(sensorinput(this)); // pass pointer to this instance
-
-        while(schedule.active()) {
-            task currTask = schedule.getNext();
+        // while(schedule.active()) {
+        //     task currTask = schedule.getNext();
             
-            /// @param interupt Acts as a control flag to stop the attitude control thread
-            bool interupt = false;
+        //     /// @param interupt Acts as a control flag to stop the attitude control thread
+        //     bool interupt = false;
 
-            std::thread attitudeControlThread(controlLoopThread, &currTask, &interupt);
-        }
+        //     std::thread attitudeControlThread(controlLoopThread, &currTask, &interupt);
+        // }
+
+        currTask = task(taskType::example);
+
+        std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }
 };

@@ -9,6 +9,7 @@
 
 #include "../osctypes.hpp"
 #include "scheduler.hpp"
+#include "task.hpp"
 #include "../datainjest/jsonparser.hpp"
 #include "../components/component.hpp"
 #include "../components/fueltank.hpp"
@@ -24,6 +25,18 @@ namespace osc {
     class craftcontroller {
 
         private:
+
+        /// @param CONTROL_LOOP_FREQ frequency of control loop
+        const int CONTROL_LOOP_FREQ = 8000;
+        /// @param KP KP of control loop
+        const double KP = 0.01;
+
+        // /** \fn controlLoopThread(*interupt, *curTask, *controller)
+        // @param[in] interupt boolean value whether to interrupt current task
+        // @param[in] curTask current task
+        // @param[in] controller reference to craft controller
+        // PID control loop 
+        // */
 
         // Class vars (stack)
         /// @param mass Overall mass of craft
@@ -42,6 +55,10 @@ namespace osc {
         orbParam orbit;
         /// @param rotation Description of current rotation
         quaternion rotation;
+        /// @param currTask The currently running task
+        task currTask;
+        /// @param taskInterupt An interupt flag for the running task, accessible from threads
+        bool taskInterupt;
 
         /// @param components Map of all component objects to associated IDs
         std::map<std::string, component> components;
@@ -53,7 +70,7 @@ namespace osc {
         std::map<std::string, rotator> rotators;
         /// @param attitudeActuators Map of all ftModels to associated IDs
         std::map<std::string, ftModel> attitudeActuators;
-
+        /// @param thrusterCommands The commands to be sent ot the thusters as a double between 0 and 1, mapped to associated IDs
         std::map<std::string, double> thrusterCommands;
 
         // Member functions
@@ -74,11 +91,15 @@ namespace osc {
     
         void forcesToCommands(ftModel setpoint);
         
-        void controlLoopThread(bool *interupt, task *carTask);
+        void controlLoopThread();
+
+        void sensorThread();
+
+        void outputThread();
 
         craftcontroller();
 
-        void beginControl();
+        void beginExampleControl();
     };
 }
 

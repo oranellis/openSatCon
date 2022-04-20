@@ -8,7 +8,7 @@ int main(int argc, char** args) {
 
     osc::craftcontroller controller;
 
-    controller.beginControl();
+    controller.beginExampleControl();
 
     std::cout << "Finished execution, closing." << std::endl;
 
