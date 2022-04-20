@@ -77,6 +77,7 @@ Open the index.html file in the html folder
 5. This may involve sleeping to save power, waiting a short time to complete the task, completing the task, or even interrupt an ongoing task. This is based on priority of the tasks added to the queue.
 
 ![Header Image](assets/logos/dependencydiagram.png)
+
 The figure above shows the framework with which the software operates. The data injest folder is where the user inputs the satellite model and any data. This, alongside other folders, is read by the control folder, to obtain the satellite model and relevant dynamics and objects.
 
 ![Header Image](assets/logos/ControlInterface.png)
