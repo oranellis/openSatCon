@@ -13,11 +13,12 @@ namespace osc {
     @param[in] curKOE current KOE of craft
     @param[in] aftKOE desired KOE of craft
     @param[out] taskList outputs a series of tasks to complete the change in KOE
-    Function calculates and outputs a vector of tasks to complete a change in KOEs
+    this command will take in a set of desired orbital parameters and attempt to automatically create an efficicient 
+    burn to reach them
     */
     std::vector<task> highlevelcommand(orbParam curKOE, orbParam aftKOE) {
-        //this command will take in a set of desired orbital parameters and attempt to automatically create an efficicient 
-        //burn to reach them
+
+        
         std::vector<task> taskList;
         
         if (curKOE.ecc == 0 && aftKOE.ecc == 0) {

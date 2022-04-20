@@ -12,9 +12,9 @@
 namespace osc{
 
     /** \fn greenwichSiderealAngle()
-    calculates the angle required for the transformation between ECI and ECEF
-    accounts for the rotation of the Earth using the number of Julian days
-    since the J2000 epoch, using an equation from the IAU
+    \brief calculates the angle required for the transformation between ECI and ECEF
+    \n accounts for the rotation of the Earth using the number of Julian days
+    \n since the J2000 epoch, using an equation from the IAU
     */
 inline double greenwichSiderealAngle() { //working
 
@@ -39,9 +39,9 @@ inline double greenwichSiderealAngle() { //working
 };
 
     /** \fn LLAtoECEF(posLLA)
+    \brief  converts the latitude, longitude, and altitude of an object to the ECEF co-ordinate system
+    \n this uses the correct altitude of a non-spherical earth, note that altitude here is above the ground
     @param[in] posLLA position in LLA coordinates
-    converts the latitude, longitude, and altitude of an object to the ECEF co-ordinate system
-    this uses the correct altitude of a non-spherical earth, note that altitude here is above the ground
     */
 inline ecef LLAtoECEF(lla posLLA) {
     ecef posECEF;
@@ -55,8 +55,8 @@ inline ecef LLAtoECEF(lla posLLA) {
 };
 
     /** \fn ECEFtoLLA(posECEF)
+    \brief returns ground position of sub satellite point and satellite altitude from ECEF co-ords
     @param[in] posECEF input ECEF coordinate position
-    returns ground position of sub satellite point and satellite altitude from ECEF co-ords
     */
 
 inline lla ECEFtoLLA(ecef posECEF) {
@@ -77,12 +77,11 @@ inline lla ECEFtoLLA(ecef posECEF) {
 };
 
     /** \fn ECEFtoNED(posECEF, refLLA)
+    \brief     returns vector from satellite to ground station in North East Down reference frame
+    \n this axis frame intuitively forms a local tangent plane, and has good axes for
+    \n visualisation, unlike ECI or ECEF
     @param[in] posECEF ECEF coordinate position
     @param[in] refLLA reference LLA position
-
-    returns vector from satellite to ground station in North East Down reference frame
-    this axis frame intuitively forms a local tangent plane, and has good axes for 
-    visualisation, unlike ECI or ECEF
     */
 inline ned ECEFtoNED(ecef posECEF, lla refLLA) {
     ned posNED;
@@ -472,6 +471,7 @@ inline eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
     /** \fn VNBtoECI(posvelECEI, VNBdV)
     @param[in] posvelECI position and velocity in ECI coordinates
     @param[in] VNBdV deltaV in VNB coordinate system
+
     this function is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
     the second called in value in a vector relative to the spacecraft, in the Velocity Normal Bi-Normal frame
     the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
@@ -506,7 +506,7 @@ inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     return ECIdV;
 };
 
-    /** ECItoVNB(posvelECI, ECIdV)
+    /** \fn ECItoVNB(posvelECI, ECIdV)
     @param[in] posvelECI ECI coordinate position and velocity
     @param[in] ECIdV deltaV in ECI coordinates 
     this function is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
@@ -515,6 +515,7 @@ inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
     to decrease), but it also allows for easy integrated plane changes during another planned orbital maneuver. In comparison
     to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found */
+
 inline vnb ECItoVNB(eci posvelECI, eci ECIdV) {
     vnb VNBdV;
     //precalculating as this needs to be run quite fast
