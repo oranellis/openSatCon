@@ -37,9 +37,9 @@ int main() {
         // testLLA.lat = deg2rad(55.8724);
         // testLLA.lon = deg2rad(4.2900);
         // testLLA.alt = 38;
-        testLLA.lat=deg2rad(45.9132);
-        testLLA.lon=deg2rad(36.7484);
-        testLLA.alt=1877753;
+        testLLA.lat = deg2rad(45.9132);
+        testLLA.lon = deg2rad(36.7484);
+        testLLA.alt = 1877753;
 
     osc::pcs outPCS = osc::KOEtoPCS(testKOE);
         std::cout << "testing KOE to PCS:" << std::endl;
