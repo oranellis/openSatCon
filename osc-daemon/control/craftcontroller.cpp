@@ -142,6 +142,8 @@ namespace osc {
 
     void craftcontroller::outputThread() {
 
+        taskInterupt = false;
+
         wiringPiSetup();
 
         pinMode(PIN_X_POS, OUTPUT);

@@ -32,13 +32,13 @@ namespace osc {
         /// @param KP KP of control loop
         const double KP = 0.01;
 
-        const int PIN_X_POS = 16;
-        const int PIN_X_NEG = 26;
-        const int PIN_Y_POS = 5;
-        const int PIN_Y_NEG = 6;
-        const int PIN_Z_POS = 13;
-        const int PIN_Z_NEG = 19;
-        const int PIN_T = 1;
+        const int PIN_X_POS = 27;
+        const int PIN_X_NEG = 25;
+        const int PIN_Y_POS = 21;
+        const int PIN_Y_NEG = 22;
+        const int PIN_Z_POS = 23;
+        const int PIN_Z_NEG = 24;
+        const int PIN_T = 28;
 
         // /** \fn controlLoopThread(*interupt, *curTask, *controller)
         // @param[in] interupt boolean value whether to interrupt current task
@@ -67,7 +67,7 @@ namespace osc {
         /// @param currTask The currently running task
         task currTask;
         /// @param taskInterupt An interupt flag for the running task, accessible from threads
-        bool taskInterupt;
+        bool taskInterupt = false;
 
         /// @param components Map of all component objects to associated IDs
         std::map<std::string, component> components;
