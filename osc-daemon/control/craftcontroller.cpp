@@ -135,7 +135,7 @@ namespace osc {
 
             forcesToCommands(ftCommand);
 
-            std::chrono::time_point suspendUntil = loopStartTime + std::chrono::microseconds(1000000/CONTROL_LOOP_FREQ); // Period represented in microseconds, sets the time to start the next control loop
+            auto suspendUntil = loopStartTime + std::chrono::microseconds(1000000/CONTROL_LOOP_FREQ); // Period represented in microseconds, sets the time to start the next control loop
             std::this_thread::sleep_until(loopStartTime); // Will run slow if loop takes longer than 125us
         }
     }
@@ -202,7 +202,7 @@ namespace osc {
 
         std::cout << "Example task generated" << std::endl;
 
-        std::thread outputThread(&craftcontroller::outputThread, this);
+        std::thread outputThread(&craftcontroller::controlLoopThread, this);
 
         // std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }
