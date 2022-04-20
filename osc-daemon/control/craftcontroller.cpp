@@ -11,7 +11,7 @@ namespace osc {
         // std::cin >> pathString;
 
         std::cout << "Using the default craft config " << std::endl;
-        pathString = "/home/oran/Dev/opensatcon/osc-daemon/datainjest/examplecraft.json";
+        pathString = "../osc-daemon/datainjest/examemecraft.json";
 
         craftconfig config = parseJson(pathString);
         
