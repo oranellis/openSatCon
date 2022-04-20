@@ -76,6 +76,9 @@ Open the index.html file in the html folder
 4. A task is sent to the queue and based on the current satellite status, a task is chosen to complete.
 5. This may involve sleeping to save power, waiting a short time to complete the task, completing the task, or even interrupt an ongoing task. This is based on priority of the tasks added to the queue.
 
+![Header Image](assets/logos/dependencydiagram.png)
+The figure above shows the framework with which the software operates. The data injest folder is where the user inputs the satellite model and any data. This, alongside other folders, is read by the control folder, to obtain the satellite model and relevant dynamics and objects.
+
 ![Header Image](assets/logos/ControlInterface.png)
 
 The control flow diagram can be seen in the figure above. The IMU inputs orientation data to the microprocessor. The microprocessor then exchanges information with the scheduler. The scheduler handles the priority of tasks and based on the input from the IMU, will make a decision to prioritze a given task. This could range from a simple pointing manoeuvre to a burn for orbital transfers. The scheduler then gives information to the microprocessor which will then give the appropriate commands to the thrusters, magnetorquers, and reaction wheels. It should be noted, the scheduler is not a physical component, but just an important part of the controller. 
