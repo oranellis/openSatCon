@@ -67,7 +67,7 @@ Then in the openSatCon folder <br/>
 ```sh
 doxygen config.conf
 ```
-Open the index.html file in the html folder
+Open the index.html file in the html folder in a browser
 
 ## How it works
 1. The software provides a basic framework to implement attitude determination and control systems and orbital manoeuvres onto their own satellite
