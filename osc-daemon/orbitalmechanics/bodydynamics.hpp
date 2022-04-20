@@ -15,11 +15,11 @@ namespace osc{
     @param[in] control control state of model
     @param[in] inverseInertia inverse of the model inertia matrix
     @param[out] dotStates dotStates of the rotation 
-    Outputs a set of rotations
+    this model will handle the rotational dynamics of the craft, and has six state vectors: 3 body rates and three quaternion vector parts
+    a simple RK4 integrated can be used to save computational power while retaining accuracy
     */
     rotStates rotationDynamicModel(rotStates curStates, rotStates control, std::array<std::array<double, 3>, 3> inverseInertia) { //someone make matrices inversible pls
-    //this model will handle the rotational dynamics of the craft, and has six state vectors: 3 body rates and three quaternion vector parts
-        //a simple RK4 integrated can be used to save computational power while retaining accuracy
+
     rotStates dotStates;
         
         dotStates.omega.data[0] = inverseInertia[0][0]*control.omega.data[0]+inverseInertia[0][1]*control.omega.data[1]+inverseInertia[0][2]*control.omega.data[2];
@@ -28,11 +28,18 @@ namespace osc{
         dotStates.q             = curStates.q.operator/(2);
     };
 
+    /** \fn positiondynamicmodel(curStates, thrust, Ve)
+    @param [in] curStates current position and velocity, and mass states of the model
+    @param [in] thrust absolute thrust value output 
+    @param [in] Ve exhaust velocity of the thruster, given by Isp*g0
+    @param [out] dotStates calculation of position, velocity, and mass state derivatives
+    this is the orbit positing dynamic model, and allows for the positon of the craft ot be effectively estimated, 
+    again using an RK4 integrator. there are seven states, 3 positions, 3 velocities, and a mass state, as the burning
+    of propellant will affect the dynamics of the spacecraft. Attempts were made to calculate some constants a single 
+    time, as this model may require a very low runtime
+    */
+
     posStates positiondynamicmodel(posStates curStates, double thrust, double Ve) { 
-        //this is the orbit positing dynamic model, and allows for the positon of the craft ot be effectively estimated, 
-        //again using an RK4 integrator. there are seven states, 3 positions, 3 velocities, and a mass state, as the burning
-        //of propellant will affect the dynamics of the spacecraft. Attempts were made to calculate some constants a single 
-        //time, as this model may require a very low runtime
     double r = curStates.r.mag();
     double v = curStates.v.mag();
     double C =  (3 * planet.J2 * planet.sgp * pow2(planet.sMa)) / (2 * pow(r, 5)); //constant values
