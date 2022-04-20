@@ -97,7 +97,7 @@ The software provides a framework between satellite control and satellite input/
 Satellite information is stored in a json file format, which includes important information of each of the components. For example, mass, moment of inertia, position of the object. This is completed for all mass objects, thrusters, fuel tanks, and rotators.
 
 #### What are the outputs?
-The software generates a series of commands at the control loop frequency (8Hz) which is stored in a map of commands. These are a series of actuator commands and have information on the thrust and the thrust fraction from 0 - 1 (ie, is the actuator running at full power) for each actuator. Commands are only generated while a task is running, to save power, based on real-time sensor input. These outputs are then interfaced through the microprocessor to the actuators.
+The software generates a series of commands at the control loop frequency (8kHz) which is stored in a map of commands. These are a series of actuator commands and have information on the thrust and the thrust fraction from 0 - 1 (ie, is the actuator running at full power) for each actuator. Commands are only generated while a task is running, to save power, based on real-time sensor input. These outputs are then interfaced through the microprocessor to the actuators.
 
 #### How fast are the actuator commands?
 The control loop takes 125us but a higher performance computer can go even faster. 125us is a very fast reaction, especially in orbit where communications towers may only be available for a few seconds. Although the time required to physically change attitude will be slightly longer, the control software is able to react to any disturbance very quickly.
