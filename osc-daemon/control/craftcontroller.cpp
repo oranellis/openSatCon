@@ -7,12 +7,15 @@ namespace osc {
     */
     bool craftcontroller::initModel() {
         std::string pathString;
-        std::cout << "Enter path to craft configuration: ";
-        std::cin >> pathString;
+        // std::cout << "Enter path to craft configuration: ";
+        // std::cin >> pathString;
 
-        // craftconfig config = parseJson(pathString);
+        std::cout << "Using the default craft config " << std::endl;
+        pathString = "/home/oran/Dev/opensatcon/osc-daemon/datainjest/examplecraft.json";
+
+        craftconfig config = parseJson(pathString);
         
-        // if (!config.populated()) return false;
+        if (!config.populated()) return false;
         return true;
     }
 
@@ -150,7 +153,7 @@ namespace osc {
     control begins and scheduler is activated 
     */
     void craftcontroller::beginExampleControl() {
-        scheduler schedule = scheduler();
+        // scheduler schedule = scheduler();
         std::cout << "Beginning control" << std::endl;
         
         // while(schedule.active()) {
@@ -163,6 +166,8 @@ namespace osc {
         // }
 
         currTask = task(taskType::example);
+
+        std::cout << "Example task generated" << std::endl;
 
         std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }

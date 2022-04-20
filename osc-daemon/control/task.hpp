@@ -7,7 +7,7 @@
 
 #include "../osctypes.hpp"
 #include "craftcontroller.hpp"
-#include "../orbitalmechanics/axistransforms.cpp"
+#include "../orbitalmechanics/axistransforms.hpp"
 
 namespace osc {
 
@@ -15,8 +15,8 @@ namespace osc {
     enum describing the type of task
     */
     enum taskType {
-        grountTrack,
         manoeuvre,
+        groundTrack,
         example,
         empty
     };

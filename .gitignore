@@ -34,5 +34,8 @@
 # Build folder
 build/*
 
+# Doxygen build folder
+html/*
+
 # VSCode settings
 .vscode/

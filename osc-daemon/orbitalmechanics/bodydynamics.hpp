@@ -1,9 +1,12 @@
+#ifndef BODYDYNAMICS_H
+#define BODYDYNAMICS_H
+
 #include <iostream>
 #include <vector>
 #include <math.h>
 
 #include "../osctypes.hpp"
-#include "planet.cpp"
+#include "planet.hpp"
 
 namespace osc{
 
@@ -54,3 +57,5 @@ namespace osc{
     };
 
 }
+
+#endif

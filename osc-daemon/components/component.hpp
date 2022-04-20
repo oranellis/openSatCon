@@ -36,7 +36,9 @@ namespace osc {
         pos = initPos;
         rot = initRot;
         power = initPower;
-      }
+    }
+    /// \brief The default initialiser
+    component() {}
 
     /// Accessers
     /// returns \p mass

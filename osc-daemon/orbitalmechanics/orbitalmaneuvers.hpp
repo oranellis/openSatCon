@@ -3,8 +3,8 @@
 #include <math.h>
 
 #include "../osctypes.hpp"
-#include "planet.cpp"
-#include "axistransforms.cpp"
+#include "planet.hpp"
+#include "axistransforms.hpp"
 #include "../control/task.hpp"
 
 namespace osc {
@@ -89,18 +89,19 @@ std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
         burn1dV.vVNB.data[0] = dVa;
         burn2dV.vVNB.data[0] = dVb;
 
-        task burnOne = task(burn1dV, 0); // taskListHohmann.push_back(task(burn1dV, 0))
-        task burnTwo = task(burn2dV, M_PI);
+        // task burnOne = task(burn1dV, 0); // taskListHohmann.push_back(task(burn1dV, 0))
+        // task burnTwo = task(burn2dV, M_PI);
     }    //do first burn (dVa)  at the current periapsis, circularise (dVb) at intermediate apoapsis
     else {
         burn1dV.vVNB.data[0] = dVa_;
         burn2dV.vVNB.data[0] = dVb_;
 
-        task burnOne = task(burn1dV, M_PI);
-        task burnTwo = task(burn2dV, 0);
+        // task burnOne = task(burn1dV, M_PI);
+        // task burnTwo = task(burn2dV, 0);
 
     }          //do first burn (dVa_) at the current apoapsis, circularise (dVb_) at intermediate apoapsis
 
+    taskListHohmann.push_back(task());
     //make taskList
     return taskListHohmann;
 };
@@ -112,7 +113,7 @@ std::vector<task> hohmannTransfer(orbParam curKOE, orbParam aftKOE) {
     A bielleptic transfer consists of three burns, with one large inital burn, followed by two correctional burns
     while it can be more deltaV efficient, it is much slower than a Hohmann transfer
     */
-std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
+std::vector<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
 
     std::vector<task> taskListBielliptic;
     vnb burn1dV, burn2dV, burn3dV;
@@ -141,9 +142,11 @@ std::array<task> biellipticTransfer(orbParam curKOE, orbParam aftKOE) {
     burn2dV.vVNB.data[0] = vb3 - vb2; //prograde    at apoapsis
     burn3dV.vVNB.data[0] = vc4 - vc3; //retrograde  at periapsis
 
-    task burnOne   = task(burn1dV, 0); // taskListBielliptic.push_back(task(burn1dV, 0))
-    task burnTwo   = task(burn2dV, M_PI);
-    task burnThree = task(burn3dV, 0);
+    // task burnOne   = task(burn1dV, 0); // taskListBielliptic.push_back(task(burn1dV, 0))
+    // task burnTwo   = task(burn2dV, M_PI);
+    // task burnThree = task(burn3dV, 0);
+    taskListBielliptic.push_back(task());
+
     //taskList
     return taskListBielliptic;
 };
@@ -207,7 +210,7 @@ bool circOrbitChoice(orbParam curKOE, orbParam aftKOE) {
     @param[in] phasePeriod phase period of the orbit
     @param[out] taskListPhasing outputs an array of tasks to complete the Phasing Transfer
     */
-std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
+std::vector<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     //this is a series of two burns that seek to change the timing of the orbit,
     //without affecting the positioning of it by any more than is necessary.
     std::vector<task> taskListPhasing;
@@ -230,8 +233,10 @@ std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     va2                 = h2 / ra;
     burndV.vVNB.data[0] = va2 - va1;//first burn at periapsis
     //burns are prograde/retrograde if positive/negative
-    task burnOne   = task(burndV, 0);
-    task burnTwo   = task(-burndV, 2*M_PI);
+    // task burnOne   = task(burndV, 0);
+    // task burnTwo   = task(-burndV, 2*M_PI);
+
+    taskListPhasing.push_back(task());
 
     return taskListPhasing;
 };
@@ -241,7 +246,7 @@ std::array<task> phasingTransfer(orbParam curKOE, double phasePeriod) {
     @param[in] aftKOE desired KOE of craft
     @param[out] taskPlaneChange list of tasks to complete plane change
     */
-std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
+std::vector<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
     //this burn allows for the inclination of the orbit to be changed.
     //it is most deltaV efficient to perform this burn at the lowest
     //orbital veloctiy
@@ -255,9 +260,12 @@ std::array<task> planeChangeTransfer(orbParam curKOE, orbParam aftKOE) {
     deltaV.vVNB.data[1] = curV * (1 - cos(deltaInc));
     deltaV.vVNB.data[2] = 0;
         
-    task taskPlaneChange = task(deltaV, M_PI); //perform at min velocity for delta V efficiency
+    // task taskPlaneChange = task(deltaV, M_PI); //perform at min velocity for delta V efficiency
+
+    taskPlaneChange.push_back(task());
 
     return taskPlaneChange;
+    
 };
 
     /** \fn complexManeuver(dVv, dVn, dVb, burnTrueAnom)
@@ -280,7 +288,8 @@ task complexManeuver(double dVv, double dVn, double dVb, double burnTrueAnom) {
     deltaV.vVNB.data[1] = dVn;
     deltaV.vVNB.data[2] = dVb;
 
-    return task(deltaV, burnAngle); //return task with VNB values and req truanom
+    // return task(deltaV, burnAngle); //return task with VNB values and req truanom
+    return task();
 // };
 };
 }

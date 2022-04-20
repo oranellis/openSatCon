@@ -42,7 +42,7 @@ struct craftconfig {
     parses the json file from the path and produces a craft config object with mapped 
     components
     */
-craftconfig parseJson(std::string jsonPath) {
+inline craftconfig parseJson(std::string jsonPath) {
     // std::cout << "start"; // debug
     // map<string, std::list<double> > Components;
     
