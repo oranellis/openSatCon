@@ -73,12 +73,11 @@ inline lla ECEFtoLLA(ecef posECEF) {
     return llaret;
 };
 
-    /** ECEFtoNED(posECEF, refLLA) returns a vector from satellite to ground station in North East Down reference frame
-    this axis frame intuitively forms a local tangent plane, and has good axes for 
+    /** ECEFtoNED(posECEF, refLLA) returns vector from satellite to ground station in North East Down reference frame.
+    this axis frame intuitively forms a local tangent plane, and has good axes for
     visualisation, unlike ECI or ECEF
     @param[in] posECEF ECEF coordinate position
     @param[in] refLLA reference LLA position
-
     */
 inline ned ECEFtoNED(ecef posECEF, lla refLLA) {
     ned posNED;
@@ -461,7 +460,7 @@ inline eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
 
 
 
-    /** VNBtoECI(posvelECEI, VNBdV) is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
+    /** VNBtoECI(posvelECEI, VNBdV) this function is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
     the second called in value in a vector relative to the spacecraft, in the Velocity Normal Bi-Normal frame
     the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
     the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
@@ -469,6 +468,7 @@ inline eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
     to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found
     @param[in] posvelECI position and velocity in ECI coordinates
     @param[in] VNBdV deltaV in VNB coordinate system
+
 
     */
 inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
@@ -498,15 +498,16 @@ inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     return ECIdV;
 };
 
-    /** ECItoVNB(posvelECI, ECIdV) is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
+    /** \fn ECItoVNB(posvelECI, ECIdV) this function is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
     the second called in value in a vector relative to the spacecraft, in the Earth Centred Inertial frame
     the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
     the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
     to decrease), but it also allows for easy integrated plane changes during another planned orbital maneuver. In comparison
-    to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found *
+    to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found 
     @param[in] posvelECI ECI coordinate position and velocity
     @param[in] ECIdV deltaV in ECI coordinates 
-    */
+*/
+
 inline vnb ECItoVNB(eci posvelECI, eci ECIdV) {
     vnb VNBdV;
     //precalculating as this needs to be run quite fast
