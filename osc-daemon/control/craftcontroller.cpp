@@ -141,6 +141,39 @@ namespace osc {
     }
 
     void craftcontroller::outputThread() {
+
+        wiringPiSetup();
+
+        pinMode(PIN_X_POS, OUTPUT);
+        pinMode(PIN_X_NEG, OUTPUT);
+        pinMode(PIN_Y_POS, OUTPUT);
+        pinMode(PIN_Y_NEG, OUTPUT);
+        pinMode(PIN_Z_POS, OUTPUT);
+        pinMode(PIN_Z_NEG, OUTPUT);
+        pinMode(PIN_T, OUTPUT);
+
+        while (!taskInterupt) {
+
+            auto timeNow = std::chrono::steady_clock::now();
+            digitalWrite(PIN_X_POS, 1);
+            digitalWrite(PIN_X_NEG, 1);
+            digitalWrite(PIN_Y_POS, 1);
+            digitalWrite(PIN_Y_NEG, 1);
+            digitalWrite(PIN_Z_POS, 1);
+            digitalWrite(PIN_Z_NEG, 1);
+            digitalWrite(PIN_T, 1);
+            std::this_thread::sleep_until(timeNow+std::chrono::milliseconds(500));
+
+            digitalWrite(PIN_X_POS, 0);
+            digitalWrite(PIN_X_NEG, 0);
+            digitalWrite(PIN_Y_POS, 0);
+            digitalWrite(PIN_Y_NEG, 0);
+            digitalWrite(PIN_Z_POS, 0);
+            digitalWrite(PIN_Z_NEG, 0);
+            digitalWrite(PIN_T, 0);
+            std::this_thread::sleep_until(timeNow+std::chrono::milliseconds(1000));
+
+        }
         
     }
 
@@ -169,6 +202,8 @@ namespace osc {
 
         std::cout << "Example task generated" << std::endl;
 
-        std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
+        std::thread outputThread(&craftcontroller::outputThread, this);
+
+        // std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }
 };
