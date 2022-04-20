@@ -201,10 +201,14 @@ namespace osc {
         currTask = task(taskType::example);
 
         std::cout << "Example task generated" << std::endl;
+	auto timenow = std::chrono::steady_clock::now();
 
-        outputThread();
-        // std::thread outputThread(&craftcontroller::controlLoopThread, this);
-
+        // outputThread();
+        std::thread outputThread(&craftcontroller::outputThread, this);
+	
+	std::this_thread::sleep_until(timenow + std::chrono::seconds(10));
+	taskInterupt = true;
+	outputThread.join();
         // std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }
 };
