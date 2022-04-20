@@ -6,6 +6,7 @@
 namespace osc {
 
   /** \class fueltank
+  \brief Class for fuel tanks
   Fuel tank class
   */
   class fueltank {

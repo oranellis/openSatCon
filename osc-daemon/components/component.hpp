@@ -9,6 +9,7 @@
 namespace osc {
 
   /** \class component
+  \brief Class for any general component
   Component class of a satellite object, used for the general definition
   of components on a satellite
   */

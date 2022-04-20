@@ -8,6 +8,7 @@
 namespace osc {
 
   /** \class thruster 
+  \brief Thrusters
   Thruster class for thrust producing components
   */
   class thruster {

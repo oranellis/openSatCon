@@ -6,6 +6,7 @@
 namespace osc {
 
   /** \class rotator
+  \brief Class for rotating actuators
   Rotator Class to store rotating attitude control systems, like reaction wheels or magnetorquers
   */
   class rotator {
