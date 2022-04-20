@@ -5,7 +5,8 @@ We are a team of University of Glasgow students creating an open-source satellit
 
 ### Status
 <p><a href="LICENSE"><img src="https://img.shields.io/github/license/oranellis/openSatCon" alt="License" /></a>
-<a href="https://github.com/oranellis/openSatCon/issues"><img src="https://img.shields.io/github/issues/oranellis/openSatCon" alt="GitHub open issues" /></a> 
+<a href="https://github.com/oranellis/openSatCon/issues"><img src="https://img.shields.io/github/issues/oranellis/openSatCon" alt="GitHub open issues" /></a>
+<img src= "https://img.shields.io/github/forks/oranellis/openSatCon" alt="GitHub Forks" /> </a>
 <img src="https://img.shields.io/github/stars/oranellis/openSatCon" alt="GitHub stars" />
 </p>
 
