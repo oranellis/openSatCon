@@ -511,7 +511,7 @@ inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
 
     /** ECItoVNB(posvelECI, ECIdV)
     @param[in] posvelECI ECI coordinate position and velocity
-    @param[in] ECIdV deltaV in ECI coordinates 
+    @param[in] ECIdV deltaV in ECI coordinates \n
     Returns the VNB coordinate system delta V from ECI */
 inline vnb ECItoVNB(eci posvelECI, eci ECIdV) {
     vnb VNBdV;

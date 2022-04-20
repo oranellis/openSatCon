@@ -2,8 +2,8 @@
 
 namespace osc {
 
-    /** \fn initModel()
-    Initialises the model, returning true when the model initialises 
+    /** Initialises the model, returning true when the model initialises  
+    initModel()
     */
     bool craftcontroller::initModel() {
         std::string pathString;
@@ -19,21 +19,21 @@ namespace osc {
         return true;
     }
 
-    /** /fn getMaxThrust()
+    /** getMaxThrust()
     returns the \p maxThrust parameter
     */
     double craftcontroller::getMaxThrust() {
         return maxThrust;
     }
 
-    /** /fn getTransferISP()
+    /** getTransferISP()
     returns the \p transferISP parameter
     */
     double craftcontroller::getTransferISP() {
         return transferISP;
     }
 
-    /** \fn recomputeComponentDeps()
+    /** recomputeComponentDeps()
     recomputes craft parameters from a change in component configuration
     */
     void craftcontroller::recomputeComponentDeps() {
@@ -76,9 +76,8 @@ namespace osc {
         }
     }
 
-    /** \fn forcesToCommands()
+    /** forcesToCommands() returns a set of thruster commands
     @param[in] setpoint input an ftModel of the setpoint
-    returns a set of thruster commands
     */
     void craftcontroller::forcesToCommands(ftModel setpoint) {
 
@@ -112,7 +111,7 @@ namespace osc {
         }
     }
 
-    /** \fn controlLoopThread()
+    /** controlLoopThread()
     the function that is run in a thread responsible for generating the actuator outputs based on the current task
     */
     void craftcontroller::controlLoopThread() {
@@ -182,8 +181,7 @@ namespace osc {
         if (!initModel()) throw std::runtime_error("Craft model failed to initialise");
     }
 
-    /** \fn beginControl()
-    control begins and scheduler is activated 
+    /** beginControl() starts control and activates the scheduler
     */
     void craftcontroller::beginExampleControl() {
         // scheduler schedule = scheduler();
@@ -192,7 +190,7 @@ namespace osc {
         // while(schedule.active()) {
         //     task currTask = schedule.getNext();
             
-        //     /// @param interupt Acts as a control flag to stop the attitude control thread
+        // @param interupt Acts as a control flag to stop the attitude control thread
         //     bool interupt = false;
 
         //     std::thread attitudeControlThread(controlLoopThread, &currTask, &interupt);

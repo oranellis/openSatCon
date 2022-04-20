@@ -29,9 +29,9 @@ namespace osc {
             return state;
         }
 
-        /** getNext
+        /** getNext() returns the index of the next task 
         @param[out] closestTaskIndex output index of the next task
-        Returns the index of the next task */
+        */
         task getNext() {
             
             std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
@@ -54,9 +54,9 @@ namespace osc {
             }
         }
 
-        /** \fn addTask(argTask)
+        /** \fn addTask(argTask) adds \p argTask into the tasks list
         @param[in] argTask task to add
-        adds a task to put into the tasks list
+        
         */
         void addTask(task argTask) {
             ptasks->push_back(argTask);

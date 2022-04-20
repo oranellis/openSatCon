@@ -36,11 +36,10 @@ struct craftconfig {
     }
 };
 
-    /** \fn parseJson(jsonPath)
-    \brief parses a file at a path
-    @param[in] jsonPath path to json file
+    /** \parseJson(jsonPath)
     parses the json file from the path and produces a craft config object with mapped 
     components
+    @param[in] jsonPath path to json file
     */
 inline craftconfig parseJson(std::string jsonPath) {
     // std::cout << "start"; // debug
