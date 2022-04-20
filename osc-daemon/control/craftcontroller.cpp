@@ -13,9 +13,9 @@ namespace osc {
         std::cout << "Using the default craft config " << std::endl;
         pathString = "../osc-daemon/datainjest/examemecraft.json";
 
-        craftconfig config = parseJson(pathString);
+        // craftconfig config = parseJson(pathString);
         
-        if (!config.populated()) return false;
+        // if (!config.populated()) return false;
         return true;
     }
 
@@ -135,12 +135,45 @@ namespace osc {
 
             forcesToCommands(ftCommand);
 
-            std::chrono::time_point suspendUntil = loopStartTime + std::chrono::microseconds(1000000/CONTROL_LOOP_FREQ); // Period represented in microseconds, sets the time to start the next control loop
+            auto suspendUntil = loopStartTime + std::chrono::microseconds(1000000/CONTROL_LOOP_FREQ); // Period represented in microseconds, sets the time to start the next control loop
             std::this_thread::sleep_until(loopStartTime); // Will run slow if loop takes longer than 125us
         }
     }
 
     void craftcontroller::outputThread() {
+
+        wiringPiSetup();
+
+        pinMode(PIN_X_POS, OUTPUT);
+        pinMode(PIN_X_NEG, OUTPUT);
+        pinMode(PIN_Y_POS, OUTPUT);
+        pinMode(PIN_Y_NEG, OUTPUT);
+        pinMode(PIN_Z_POS, OUTPUT);
+        pinMode(PIN_Z_NEG, OUTPUT);
+        pinMode(PIN_T, OUTPUT);
+
+        while (!taskInterupt) {
+
+            auto timeNow = std::chrono::steady_clock::now();
+            digitalWrite(PIN_X_POS, 1);
+            digitalWrite(PIN_X_NEG, 1);
+            digitalWrite(PIN_Y_POS, 1);
+            digitalWrite(PIN_Y_NEG, 1);
+            digitalWrite(PIN_Z_POS, 1);
+            digitalWrite(PIN_Z_NEG, 1);
+            digitalWrite(PIN_T, 1);
+            std::this_thread::sleep_until(timeNow+std::chrono::milliseconds(500));
+
+            digitalWrite(PIN_X_POS, 0);
+            digitalWrite(PIN_X_NEG, 0);
+            digitalWrite(PIN_Y_POS, 0);
+            digitalWrite(PIN_Y_NEG, 0);
+            digitalWrite(PIN_Z_POS, 0);
+            digitalWrite(PIN_Z_NEG, 0);
+            digitalWrite(PIN_T, 0);
+            std::this_thread::sleep_until(timeNow+std::chrono::milliseconds(1000));
+
+        }
         
     }
 
@@ -169,6 +202,9 @@ namespace osc {
 
         std::cout << "Example task generated" << std::endl;
 
-        std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
+        outputThread();
+        // std::thread outputThread(&craftcontroller::controlLoopThread, this);
+
+        // std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }
 };

@@ -6,6 +6,7 @@
 #include <map>
 #include <iostream>
 #include <thread>
+#include <wiringPi.h>
 
 #include "../osctypes.hpp"
 #include "scheduler.hpp"
@@ -30,6 +31,14 @@ namespace osc {
         const int CONTROL_LOOP_FREQ = 8000;
         /// @param KP KP of control loop
         const double KP = 0.01;
+
+        const int PIN_X_POS = 16;
+        const int PIN_X_NEG = 26;
+        const int PIN_Y_POS = 5;
+        const int PIN_Y_NEG = 6;
+        const int PIN_Z_POS = 13;
+        const int PIN_Z_NEG = 19;
+        const int PIN_T = 1;
 
         // /** \fn controlLoopThread(*interupt, *curTask, *controller)
         // @param[in] interupt boolean value whether to interrupt current task
