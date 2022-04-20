@@ -1,0 +1,6 @@
+sudo touch /usr/share/cmake/Modules/FindWiringPi.cmake
+sudo echo "find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
+find_path(WIRINGPI_INCLUDE_DIRS NAMES wiringPi.h)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(wiringPi DEFAULT_MSG WIRINGPI_LIBRARIES WIRINGPI_INCLUDE_DIRS)" >  /usr/share/cmake/Modules/FindWiringPi.cmake

@@ -134,6 +134,7 @@ namespace osc {
 
                     //if doing an mnvr
                         //use relative velocity instead of relative position
+                        //i.e vIJK instead of rIJK
                         //make sure that the time offset is worked out beforehand in that case, using this equation:
                         //actionDuration = std::chrono::microseconds((int)(startMass * exhaustVel / controller->getMaxThrust()*(1 - exp(-normDeltaV / exhaustVel))*1000000));
 
@@ -144,6 +145,7 @@ namespace osc {
 
                 case taskType::example: {
                     pointingVec = vec3(1,0,0);
+                    //this is a simple pointing of the craft in the prograde direction
                     break;
                 }
             }
