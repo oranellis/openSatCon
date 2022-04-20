@@ -13,9 +13,9 @@ namespace osc {
         std::cout << "Using the default craft config " << std::endl;
         pathString = "../osc-daemon/datainjest/examemecraft.json";
 
-        craftconfig config = parseJson(pathString);
+        // craftconfig config = parseJson(pathString);
         
-        if (!config.populated()) return false;
+        // if (!config.populated()) return false;
         return true;
     }
 
@@ -202,7 +202,8 @@ namespace osc {
 
         std::cout << "Example task generated" << std::endl;
 
-        std::thread outputThread(&craftcontroller::controlLoopThread, this);
+        outputThread();
+        // std::thread outputThread(&craftcontroller::controlLoopThread, this);
 
         // std::thread attitudeControlThread(&craftcontroller::controlLoopThread, this);
     }
