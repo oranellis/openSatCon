@@ -11,7 +11,7 @@ namespace osc {
   /** \class component
   \brief Class for any general component
   Component class of a satellite object, used for the general definition
-  of components on a satellite
+  of components on a satellite including their mass, inertia and position
   */
   class component{
 
@@ -30,10 +30,15 @@ namespace osc {
     public:
     
     /// Constructors
-    component(double initMass, momentofinertia initMoi, position initPos, quaternion initRot, powermodel initPower):
-      mass(initMass), moi(initMoi), pos(initPos), rot(initRot), power(initPower) { }
+    component(double initMass, momentofinertia initMoi, position initPos, quaternion initRot, powermodel initPower) {
+        mass = initMass;
+        moi = initMoi;
+        pos = initPos;
+        rot = initRot;
+        power = initPower;
+      }
 
-    // Accessers
+    /// Accessers
     /// returns \p mass
     double getMass() {
       return mass;

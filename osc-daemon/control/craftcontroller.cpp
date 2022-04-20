@@ -138,8 +138,6 @@ namespace osc {
     }
 
     void craftcontroller::outputThread() {
-
-
         
     }
 

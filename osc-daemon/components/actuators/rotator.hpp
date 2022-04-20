@@ -3,6 +3,8 @@
 
 #include <array>
 
+#include "../../osctypes.hpp"
+
 namespace osc {
 
   /** \class rotator
