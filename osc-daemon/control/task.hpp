@@ -48,10 +48,20 @@ namespace osc {
 
         public:
 
+        /** \fn task()
+        initialises an empty task*/
         task() {
             thisTaskType = taskType::empty;
         }
 
+        /** \fn task(transferISP, maxThrust, deltaV, impulseKOE, startMass)
+        @param[in] transferISP transfer ISP for a task
+        @param[in] maxThrust the maximum thrust of the task
+        @param[in] deltaV the deltaV of the task
+        @param[in] impulseKOE the impulse KOE of the task
+        @param[in] startMass the starting mass of the craft
+        Generates a new task with the input parameters
+        */
         task(double transferISP, double maxThrust, vnb deltaV, orbParam impulseKOE, double startMass) {//takes in KOE at impulse burn point, has mean anomaly
             pcs posvelPCSimpulse = KOEtoPCS(impulseKOE); // impulse koe at burn centre, converted perifocal coordinate system
             eci posvelECIimpulse = PCStoECI(impulseKOE, posvelPCSimpulse); // to eci, current pos and vel at impulse burn before burn
@@ -144,10 +154,16 @@ namespace osc {
             return pointingVec;
         }
 
+        /** \fn getStartTime()
+        returns \p startTime
+        */
         auto getStartTime() {
             return startTime;
         }
 
+        /** \fn getTaskType()
+        returns \p thisTaskType
+        */
         taskType getTaskType() {
             return thisTaskType;
         }
