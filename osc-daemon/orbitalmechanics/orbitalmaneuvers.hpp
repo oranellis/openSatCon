@@ -119,7 +119,7 @@ namespace osc {
         vnb burn1dV, burn2dV, burn3dV;
         double r1, rp2, ra2, rp3, ra3, r4;
 
-        r1  = curKOE.sma;//feel free to optimise this
+        r1  = curKOE.sma;//feel free to optimise this, structured like this for clarity of maths only
         rp2 = r1;
         ra2 = 2 * curKOE.sma;
         rp3 = aftKOE.sma;

@@ -13,7 +13,8 @@ namespace osc{
 
     /** \fn greenwichSiderealAngle()
     calculates the angle required for the transformation between ECI and ECEF
-    accounts for the rotation of the Earth
+    accounts for the rotation of the Earth using the number of Julian days
+    since the J2000 epoch, using an equation from the IAU
     */
 inline double greenwichSiderealAngle() { //working
 
@@ -31,7 +32,7 @@ inline double greenwichSiderealAngle() { //working
     seconds = difftime(timer,mktime(&J2000));
     double julianDays = seconds/86400;
     
-    gsraret = 2 * M_PI * (0.77905722732640 + 1.00273781191135448 * (julianDays));
+    gsraret = fmod(2 * M_PI * (0.77905722732640 + 1.00273781191135448 * (julianDays)), 2 * M_PI);
 
     return gsraret;
     //this could be made down to sub-second accuracy if possible
@@ -39,11 +40,11 @@ inline double greenwichSiderealAngle() { //working
 
     /** \fn LLAtoECEF(posLLA)
     @param[in] posLLA position in LLA coordinates
-    converts the angular position of the satellite to the ECEF co-ordinate system
+    converts the latitude, longitude, and altitude of an object to the ECEF co-ordinate system
+    this uses the correct altitude of a non-spherical earth, note that altitude here is above the ground
     */
-inline ecef LLAtoECEF(lla posLLA) {//working
+inline ecef LLAtoECEF(lla posLLA) {
     ecef posECEF;
-    // this gives the correct altitude of a non-spherical earth, note that altitude here is above the ground
     double normalDistance = planet.sMa / sqrt(1 - pow2(planet.ecc * sin(posLLA.lat)));
 
     posECEF.rXYZ.data[0] = (normalDistance + posLLA.alt) * cos(posLLA.lon) * cos(posLLA.lat);
@@ -58,7 +59,7 @@ inline ecef LLAtoECEF(lla posLLA) {//working
     returns ground position of sub satellite point and satellite altitude from ECEF co-ords
     */
 
-inline lla ECEFtoLLA(ecef posECEF) {//working
+inline lla ECEFtoLLA(ecef posECEF) {
     lla llaret;
     double secondeccentricity = planet.ecc / sqrt(1 - pow2(planet.ecc));
     double p = sqrt(pow2(posECEF.rXYZ.data[0]) + pow2(posECEF.rXYZ.data[1]));
@@ -78,11 +79,12 @@ inline lla ECEFtoLLA(ecef posECEF) {//working
     /** \fn ECEFtoNED(posECEF, refLLA)
     @param[in] posECEF ECEF coordinate position
     @param[in] refLLA reference LLA position
+
     returns vector from satellite to ground station in North East Down reference frame
+    this axis frame intuitively forms a local tangent plane, and has good axes for 
+    visualisation, unlike ECI or ECEF
     */
-inline ned ECEFtoNED(ecef posECEF, lla refLLA) { //working
-    // this axis frame intuitively forms a local tangent plane, and has good axes for 
-    // visualisation, unlike ECI or ECEF
+inline ned ECEFtoNED(ecef posECEF, lla refLLA) {
     ned posNED;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
@@ -107,9 +109,10 @@ inline ned ECEFtoNED(ecef posECEF, lla refLLA) { //working
     @param[in] posNED NED coordinate position
     @param[in] refLLA reference LLA
     returns an ECEF from an input NED
+    inverse of ECEFtoNED, can be used for satellite measuring against a ground object
     */
-inline ecef NEDtoECEF(ned posNED, lla refLLA) {//working
-    // inverse of ECEFtoNED, could be used for satellite measuring against a ground object
+inline ecef NEDtoECEF(ned posNED, lla refLLA) {
+    // 
     ecef relECEF;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef posECEF;
@@ -134,9 +137,9 @@ inline ecef NEDtoECEF(ned posNED, lla refLLA) {//working
     @param[in] posEAR position EAR coordinates
     @param[in] refLLA reference LLA
     returns ECEF position from ground station Elevation Azimuth Range tracking
+    this method goes through SEZ co-ordinates, but seems to be the best method
     */
 inline ecef EARtoECEF(ear posEAR, lla refLLA) {
-    // this method goes through SEZ co-ordinates, but seems to be the best method
     ecef posECEF;
     ecef relECEF;
     ecef refECEF = LLAtoECEF(refLLA);
@@ -161,12 +164,12 @@ inline ecef EARtoECEF(ear posEAR, lla refLLA) {
     /** \fn ENUtoECEF(posENU, refLLA)
     @param[in] posENU NED coordinate position
     @param[in] refLLA reference LLA
-    returns an ECEF from an input ENU
+    returns the ECEF position of a satellite tracked by a ground station in East North Up
+    this is simply an axis shift of NED, but is used when ground stations track satellites
+    instead of vice versa
     */
 inline ecef ENUtoECEF(enu posENU, lla refLLA) {
-    // returns the ECEF position of a satellite tracked by a ground station in East North Up
-    // this is simply an axis shift of NED, but is used when ground stations track satellites
-    // instead of vice versa
+
     ecef posECEF;
     ecef relECEF;
     ecef refECEF = LLAtoECEF(refLLA);
@@ -191,11 +194,10 @@ inline ecef ENUtoECEF(enu posENU, lla refLLA) {
     /** \fn ECEFtoENU(posECEF, refLLA)
     @param[in] posECEF ECEF coordinate position
     @param[in] refLLA reference LLA
-    returns an ENU from an input ECEF
+    returns the ENU values seen by a ground station of a satellite at the given ECEF position
+    used as an intermediate step for the following transform
     */
 inline enu ECEFtoENU(ecef posECEF, lla refLLA){
-    // returns the ENU values seen by a ground station of a satellite at the given ECEF position
-    // used as an intermediate step for the following transform
     enu posENU;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
@@ -219,10 +221,9 @@ inline enu ECEFtoENU(ecef posECEF, lla refLLA){
     /** \fn ECEFtoEAR(posECEF, refLLA)
     @param[in] posECEF ECEF coordinate position
     @param[in] refLLA reference LLA
-    returns an EAR from an input ECEF
+    returns the EAR values seen by a ground station of a satellite at the given ECEF position
     */
 inline ear ECEFtoEAR(ecef posECEF, lla refLLA) {
-    // returns the EAR values seen by a ground station of a satellite at the given ECEF position
     ear posEAR;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
@@ -256,9 +257,9 @@ inline ear ECEFtoEAR(ecef posECEF, lla refLLA) {
     @param[in] posSEZ SEZ coordinate position
     @param[in] refLLA reference LLA
     returns an ECEF from an input SEZ
+    returns the ECEF position of a satellite tracked by a ground station in the Topocentric Horizon Co-ordinate System
     */
 inline ecef SEZtoECEF(thcs posSEZ, lla refLLA) {
-    // returns the ECEF position of a satellite tracked by a ground station in the Topocentric Horizon Co-ordinate System
     ecef posECEF;
     ecef relECEF;
     ecef refECEF = LLAtoECEF(refLLA);
@@ -284,10 +285,9 @@ inline ecef SEZtoECEF(thcs posSEZ, lla refLLA) {
     /** \fn ECEFtoSEZ(posECEF, refLLA)
     @param[in] posECEF NED coordinate position
     @param[in] refLLA reference LLA
-    returns an SEZ from an input ECEF
+    returns the SEZ values seen by a ground station of a satellite at the given ECEF position
     */
 inline thcs ECEFtoSEZ(ecef posECEF, lla refLLA) {
-    // returns the SEZ values seen by a ground station of a satellite at the given ECEF position
     thcs posSEZ;
     ecef refECEF = LLAtoECEF(refLLA);
     ecef relECEF;
@@ -313,10 +313,10 @@ inline thcs ECEFtoSEZ(ecef posECEF, lla refLLA) {
     @param[in] KOE KOE of craft
     @param[in] posvelPCS position and velocity in PCS coordinates
     returns an ECI from an input PCS
+    this is the second step for getting ECI positon and velocity from Keplerian elements,
+    by using a co-ordinate system with two vectors in the plane of the orbit 
     */
 inline eci PCStoECI(orbParam KOE, pcs posvelPCS) {
-    // this is the second step for getting ECI positon and velocity from Keplerian elements,
-    // by using a co-ordinate system with two vectors in the plane of the orbit 
     eci posvelECI;
 
         posvelECI.rIJK.data[0] = (cos(KOE.aop) * cos(KOE.asc) - sin(KOE.asc) * sin(KOE.aop) * cos(KOE.inc))   * posvelPCS.rPCS.data[0]
@@ -351,12 +351,10 @@ inline eci PCStoECI(orbParam KOE, pcs posvelPCS) {
     /** \fn KOEtoPCS(KOE)
     @param[in] KOE current KOE
 
-    returns a KOE from PCS
+    Gives the PCS position and velocity of a satellite given its Keplerian Orbital Elements
+    used to determine the ECI and ECEF position from Keplerian elements
     */
-inline pcs KOEtoPCS(orbParam KOE) { //working
-    // gives the PCS position and velocity of a satellite given its Keplerian Erbital Elements
-    // used to determine the ECI and ECEF position from Keplerian elements
-
+inline pcs KOEtoPCS(orbParam KOE) {
     pcs posvelPCS;
     double orbitRadius = (KOE.sma * (1 - pow2(KOE.ecc)))/(1 + KOE.ecc * cos(KOE.truAnom));
 
@@ -376,13 +374,13 @@ inline pcs KOEtoPCS(orbParam KOE) { //working
 };
     /** \fn ECItoKOE(posvelECI)
     @param[in] posvelECI ECI coordinate position and velocity
-    returns a KOE from an input ECI
+    this returns the kepler orbital elements of an orbit from a satellite tracked at a single position and velocity
+    which allows orbits to be determined from a single detection of a satellite
+    this can also be used tosee how a burn in ECI co-ordinates affects the orbital elements,
+    by increasing the velocity vector by the deltaV in the ECI frame
     */
 inline orbParam ECItoKOE(eci posvelECI) {
-    // this returns the kepler orbital elements of an orbit from a satellite tracked at a single position and velocity
-    // this allows orbits to be determined from a single detection of a satellite
-    // this can also be used tosee how a burn in ECI co-ordinates affects the orbital elements,
-    // by increasing the velocity vector by the deltaV in the ECI frame
+
     orbParam KOE;
     eci h;                           // angular momentum vector
     eci N;                           // ascending node vector
@@ -438,12 +436,11 @@ inline orbParam ECItoKOE(eci posvelECI) {
     /** \fn ECItoECEF(posvelECI, siderealAngle)
     @param[in] posvelECI position and velocity in ECI coordinates
     @param[in] siderealAngle sidereal angle
-    returns an ECEF from an input ECI
+    changes from the inertial ECI frame to the non-enertial ECEF frame
+    the ECEF frame is more useful for ground positions, whereas the 
+    ECI frame is more useful for orbits and celestial objects
     */
 inline ecef ECItoECEF(eci posvelECI,double siderealAngle) {
-    //changes from the inertial ECI frame to the non-enertial ECEF frame
-    //the ECEF frame is more useful for ground positions, whereas the 
-    //ECI frame is more useful for orbits and celestial objects
     ecef posvelECEF;
 
         posvelECEF.rXYZ.data[0] = cos(siderealAngle) * posvelECI.rIJK.data[0] + sin(siderealAngle) * posvelECI.rIJK.data[1];
@@ -456,11 +453,11 @@ inline ecef ECItoECEF(eci posvelECI,double siderealAngle) {
     /** \fn ECEFtoECI(posvelECEF, siderealAngle)
     @param[in] posvelECEF position and velocity in ECEF coordinates
     @param[in] siderealAngle siderealAngle value
-    returns an ECI from an input ECEF
+    rotation in the opposite direction. Complicated effects of precession and nutation have been ignored,
+    but can be simply implemented into the transforms
     */
 inline eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
-    //rotation in the opposite direction. Complicated effects of precession and nutation have been ignored,
-    //but can be simply implemented into the transforms
+
     eci posvelECI;
 
         posvelECI.rIJK.data[0] = cos(-siderealAngle) * posvelECEF.rXYZ.data[0] + sin(-siderealAngle)  * posvelECEF.rXYZ.data[1];
@@ -470,17 +467,17 @@ inline eci ECEFtoECI(ecef posvelECEF, double siderealAngle) {
     return posvelECI;
 };
 
-//the following two are not exactly true axis transforms, and are only used for maneuvers and pointing command handling
-//the second called in value in a vector relative to the spacecraft, in either the Velocity Normal Bi-Normal or ECI frames
-//the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
-// the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
-// to decrease), but it also allows for easy integrated plane changes during another planned orbital maneuver. In comparison
-// to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found
+
 
     /** \fn VNBtoECI(posvelECEI, VNBdV)
     @param[in] posvelECI position and velocity in ECI coordinates
     @param[in] VNBdV deltaV in VNB coordinate system
-    returns a delta V in ECI coordinates from an input VNB delta V
+    this function is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
+    the second called in value in a vector relative to the spacecraft, in the Velocity Normal Bi-Normal frame
+    the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
+    the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
+    to decrease), but it also allows for easy integrated plane changes during another planned orbital maneuver. In comparison
+    to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found
     */
 inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     eci ECIdV;
@@ -512,7 +509,12 @@ inline eci VNBtoECI(eci posvelECI, vnb VNBdV) {
     /** ECItoVNB(posvelECI, ECIdV)
     @param[in] posvelECI ECI coordinate position and velocity
     @param[in] ECIdV deltaV in ECI coordinates 
-    Returns the VNB coordinate system delta V from ECI */
+    this function is not exactly a true axis transform, and is only used for maneuvers and pointing command handling
+    the second called in value in a vector relative to the spacecraft, in the Earth Centred Inertial frame
+    the first called in value is the ECI position and velocity at the time of the transform, and it is required to set up
+    the transformation matrix. VNB was chosen as it is not only very intuitive to use (+Velocity to increase orbit, -Velocity 
+    to decrease), but it also allows for easy integrated plane changes during another planned orbital maneuver. In comparison
+    to other satellite-based reference frames, VNB is orthogonal, allowing the inverse to be easily found */
 inline vnb ECItoVNB(eci posvelECI, eci ECIdV) {
     vnb VNBdV;
     //precalculating as this needs to be run quite fast

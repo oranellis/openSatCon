@@ -1,4 +1,4 @@
-#include "../../osc-daemon/orbitalmechanics/axistransforms.cpp"
+#include "../../osc-daemon/orbitalmechanics/axistransforms.hpp"
 
 double deg2rad(double deg) {
     return deg/180*M_PI;
