@@ -74,69 +74,71 @@ namespace osc {
 
         task(taskType type) {
             if (type == taskType::example) {
-                
+                thisTaskType = taskType::example;
             }
-
         }
+
         /** \fn getPointingDirection()
         Finds the pointing vector at an arbitrary time offset from a known pointing vector*/
         vec3 getPointingDirection() { //orbParam KOE, eci posvelECI, eci pointVector, double timeOffset
 
             vec3 pointingVec;
+
             switch (thisTaskType) {
-            case taskType::manoeuvre: {
-                //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
-                //a function to create a new pointing vector for multiple input types is explained below
+                case taskType::manoeuvre: {
+                    //this function will find the pointing vector at an arbitrary time offset from a known pointing vector
+                    //a function to create a new pointing vector for multiple input types is explained below
 
-                orbParam offsetKOE = KOE; //have this equal KOE for everything except truAnom, other elements do not change while in motion
+                    orbParam offsetKOE = KOE; //have this equal KOE for everything except truAnom, other elements do not change while in motion
 
-                double meanAngularMotion = sqrt(planet.sgp/pow3(KOE.sma)); // this is mean anomaly (radians) travelled by the craft per second
-                // not accurate when ecc>0 therefore must convert to true anomaly
+                    double meanAngularMotion = sqrt(planet.sgp/pow3(KOE.sma)); // this is mean anomaly (radians) travelled by the craft per second
+                    // not accurate when ecc>0 therefore must convert to true anomaly
 
-                double meanAnomalyKnown = KOE.trueToMean(); // we find the mean anomaly at the known point
-                
-                double meanAnomalyOffset = meanAngularMotion * timeOffset; //then calculate and add the offset
-                double meanAnom = meanAnomalyKnown + meanAnomalyOffset; 
+                    double meanAnomalyKnown = KOE.trueToMean(); // we find the mean anomaly at the known point
+                    
+                    double meanAnomalyOffset = meanAngularMotion * timeOffset; //then calculate and add the offset
+                    double meanAnom = meanAnomalyKnown + meanAnomalyOffset; 
 
-                offsetKOE.meanToTrue(meanAnom); //this function then gives us the more accurate true anomaly
+                    offsetKOE.meanToTrue(meanAnom); //this function then gives us the more accurate true anomaly
 
-                pcs posvelPCSoffset = KOEtoPCS(offsetKOE); //intermediate transform from KOE to ECI
-                eci posvelECIoffset = PCStoECI(offsetKOE, posvelPCSoffset); //gives ECI position and velocity at the offset point
-                // these position and velocity values are used for the ECItoVNB transform matrix,
-                // and to calculate the new pointing angle at the offset point;
+                    pcs posvelPCSoffset = KOEtoPCS(offsetKOE); //intermediate transform from KOE to ECI
+                    eci posvelECIoffset = PCStoECI(offsetKOE, posvelPCSoffset); //gives ECI position and velocity at the offset point
+                    // these position and velocity values are used for the ECItoVNB transform matrix,
+                    // and to calculate the new pointing angle at the offset point;
 
-                eci newPointVector;
-                // newPointVector = posvelECI.rIJK - targetPosECI); //calculate new pointing vector, this is placeholder
-                // note that in some cases the target position in the ECI frame may have moved, and may need 
-                // recalculated, such as ground positions, fixed in ECEF, but moving in ECI.
+                    eci newPointVector;
+                    // newPointVector = posvelECI.rIJK - targetPosECI); //calculate new pointing vector, this is placeholder
+                    // note that in some cases the target position in the ECI frame may have moved, and may need 
+                    // recalculated, such as ground positions, fixed in ECEF, but moving in ECI.
 
-                //if targeting LLA position
-                    //LLA->ECEF->ECI
-                    //
-                    //ecef posECEF = LLAtoECEF(posLLA);
-                    //eci posECI = ECEFtoECI(posECEF, siderealTime) <--this needs to be the sidereal time at the offset time
+                    //if targeting LLA position
+                        //LLA->ECEF->ECI
+                        //
+                        //ecef posECEF = LLAtoECEF(posLLA);
+                        //eci posECI = ECEFtoECI(posECEF, siderealTime) <--this needs to be the sidereal time at the offset time
 
-                //if targeting ground ECEF position
-                    //ECEF->ECI
-                    //
-                    //eci posECI = ECEFtoECI(posECEF, siderealTime)
+                    //if targeting ground ECEF position
+                        //ECEF->ECI
+                        //
+                        //eci posECI = ECEFtoECI(posECEF, siderealTime)
 
-                //if targeting point in space
-                    //already done, its already an ECI position
+                    //if targeting point in space
+                        //already done, its already an ECI position
 
-                //if doing an mnvr
-                    //use relative velocity instead of relative position
-                    //make sure that the time offset is worked out beforehand in that case, using this equation:
-                    //actionDuration = std::chrono::microseconds((int)(startMass * exhaustVel / controller->getMaxThrust()*(1 - exp(-normDeltaV / exhaustVel))*1000000));
+                    //if doing an mnvr
+                        //use relative velocity instead of relative position
+                        //make sure that the time offset is worked out beforehand in that case, using this equation:
+                        //actionDuration = std::chrono::microseconds((int)(startMass * exhaustVel / controller->getMaxThrust()*(1 - exp(-normDeltaV / exhaustVel))*1000000));
 
-                vnb newPointVectorVNB = ECItoVNB(posvelECIoffset, newPointVector); //translates and returns the ECI vector into a VNB vector
-                pointingVec = newPointVectorVNB.vVNB;
-                break;
-            }
-            case taskType::example: {
-                pointingVec = vec3(1,0,0);
-                break;
-            }
+                    vnb newPointVectorVNB = ECItoVNB(posvelECIoffset, newPointVector); //translates and returns the ECI vector into a VNB vector
+                    pointingVec = newPointVectorVNB.vVNB;
+                    break;
+                }
+
+                case taskType::example: {
+                    pointingVec = vec3(1,0,0);
+                    break;
+                }
             }
 
             return pointingVec;
